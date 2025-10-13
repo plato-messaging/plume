@@ -9,8 +9,7 @@ abstract class FormatRule {
 
   /// Applies heuristic rule to a retain (format) operation on a [document] and
   /// returns resulting [Delta].
-  Delta? apply(
-      Delta document, int index, int length, Attribute attribute);
+  Delta? apply(Delta document, int index, int length, Attribute attribute);
 }
 
 /// Produces Delta with line-level attributes applied strictly to
@@ -19,8 +18,7 @@ class ResolveLineFormatRule extends FormatRule {
   const ResolveLineFormatRule() : super();
 
   @override
-  Delta? apply(
-      Delta document, int index, int length, Attribute attribute) {
+  Delta? apply(Delta document, int index, int length, Attribute attribute) {
     if (attribute.scope != AttributeScope.line) return null;
 
     var result = Delta()..retain(index);
@@ -57,8 +55,12 @@ class ResolveLineFormatRule extends FormatRule {
     return result;
   }
 
-  Delta _applyAttribute(String text, Operation op, Attribute attribute,
-      {bool firstOnly = false}) {
+  Delta _applyAttribute(
+    String text,
+    Operation op,
+    Attribute attribute, {
+    bool firstOnly = false,
+  }) {
     final result = Delta();
     var offset = 0;
     var lf = text.indexOf('\n');
@@ -96,8 +98,7 @@ class ResolveInlineFormatRule extends FormatRule {
   const ResolveInlineFormatRule();
 
   @override
-  Delta? apply(
-      Delta document, int index, int length, Attribute attribute) {
+  Delta? apply(Delta document, int index, int length, Attribute attribute) {
     if (attribute.scope != AttributeScope.inline) return null;
 
     final result = Delta()..retain(index);
@@ -136,8 +137,7 @@ class FormatLinkAtCaretPositionRule extends FormatRule {
   const FormatLinkAtCaretPositionRule();
 
   @override
-  Delta? apply(
-      Delta document, int index, int length, Attribute attribute) {
+  Delta? apply(Delta document, int index, int length, Attribute attribute) {
     if (attribute.key != Attribute.link.key) return null;
     // If user selection is not collapsed we let it fallback to default rule
     // which simply applies the attribute to selected range.

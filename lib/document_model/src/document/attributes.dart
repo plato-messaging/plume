@@ -36,8 +36,7 @@ abstract class AttributeKey<T> {
 ///   * [IndentAttributeBuilder
 ///   * [BackgroundColorAttributeBuilder]
 ///   * [DirectionAttributeBuilder]
-abstract class AttributeBuilder<T>
-    implements AttributeKey<T> {
+abstract class AttributeBuilder<T> implements AttributeKey<T> {
   const AttributeBuilder._(this.key, this.scope);
 
   @override
@@ -46,8 +45,7 @@ abstract class AttributeBuilder<T>
 
   Attribute<T> get unset => Attribute<T>._(key, scope, null);
 
-  Attribute<T> withValue(T? value) =>
-      Attribute<T>._(key, scope, value);
+  Attribute<T> withValue(T? value) => Attribute<T>._(key, scope, value);
 }
 
 /// Style attribute applicable to a segment of a [Document].
@@ -200,7 +198,9 @@ class Attribute<T> implements AttributeBuilder<T> {
   static Attribute _fromKeyValue(String key, dynamic value) {
     if (!_registry.containsKey(key)) {
       throw ArgumentError.value(
-          key, 'No attribute with key "$key" registered.');
+        key,
+        'No attribute with key "$key" registered.',
+      );
     }
     final builder = _registry[key]!;
     return builder.withValue(value);
@@ -242,8 +242,7 @@ class Attribute<T> implements AttributeBuilder<T> {
   bool get isInline => scope == AttributeScope.inline;
 
   @override
-  Attribute<T> withValue(T? value) =>
-      Attribute<T>._(key, scope, value);
+  Attribute<T> withValue(T? value) => Attribute<T>._(key, scope, value);
 
   @override
   bool operator ==(Object other) {
@@ -319,8 +318,7 @@ class Style {
   T? value<T>(AttributeKey<T> key) => get(key)?.value;
 
   /// Returns [Attribute] from this set by specified [key].
-  Attribute<T>? get<T>(AttributeKey<T> key) =>
-      _data[key.key] as Attribute<T>?;
+  Attribute<T>? get<T>(AttributeKey<T> key) => _data[key.key] as Attribute<T>?;
 
   /// Returns collection of all attribute keys in this set.
   Iterable<String> get keys => _data.keys;
@@ -383,8 +381,10 @@ class Style {
   /// Returns JSON-serializable representation of this style.
   Map<String, dynamic>? toJson() => _data.isEmpty
       ? null
-      : _data.map<String, dynamic>((String _, Attribute value) =>
-          MapEntry<String, dynamic>(value.key, value.value));
+      : _data.map<String, dynamic>(
+          (String _, Attribute value) =>
+              MapEntry<String, dynamic>(value.key, value.value),
+        );
 
   @override
   bool operator ==(Object other) {
@@ -396,8 +396,9 @@ class Style {
 
   @override
   int get hashCode {
-    final hashes =
-        _data.entries.map((entry) => Object.hash(entry.key, entry.value));
+    final hashes = _data.entries.map(
+      (entry) => Object.hash(entry.key, entry.value),
+    );
     return Object.hashAll(hashes);
   }
 
@@ -417,20 +418,17 @@ class _ItalicAttribute extends Attribute<bool> {
 
 /// Applies underline style to a text segment.
 class _UnderlineAttribute extends Attribute<bool> {
-  const _UnderlineAttribute()
-      : super._('u', AttributeScope.inline, true);
+  const _UnderlineAttribute() : super._('u', AttributeScope.inline, true);
 }
 
 /// Applies strikethrough style to a text segment.
 class _StrikethroughAttribute extends Attribute<bool> {
-  const _StrikethroughAttribute()
-      : super._('s', AttributeScope.inline, true);
+  const _StrikethroughAttribute() : super._('s', AttributeScope.inline, true);
 }
 
 /// Applies code style to a text segment.
 class _InlineCodeAttribute extends Attribute<bool> {
-  const _InlineCodeAttribute()
-      : super._('c', AttributeScope.inline, true);
+  const _InlineCodeAttribute() : super._('c', AttributeScope.inline, true);
 }
 
 /// Builder for color-based style attributes.
@@ -440,8 +438,7 @@ class _InlineCodeAttribute extends Attribute<bool> {
 /// See also:
 ///   * [BackgroundColorAttributeBuilder]
 ///   * [ForegroundColorAttributeBuilder]
-abstract class ColorAttributeBuilder
-    extends AttributeBuilder<int> {
+abstract class ColorAttributeBuilder extends AttributeBuilder<int> {
   const ColorAttributeBuilder._(super.key, super.scope) : super._();
 
   /// Creates the color attribute with [color] value
@@ -466,7 +463,7 @@ class BackgroundColorAttributeBuilder extends ColorAttributeBuilder {
   static const _transparentColor = 0;
 
   const BackgroundColorAttributeBuilder._()
-      : super._(_bgColor, AttributeScope.inline);
+    : super._(_bgColor, AttributeScope.inline);
 
   /// Creates foreground color attribute with [color] value
   ///
@@ -498,7 +495,7 @@ class ForegroundColorAttributeBuilder extends ColorAttributeBuilder {
   static const _black = 0x00000000;
 
   const ForegroundColorAttributeBuilder._()
-      : super._(_fgColor, AttributeScope.inline);
+    : super._(_fgColor, AttributeScope.inline);
 
   /// Creates foreground color attribute with [color] value
   ///
@@ -519,8 +516,7 @@ class ForegroundColorAttributeBuilder extends ColorAttributeBuilder {
 class LinkAttributeBuilder extends AttributeBuilder<String> {
   static const _kLink = 'a';
 
-  const LinkAttributeBuilder._()
-      : super._(_kLink, AttributeScope.inline);
+  const LinkAttributeBuilder._() : super._(_kLink, AttributeScope.inline);
 
   /// Creates a link attribute with specified link [value].
   Attribute<String> fromString(String value) =>
@@ -534,38 +530,30 @@ class LinkAttributeBuilder extends AttributeBuilder<String> {
 class HeadingAttributeBuilder extends AttributeBuilder<int> {
   static const _kHeading = 'heading';
 
-  const HeadingAttributeBuilder._()
-      : super._(_kHeading, AttributeScope.line);
+  const HeadingAttributeBuilder._() : super._(_kHeading, AttributeScope.line);
 
   /// Level 1 heading, equivalent of `H1` in HTML.
-  Attribute<int> get level1 =>
-      Attribute<int>._(key, scope, 1);
+  Attribute<int> get level1 => Attribute<int>._(key, scope, 1);
 
   /// Level 2 heading, equivalent of `H2` in HTML.
-  Attribute<int> get level2 =>
-      Attribute<int>._(key, scope, 2);
+  Attribute<int> get level2 => Attribute<int>._(key, scope, 2);
 
   /// Level 3 heading, equivalent of `H3` in HTML.
-  Attribute<int> get level3 =>
-      Attribute<int>._(key, scope, 3);
+  Attribute<int> get level3 => Attribute<int>._(key, scope, 3);
 
   /// Level 4 heading, equivalent of `H4` in HTML.
-  Attribute<int> get level4 =>
-      Attribute<int>._(key, scope, 4);
+  Attribute<int> get level4 => Attribute<int>._(key, scope, 4);
 
   /// Level 5 heading, equivalent of `H5` in HTML.
-  Attribute<int> get level5 =>
-      Attribute<int>._(key, scope, 5);
+  Attribute<int> get level5 => Attribute<int>._(key, scope, 5);
 
   /// Level 6 heading, equivalent of `H6` in HTML.
-  Attribute<int> get level6 =>
-      Attribute<int>._(key, scope, 6);
+  Attribute<int> get level6 => Attribute<int>._(key, scope, 6);
 }
 
 /// Applies checked style to a line in a checklist block.
 class _CheckedAttribute extends Attribute<bool> {
-  const _CheckedAttribute()
-      : super._('checked', AttributeScope.line, true);
+  const _CheckedAttribute() : super._('checked', AttributeScope.line, true);
 }
 
 /// Builder for block attribute styles (number/bullet lists, code and quote).
@@ -575,54 +563,44 @@ class _CheckedAttribute extends Attribute<bool> {
 class BlockAttributeBuilder extends AttributeBuilder<String> {
   static const _kBlock = 'block';
 
-  const BlockAttributeBuilder._()
-      : super._(_kBlock, AttributeScope.line);
+  const BlockAttributeBuilder._() : super._(_kBlock, AttributeScope.line);
 
   /// Formats a block of lines as a bullet list.
-  Attribute<String> get bulletList =>
-      Attribute<String>._(key, scope, 'ul');
+  Attribute<String> get bulletList => Attribute<String>._(key, scope, 'ul');
 
   /// Formats a block of lines as a number list.
-  Attribute<String> get numberList =>
-      Attribute<String>._(key, scope, 'ol');
+  Attribute<String> get numberList => Attribute<String>._(key, scope, 'ol');
 
   /// Formats a block of lines as a check list.
-  Attribute<String> get checkList =>
-      Attribute<String>._(key, scope, 'cl');
+  Attribute<String> get checkList => Attribute<String>._(key, scope, 'cl');
 
   /// Formats a block of lines as a code snippet, using monospace font.
-  Attribute<String> get code =>
-      Attribute<String>._(key, scope, 'code');
+  Attribute<String> get code => Attribute<String>._(key, scope, 'code');
 
   /// Formats a block of lines as a quote.
-  Attribute<String> get quote =>
-      Attribute<String>._(key, scope, 'quote');
+  Attribute<String> get quote => Attribute<String>._(key, scope, 'quote');
 }
 
 class DirectionAttributeBuilder extends AttributeBuilder<String> {
   static const _kDirection = 'direction';
 
   const DirectionAttributeBuilder._()
-      : super._(_kDirection, AttributeScope.line);
+    : super._(_kDirection, AttributeScope.line);
 
-  Attribute<String> get rtl =>
-      Attribute<String>._(key, scope, 'rtl');
+  Attribute<String> get rtl => Attribute<String>._(key, scope, 'rtl');
 }
 
 class AlignmentAttributeBuilder extends AttributeBuilder<String> {
   static const _kAlignment = 'alignment';
 
   const AlignmentAttributeBuilder._()
-      : super._(_kAlignment, AttributeScope.line);
+    : super._(_kAlignment, AttributeScope.line);
 
-  Attribute<String> get right =>
-      Attribute<String>._(key, scope, 'right');
+  Attribute<String> get right => Attribute<String>._(key, scope, 'right');
 
-  Attribute<String> get center =>
-      Attribute<String>._(key, scope, 'center');
+  Attribute<String> get center => Attribute<String>._(key, scope, 'center');
 
-  Attribute<String> get justify =>
-      Attribute<String>._(key, scope, 'justify');
+  Attribute<String> get justify => Attribute<String>._(key, scope, 'justify');
 }
 
 const _maxIndentationLevel = 8;
@@ -630,14 +608,12 @@ const _maxIndentationLevel = 8;
 class IndentAttributeBuilder extends AttributeBuilder<int> {
   static const _kIndent = 'indent';
 
-  const IndentAttributeBuilder._()
-      : super._(_kIndent, AttributeScope.line);
+  const IndentAttributeBuilder._() : super._(_kIndent, AttributeScope.line);
 
   Attribute<int> withLevel(int level) {
     if (level == 0) {
       return unset;
     }
-    return Attribute._(
-        key, scope, math.min(_maxIndentationLevel, level));
+    return Attribute._(key, scope, math.min(_maxIndentationLevel, level));
   }
 }

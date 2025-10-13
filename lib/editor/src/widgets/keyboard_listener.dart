@@ -18,9 +18,11 @@ class PlumePressedKeys extends ChangeNotifier {
   bool get controlPressed => _controlPressed;
 
   void _updatePressedKeys(Set<LogicalKeyboardKey> pressedKeys) {
-    final meta = pressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
+    final meta =
+        pressedKeys.contains(LogicalKeyboardKey.metaLeft) ||
         pressedKeys.contains(LogicalKeyboardKey.metaRight);
-    final control = pressedKeys.contains(LogicalKeyboardKey.controlLeft) ||
+    final control =
+        pressedKeys.contains(LogicalKeyboardKey.controlLeft) ||
         pressedKeys.contains(LogicalKeyboardKey.controlRight);
     if (_metaPressed != meta || _controlPressed != control) {
       _metaPressed = meta;
@@ -35,16 +37,16 @@ class PlumeKeyboardListener extends StatefulWidget {
   const PlumeKeyboardListener({super.key, required this.child});
 
   @override
-  PlumeKeyboardListenerState createState() =>
-      PlumeKeyboardListenerState();
+  PlumeKeyboardListenerState createState() => PlumeKeyboardListenerState();
 }
 
 class PlumeKeyboardListenerState extends State<PlumeKeyboardListener> {
   final PlumePressedKeys _pressedKeys = PlumePressedKeys();
 
   bool _keyEvent(KeyEvent event) {
-    _pressedKeys
-        ._updatePressedKeys(HardwareKeyboard.instance.logicalKeysPressed);
+    _pressedKeys._updatePressedKeys(
+      HardwareKeyboard.instance.logicalKeysPressed,
+    );
     return false;
   }
 
@@ -52,8 +54,9 @@ class PlumeKeyboardListenerState extends State<PlumeKeyboardListener> {
   void initState() {
     super.initState();
     HardwareKeyboard.instance.addHandler(_keyEvent);
-    _pressedKeys
-        ._updatePressedKeys(HardwareKeyboard.instance.logicalKeysPressed);
+    _pressedKeys._updatePressedKeys(
+      HardwareKeyboard.instance.logicalKeysPressed,
+    );
   }
 
   @override

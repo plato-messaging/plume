@@ -50,10 +50,10 @@ class EditableTextLine extends RenderObjectWidget {
   });
 
   EdgeInsetsGeometry get _padding => EdgeInsetsDirectional.only(
-        start: indentWidth,
-        top: spacing.top,
-        bottom: spacing.bottom,
-      );
+    start: indentWidth,
+    top: spacing.top,
+    bottom: spacing.bottom,
+  );
 
   @override
   RenderObjectElement createElement() => _RenderEditableTextLineElement(this);
@@ -77,7 +77,9 @@ class EditableTextLine extends RenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, covariant RenderEditableTextLine renderObject) {
+    BuildContext context,
+    covariant RenderEditableTextLine renderObject,
+  ) {
     final theme = PlumeTheme.of(context)!;
     renderObject.node = node;
     renderObject.padding = _padding;
@@ -185,7 +187,10 @@ class _RenderEditableTextLineElement extends RenderObjectElement {
 
   @override
   void moveRenderObjectChild(
-      RenderObject child, dynamic oldSlot, dynamic newSlot) {
+    RenderObject child,
+    dynamic oldSlot,
+    dynamic newSlot,
+  ) {
     assert(false, 'not reachable');
   }
 }

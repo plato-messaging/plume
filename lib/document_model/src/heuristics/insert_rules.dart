@@ -177,7 +177,8 @@ class AutoExitBlockRule extends InsertRule {
     final iter = DeltaIterator(document);
     final previous = iter.skip(index);
     final target = iter.next();
-    final isInBlock = target.isNotPlain &&
+    final isInBlock =
+        target.isNotPlain &&
         target.attributes!.containsKey(Attribute.block.key);
 
     // We are not in a block, ignore.
@@ -192,8 +193,9 @@ class AutoExitBlockRule extends InsertRule {
     // First check if `target` length is greater than 1, this would indicate
     // that it contains multiple newline characters which share the same style.
     // This would mean we are not on the last line yet.
-    final targetText = target.value
-        as String; // this is safe since we already called isEmptyLine and know it contains a newline
+    final targetText =
+        target.value
+            as String; // this is safe since we already called isEmptyLine and know it contains a newline
 
     if (targetText.length > 1) {
       // We are not on the last line of this block, ignore.
@@ -205,8 +207,7 @@ class AutoExitBlockRule extends InsertRule {
     final nextNewline = _findNextNewline(iter);
     if (nextNewline.isNotEmpty &&
         nextNewline.op!.attributes != null &&
-        nextNewline.op!.attributes![Attribute.block.key] ==
-            blockStyle) {
+        nextNewline.op!.attributes![Attribute.block.key] == blockStyle) {
       // We are not at the end of this block, ignore.
       return null;
     }
@@ -250,8 +251,8 @@ class PreserveInlineStylesRule extends InsertRule {
     if (previousText.contains('\n')) return null;
 
     final attributes = previous.attributes;
-    final hasLink = (attributes != null &&
-        attributes.containsKey(Attribute.link.key));
+    final hasLink =
+        (attributes != null && attributes.containsKey(Attribute.link.key));
     if (!hasLink) {
       return Delta()
         ..retain(index)
@@ -273,8 +274,7 @@ class PreserveInlineStylesRule extends InsertRule {
     }
     // We must make sure links are identical in previous and next operations.
     // ignore: unnecessary_non_null_assertion
-    if (attributes![Attribute.link.key] ==
-        nextAttributes[Attribute.link.key]) {
+    if (attributes![Attribute.link.key] == nextAttributes[Attribute.link.key]) {
       return Delta()
         ..retain(index)
         ..insert(data, attributes);
@@ -359,7 +359,7 @@ class PreserveBlockStyleOnInsertRule extends InsertRule {
     if (!lineStyle.containsKey(Attribute.block.key)) return null;
 
     final blockStyle = <String, dynamic>{
-      Attribute.block.key: lineStyle[Attribute.block.key]
+      Attribute.block.key: lineStyle[Attribute.block.key],
     };
 
     Map<String, dynamic> resetStyle = {};
@@ -447,7 +447,9 @@ class InsertBlockEmbedsRule extends InsertRule {
   }
 
   Map<String, dynamic>? _getLineStyle(
-      DeltaIterator iterator, Operation current) {
+    DeltaIterator iterator,
+    Operation current,
+  ) {
     final currentText = current.data is String ? current.data as String : '';
 
     if (currentText.contains('\n')) {

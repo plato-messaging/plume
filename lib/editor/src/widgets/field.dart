@@ -311,8 +311,10 @@ class _PlumeFieldState extends State<PlumeField> {
     }
 
     return AnimatedBuilder(
-      animation: Listenable.merge(
-          <Listenable?>[effectiveFocusNode, widget.controller]),
+      animation: Listenable.merge(<Listenable?>[
+        effectiveFocusNode,
+        widget.controller,
+      ]),
       builder: (BuildContext context, Widget? child) {
         return InputDecorator(
           decoration: _getEffectiveDecoration(),

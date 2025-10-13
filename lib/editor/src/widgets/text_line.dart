@@ -65,10 +65,10 @@ class _TextLineState extends State<TextLine> {
   }
 
   bool get isDesktop => {
-        TargetPlatform.macOS,
-        TargetPlatform.linux,
-        TargetPlatform.windows
-      }.contains(defaultTargetPlatform);
+    TargetPlatform.macOS,
+    TargetPlatform.linux,
+    TargetPlatform.windows,
+  }.contains(defaultTargetPlatform);
 
   bool get canLaunchLinks {
     if (widget.onLaunchUrl == null) return false;
@@ -130,11 +130,14 @@ class _TextLineState extends State<TextLine> {
     final theme = PlumeTheme.of(context)!;
     final text = buildText(context, widget.node, theme);
     final textAlign = getTextAlign(widget.node);
-    final strutStyle = theme.strutStyle?.inheritFromTextStyle(text.style) ??
-        StrutStyle.fromTextStyle(text.style!,
-            // We don't want to force strut height when the line contains inline
-            // embeds
-            forceStrutHeight: !widget.node.hasSpanEmbed);
+    final strutStyle =
+        theme.strutStyle?.inheritFromTextStyle(text.style) ??
+        StrutStyle.fromTextStyle(
+          text.style!,
+          // We don't want to force strut height when the line contains inline
+          // embeds
+          forceStrutHeight: !widget.node.hasSpanEmbed,
+        );
     return RichTextProxy(
       textStyle: text.style!,
       textAlign: textAlign,
@@ -164,7 +167,10 @@ class _TextLineState extends State<TextLine> {
   }
 
   TextSpan buildText(
-      BuildContext context, LineNode node, PlumeThemeData theme) {
+    BuildContext context,
+    LineNode node,
+    PlumeThemeData theme,
+  ) {
     final children = node.children
         .map((node) => _segmentToTextSpan(node, theme))
         .toList(growable: false);
@@ -180,14 +186,17 @@ class _TextLineState extends State<TextLine> {
           widget.spanEmbedConfigurations[segment.value.type];
       if (spanConfiguration != null) {
         return WidgetSpan(
-            child: EmbedProxy(
-                child: spanConfiguration.embedBuilder(context, segment)),
-            alignment: spanConfiguration.placeholderAlignment,
-            baseline: spanConfiguration.textBaseline,
-            style: spanConfiguration.textStyle);
+          child: EmbedProxy(
+            child: spanConfiguration.embedBuilder(context, segment),
+          ),
+          alignment: spanConfiguration.placeholderAlignment,
+          baseline: spanConfiguration.textBaseline,
+          style: spanConfiguration.textStyle,
+        );
       }
       return WidgetSpan(
-          child: EmbedProxy(child: widget.embedBuilder(context, segment)));
+        child: EmbedProxy(child: widget.embedBuilder(context, segment)),
+      );
     }
     final text = segment as TextNode;
     final attrs = text.style;
@@ -216,14 +225,12 @@ class _TextLineState extends State<TextLine> {
   }
 
   void _tapLink(Node segment) {
-    final link =
-        (segment as StyledNode).style.get(Attribute.link)!.value;
+    final link = (segment as StyledNode).style.get(Attribute.link)!.value;
     widget.onLaunchUrl!(link);
   }
 
   void _longPressLink(Node segment) async {
-    final link =
-        (segment as StyledNode).style.get(Attribute.link)!.value!;
+    final link = (segment as StyledNode).style.get(Attribute.link)!.value!;
     final action = await widget.linkActionPicker(segment);
     switch (action) {
       case LinkMenuAction.launch:
@@ -235,8 +242,11 @@ class _TextLineState extends State<TextLine> {
         break;
       case LinkMenuAction.remove:
         final range = _getLinkRange(segment);
-        widget.controller.formatText(range.start, range.end - range.start,
-            Attribute.link.unset);
+        widget.controller.formatText(
+          range.start,
+          range.end - range.start,
+          Attribute.link.unset,
+        );
         break;
       case LinkMenuAction.none:
         break;
@@ -247,8 +257,7 @@ class _TextLineState extends State<TextLine> {
     int start = segment.documentOffset;
     int length = segment.length;
     var prev = segment.previous as StyledNode?;
-    final linkAttr =
-        (segment as StyledNode).style.get(Attribute.link)!;
+    final linkAttr = (segment as StyledNode).style.get(Attribute.link)!;
     while (prev != null) {
       if (prev.style.containsSame(linkAttr)) {
         start = prev.documentOffset;
@@ -271,8 +280,7 @@ class _TextLineState extends State<TextLine> {
     return TextRange(start: start, end: start + length);
   }
 
-  TextStyle _getParagraphTextStyle(
-      Style style, PlumeThemeData theme) {
+  TextStyle _getParagraphTextStyle(Style style, PlumeThemeData theme) {
     var textStyle = const TextStyle();
     final heading = widget.node.style.get(Attribute.heading);
     if (heading == Attribute.heading.level1) {
@@ -304,8 +312,11 @@ class _TextLineState extends State<TextLine> {
     return textStyle;
   }
 
-  TextStyle _getInlineTextStyle(Style nodeStyle,
-      Style lineStyle, PlumeThemeData theme) {
+  TextStyle _getInlineTextStyle(
+    Style nodeStyle,
+    Style lineStyle,
+    PlumeThemeData theme,
+  ) {
     var result = const TextStyle();
     if (nodeStyle.containsSame(Attribute.bold)) {
       result = _mergeTextStyleWithDecoration(result, theme.bold);
@@ -324,11 +335,12 @@ class _TextLineState extends State<TextLine> {
     }
     if (nodeStyle.contains(Attribute.inlineCode)) {
       result = _mergeTextStyleWithDecoration(
-          result, theme.inlineCode.styleFor(lineStyle));
+        result,
+        theme.inlineCode.styleFor(lineStyle),
+      );
     }
     if (nodeStyle.contains(Attribute.foregroundColor)) {
-      final foregroundColor =
-          nodeStyle.get(Attribute.foregroundColor)!;
+      final foregroundColor = nodeStyle.get(Attribute.foregroundColor)!;
       if (foregroundColor != Attribute.foregroundColor.unset) {
         result = result.copyWith(color: Color(foregroundColor.value!));
       }

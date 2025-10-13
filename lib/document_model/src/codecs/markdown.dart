@@ -3,10 +3,6 @@ import 'dart:convert';
 import 'package:parchment_delta/parchment_delta.dart';
 
 import '../document.dart';
-import '../document/attributes.dart';
-import '../document/block.dart';
-import '../document/leaf.dart';
-import '../document/line.dart';
 
 class MarkdownCodec extends Codec<Document, String> {
   final String unorderedListToken;
@@ -14,8 +10,7 @@ class MarkdownCodec extends Codec<Document, String> {
   const MarkdownCodec({this.unorderedListToken = '*'});
 
   @override
-  Converter<String, Document> get decoder =>
-      _MarkdownDecoder();
+  Converter<String, Document> get decoder => _MarkdownDecoder();
 
   @override
   Converter<Document, String> get encoder =>
@@ -78,10 +73,18 @@ class _MarkdownDecoder extends Converter<String, Document> {
       if (style?.isInline ?? true) {
         _handleSpan(line, delta, true, style);
       } else {
-        _handleSpan(line, delta, false,
-            Style().putAll(style?.inlineAttributes ?? []));
-        _handleSpan('\n', delta, false,
-            Style().putAll(style?.lineAttributes ?? []));
+        _handleSpan(
+          line,
+          delta,
+          false,
+          Style().putAll(style?.inlineAttributes ?? []),
+        );
+        _handleSpan(
+          '\n',
+          delta,
+          false,
+          Style().putAll(style?.lineAttributes ?? []),
+        );
       }
     }
   }
@@ -141,8 +144,7 @@ class _MarkdownDecoder extends Converter<String, Document> {
       _handleSpan(span, delta, false, style);
       Style blockStyle = Style().put(Attribute.ol);
       if (indent > 0) {
-        blockStyle =
-            blockStyle.put(Attribute.indent.withLevel(indent));
+        blockStyle = blockStyle.put(Attribute.indent.withLevel(indent));
       }
       _handleSpan('\n', delta, false, blockStyle);
       return true;
@@ -161,10 +163,13 @@ class _MarkdownDecoder extends Converter<String, Document> {
     final match = _ulRegExp.matchAsPrefix(line);
     final span = match?.group(2);
     if (span != null) {
-      _handleSpan(span, delta, false,
-          Style().putAll(newStyle.inlineAttributes));
       _handleSpan(
-          '\n', delta, false, Style().putAll(newStyle.lineAttributes));
+        span,
+        delta,
+        false,
+        Style().putAll(newStyle.inlineAttributes),
+      );
+      _handleSpan('\n', delta, false, Style().putAll(newStyle.lineAttributes));
       return true;
     }
     return false;
@@ -176,8 +181,7 @@ class _MarkdownDecoder extends Converter<String, Document> {
       return false;
     }
 
-    Style newStyle =
-        (style ?? Style()).put(Attribute.cl);
+    Style newStyle = (style ?? Style()).put(Attribute.cl);
 
     final match = _clRegExp.matchAsPrefix(line);
     final span = match?.group(3);
@@ -186,10 +190,13 @@ class _MarkdownDecoder extends Converter<String, Document> {
       newStyle = newStyle.put(Attribute.checked);
     }
     if (span != null) {
-      _handleSpan(span, delta, false,
-          Style().putAll(newStyle.inlineAttributes));
       _handleSpan(
-          '\n', delta, false, Style().putAll(newStyle.lineAttributes));
+        span,
+        delta,
+        false,
+        Style().putAll(newStyle.inlineAttributes),
+      );
+      _handleSpan('\n', delta, false, Style().putAll(newStyle.lineAttributes));
       return true;
     }
     return false;
@@ -200,17 +207,21 @@ class _MarkdownDecoder extends Converter<String, Document> {
     final levelTag = match?.group(1);
     if (levelTag != null) {
       final level = levelTag.length;
-      final newStyle = (style ?? Style())
-          .put(Attribute.heading.withValue(level));
+      final newStyle = (style ?? Style()).put(
+        Attribute.heading.withValue(level),
+      );
 
       final span = match?.group(2);
       if (span == null) {
         return false;
       }
-      _handleSpan(span, delta, false,
-          Style().putAll(newStyle.inlineAttributes));
       _handleSpan(
-          '\n', delta, false, Style().putAll(newStyle.lineAttributes));
+        span,
+        delta,
+        false,
+        Style().putAll(newStyle.inlineAttributes),
+      );
+      _handleSpan('\n', delta, false, Style().putAll(newStyle.lineAttributes));
       return true;
     }
 
@@ -218,7 +229,11 @@ class _MarkdownDecoder extends Converter<String, Document> {
   }
 
   void _handleSpan(
-      String span, Delta delta, bool addNewLine, Style? outerStyle) {
+    String span,
+    Delta delta,
+    bool addNewLine,
+    Style? outerStyle,
+  ) {
     var start = _handleStyles(span, delta, outerStyle);
     span = span.substring(start);
 
@@ -255,14 +270,19 @@ class _MarkdownDecoder extends Converter<String, Document> {
       if (match.start > start) {
         if (span.substring(match.start - 1, match.start) == '[') {
           delta.insert(
-              span.substring(start, match.start - 1), outerStyle?.toJson());
-          start = match.start -
+            span.substring(start, match.start - 1),
+            outerStyle?.toJson(),
+          );
+          start =
+              match.start -
               1 +
               _handleLinks(span.substring(match.start - 1), delta, outerStyle);
           continue;
         } else {
           delta.insert(
-              span.substring(start, match.start), outerStyle?.toJson());
+            span.substring(start, match.start),
+            outerStyle?.toJson(),
+          );
         }
       }
 
@@ -300,19 +320,20 @@ class _MarkdownDecoder extends Converter<String, Document> {
 
   Style _fromStyleTag(String styleTag) {
     assert(
-        (styleTag == '`') |
-            (styleTag == '~~') |
-            (styleTag == '_') |
-            (styleTag == '*') |
-            (styleTag == '__') |
-            (styleTag == '**') |
-            (styleTag == '__*') |
-            (styleTag == '**_') |
-            (styleTag == '_**') |
-            (styleTag == '*__') |
-            (styleTag == '***') |
-            (styleTag == '___'),
-        'Invalid style tag \'$styleTag\'');
+      (styleTag == '`') |
+          (styleTag == '~~') |
+          (styleTag == '_') |
+          (styleTag == '*') |
+          (styleTag == '__') |
+          (styleTag == '**') |
+          (styleTag == '__*') |
+          (styleTag == '**_') |
+          (styleTag == '_**') |
+          (styleTag == '*__') |
+          (styleTag == '***') |
+          (styleTag == '___'),
+      'Invalid style tag \'$styleTag\'',
+    );
     assert(styleTag.isNotEmpty, 'Style tag must not be empty');
     if (styleTag == '`') {
       return Style().put(Attribute.inlineCode);
@@ -321,8 +342,7 @@ class _MarkdownDecoder extends Converter<String, Document> {
       return Style().put(Attribute.strikethrough);
     }
     if (styleTag.length == 3) {
-      return Style()
-          .putAll([Attribute.bold, Attribute.italic]);
+      return Style().putAll([Attribute.bold, Attribute.italic]);
     }
     if (styleTag.length == 2) {
       return Style().put(Attribute.bold);
@@ -344,8 +364,9 @@ class _MarkdownDecoder extends Converter<String, Document> {
       if (text == null || href == null) {
         return start;
       }
-      final newStyle = (outerStyle ?? Style())
-          .put(Attribute.link.fromString(href));
+      final newStyle = (outerStyle ?? Style()).put(
+        Attribute.link.fromString(href),
+      );
 
       _handleSpan(text, delta, false, newStyle);
       start = match.end;
@@ -376,7 +397,10 @@ class _MarkdownEncoder extends Converter<Document, String> {
   }
 
   void handleText(
-      StringBuffer buffer, TextNode node, Style currentInlineStyle) {
+    StringBuffer buffer,
+    TextNode node,
+    Style currentInlineStyle,
+  ) {
     final style = node.style;
     final rightPadding = _trimRight(buffer);
 
@@ -459,9 +483,7 @@ class _MarkdownEncoder extends Converter<Document, String> {
           lineBuffer.write(currentItemOrders[currentLevel]);
         } else if (node.style.containsSame(Attribute.cl)) {
           lineBuffer.write('- [');
-          if ((lineNode as LineNode)
-              .style
-              .contains(Attribute.checked)) {
+          if ((lineNode as LineNode).style.contains(Attribute.checked)) {
             lineBuffer.write('X');
           } else {
             lineBuffer.write(' ');
@@ -492,8 +514,11 @@ class _MarkdownEncoder extends Converter<Document, String> {
     return buffer.toString();
   }
 
-  void _writeAttribute(StringBuffer buffer, Attribute? attribute,
-      {bool close = false}) {
+  void _writeAttribute(
+    StringBuffer buffer,
+    Attribute? attribute, {
+    bool close = false,
+  }) {
     if (attribute == Attribute.bold) {
       _writeBoldTag(buffer);
     } else if (attribute == Attribute.italic) {
@@ -503,13 +528,11 @@ class _MarkdownEncoder extends Converter<Document, String> {
     } else if (attribute == Attribute.strikethrough) {
       _writeStrikeThoughTag(buffer);
     } else if (attribute?.key == Attribute.link.key) {
-      _writeLinkTag(buffer, attribute as Attribute<String>,
-          close: close);
+      _writeLinkTag(buffer, attribute as Attribute<String>, close: close);
     } else if (attribute?.key == Attribute.heading.key) {
       _writeHeadingTag(buffer, attribute as Attribute<int>);
     } else if (attribute?.key == Attribute.block.key) {
-      _writeBlockTag(buffer, attribute as Attribute<String>,
-          close: close);
+      _writeBlockTag(buffer, attribute as Attribute<String>, close: close);
     } else if (attribute?.key == Attribute.checked.key) {
       // no-op already handled in handleBlock
     } else if (attribute?.key == Attribute.indent.key) {
@@ -535,8 +558,11 @@ class _MarkdownEncoder extends Converter<Document, String> {
     buffer.write('~~');
   }
 
-  void _writeLinkTag(StringBuffer buffer, Attribute<String> link,
-      {bool close = false}) {
+  void _writeLinkTag(
+    StringBuffer buffer,
+    Attribute<String> link, {
+    bool close = false,
+  }) {
     if (close) {
       buffer.write('](${link.value})');
     } else {
@@ -549,8 +575,11 @@ class _MarkdownEncoder extends Converter<Document, String> {
     buffer.write('${'#' * level} ');
   }
 
-  void _writeBlockTag(StringBuffer buffer, Attribute<String> block,
-      {bool close = false}) {
+  void _writeBlockTag(
+    StringBuffer buffer,
+    Attribute<String> block, {
+    bool close = false,
+  }) {
     if (block == Attribute.code) {
       if (close) {
         buffer.write('\n```');

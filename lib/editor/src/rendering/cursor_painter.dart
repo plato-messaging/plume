@@ -30,7 +30,7 @@ class CursorPainter {
     final paint = Paint()..color = effectiveColor;
     final Offset caretOffset =
         editable.getOffsetForCaret(textPosition, cursorPrototype) +
-            effectiveOffset;
+        effectiveOffset;
     Rect caretRect = cursorPrototype.shift(caretOffset);
     if (style.offset != null) caretRect = caretRect.shift(style.offset!);
 
@@ -79,8 +79,10 @@ class CursorPainter {
     if (style.radius == null) {
       canvas.drawRect(caretRect, paint);
     } else {
-      final RRect caretRRect =
-          RRect.fromRectAndRadius(caretRect, style.radius!);
+      final RRect caretRRect = RRect.fromRectAndRadius(
+        caretRect,
+        style.radius!,
+      );
       canvas.drawRRect(caretRRect, paint);
     }
   }
@@ -90,11 +92,11 @@ class CursorPainter {
     final double pixelMultiple = 1.0 / devicePixelRatio;
     final double pixelPerfectOffsetX = caretPosition.dx.isFinite
         ? (caretPosition.dx / pixelMultiple).round() * pixelMultiple -
-            caretPosition.dx
+              caretPosition.dx
         : caretPosition.dx;
     final double pixelPerfectOffsetY = caretPosition.dy.isFinite
         ? (caretPosition.dy / pixelMultiple).round() * pixelMultiple -
-            caretPosition.dy
+              caretPosition.dy
         : caretPosition.dy;
     return Offset(pixelPerfectOffsetX, pixelPerfectOffsetY);
   }

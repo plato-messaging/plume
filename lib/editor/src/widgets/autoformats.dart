@@ -184,9 +184,7 @@ class AutoFormatLinks extends AutoFormat {
 
     String url = candidate;
     if (!url.startsWith('http')) url = 'https://$url';
-    attributes.addAll(
-      Attribute.link.fromString(url.toString()).toJson(),
-    );
+    attributes.addAll(Attribute.link.fromString(url.toString()).toJson());
 
     final change = Delta()
       ..retain(position - candidate.length)
@@ -378,12 +376,7 @@ class MarkdownLineShortcuts extends AutoFormat {
       if (prefix == null || prefix.isEmpty) return null;
       final shortcut = '$prefix$data';
       if (shortcut == '```' || shortcut == "'''") {
-        final result = _formatLine(
-          iter,
-          position,
-          prefix,
-          Attribute.code,
-        );
+        final result = _formatLine(iter, position, prefix, Attribute.code);
         if (result == null) return null;
         final change = result.$2;
         final undo = change.invert(documentDelta);

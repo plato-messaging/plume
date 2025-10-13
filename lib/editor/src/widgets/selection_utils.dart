@@ -7,8 +7,11 @@ import 'package:plume/document_model/document_model.dart';
 ///
 /// The `fromParent` parameter controls whether `selection` is relative to the
 /// entire document or to the direct parent of the `node`.
-bool intersectsWithSelection(Node node, TextSelection selection,
-    {bool fromParent = false}) {
+bool intersectsWithSelection(
+  Node node,
+  TextSelection selection, {
+  bool fromParent = false,
+}) {
   final base = fromParent ? node.offset : node.documentOffset;
   final extent = base + node.length - 1;
   return base <= selection.end && selection.start <= extent;
@@ -18,8 +21,11 @@ bool intersectsWithSelection(Node node, TextSelection selection,
 ///
 /// The `fromParent` parameter controls whether `selection` is relative to the
 /// entire document or to the direct parent of the `node`.
-TextSelection localSelection(Node node, TextSelection selection,
-    {bool fromParent = false}) {
+TextSelection localSelection(
+  Node node,
+  TextSelection selection, {
+  bool fromParent = false,
+}) {
   assert(intersectsWithSelection(node, selection, fromParent: fromParent));
 
   final offset = fromParent ? node.offset : node.documentOffset;
@@ -42,7 +48,10 @@ int _selectionPointRestrict(int base, int extent, int point) {
 
 // Returns a selection that is trimmed if necessary to be between base and extent
 TextSelection? selectionRestrict(
-    int base, int extent, TextSelection selection) {
+  int base,
+  int extent,
+  TextSelection selection,
+) {
   if (!selectionIntersectsWith(base, extent, selection)) {
     return null;
   }

@@ -16,11 +16,11 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     required Decoration decoration,
     required super.textWidthBasis,
     EdgeInsets contentPadding = EdgeInsets.zero,
-  })  : _decoration = decoration,
-        _configuration = ImageConfiguration(textDirection: textDirection),
-        _savedPadding = padding,
-        _contentPadding = contentPadding,
-        super(padding: padding.add(contentPadding));
+  }) : _decoration = decoration,
+       _configuration = ImageConfiguration(textDirection: textDirection),
+       _savedPadding = padding,
+       _contentPadding = contentPadding,
+       super(padding: padding.add(contentPadding));
 
   EdgeInsetsGeometry _savedPadding;
   EdgeInsets _contentPadding;
@@ -106,8 +106,10 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
 
   @override
   TextPosition globalToLocalPosition(TextPosition position) {
-    assert(node.containsOffset(position.offset),
-        'The provided text position is not in the current node');
+    assert(
+      node.containsOffset(position.offset),
+      'The provided text position is not in the current node',
+    );
     return TextPosition(
       offset: position.offset - node.documentOffset,
       affinity: position.affinity,
@@ -147,8 +149,9 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     assert(position.offset < node.length);
 
     final child = childAtPosition(position);
-    final childLocalPosition =
-        TextPosition(offset: position.offset - child.node.offset);
+    final childLocalPosition = TextPosition(
+      offset: position.offset - child.node.offset,
+    );
     // ignore: omit_local_variable_types
     TextPosition? result = child.getPositionAbove(childLocalPosition);
     if (result != null) {
@@ -166,7 +169,8 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     final finalOffset = Offset(caretOffset.dx, testOffset.dy);
     final siblingLocalPosition = sibling.getPositionForOffset(finalOffset);
     return TextPosition(
-        offset: sibling.node.offset + siblingLocalPosition.offset);
+      offset: sibling.node.offset + siblingLocalPosition.offset,
+    );
   }
 
   @override
@@ -174,8 +178,9 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     assert(position.offset < node.length);
 
     final child = childAtPosition(position);
-    final childLocalPosition =
-        TextPosition(offset: position.offset - child.node.offset);
+    final childLocalPosition = TextPosition(
+      offset: position.offset - child.node.offset,
+    );
     // ignore: omit_local_variable_types
     TextPosition? result = child.getPositionBelow(childLocalPosition);
     if (result != null) {
@@ -193,14 +198,16 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     final finalOffset = Offset(caretOffset.dx, testOffset.dy);
     final siblingLocalPosition = sibling.getPositionForOffset(finalOffset);
     return TextPosition(
-        offset: sibling.node.offset + siblingLocalPosition.offset);
+      offset: sibling.node.offset + siblingLocalPosition.offset,
+    );
   }
 
   @override
   double preferredLineHeight(TextPosition position) {
     final child = childAtPosition(position);
-    final localPosition =
-        TextPosition(offset: position.offset - child.node.offset);
+    final localPosition = TextPosition(
+      offset: position.offset - child.node.offset,
+    );
     return child.preferredLineHeight(localPosition);
   }
 
@@ -224,11 +231,16 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     assert(baseChild != null);
 
     final baseParentData = baseChild!.parentData as BoxParentData;
-    final baseSelection =
-        localSelection(baseChild.node, selection, fromParent: true);
+    final baseSelection = localSelection(
+      baseChild.node,
+      selection,
+      fromParent: true,
+    );
     var basePoint = baseChild.getBaseEndpointForSelection(baseSelection);
     return TextSelectionPoint(
-        basePoint.point + baseParentData.offset, basePoint.direction);
+      basePoint.point + baseParentData.offset,
+      basePoint.direction,
+    );
   }
 
   @override
@@ -252,12 +264,18 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     assert(extentChild != null);
 
     final extentParentData = extentChild!.parentData as BoxParentData;
-    final extentSelection =
-        localSelection(extentChild.node, selection, fromParent: true);
-    var extentPoint =
-        extentChild.getExtentEndpointForSelection(extentSelection);
+    final extentSelection = localSelection(
+      extentChild.node,
+      selection,
+      fromParent: true,
+    );
+    var extentPoint = extentChild.getExtentEndpointForSelection(
+      extentSelection,
+    );
     return TextSelectionPoint(
-        extentPoint.point + extentParentData.offset, extentPoint.direction);
+      extentPoint.point + extentParentData.offset,
+      extentPoint.direction,
+    );
   }
 
   @override
@@ -309,22 +327,32 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
 
     // We want the decoration to align with the text so we adjust left padding
     // by cursorMargin.
-    final decorationOffset =
-        offset.translate(decorationPadding.left, decorationPadding.top);
+    final decorationOffset = offset.translate(
+      decorationPadding.left,
+      decorationPadding.top,
+    );
     _painter!.paint(context.canvas, decorationOffset, filledConfiguration);
     assert(() {
       if (debugSaveCount != context.canvas.getSaveCount()) {
         throw FlutterError.fromParts(<DiagnosticsNode>[
           ErrorSummary(
-              '${_decoration.runtimeType} painter had mismatching save and restore calls.'),
+            '${_decoration.runtimeType} painter had mismatching save and restore calls.',
+          ),
           ErrorDescription(
-              'Before painting the decoration, the canvas save count was $debugSaveCount. '
-              'After painting it, the canvas save count was ${context.canvas.getSaveCount()}. '
-              'Every call to save() or saveLayer() must be matched by a call to restore().'),
-          DiagnosticsProperty<Decoration>('The decoration was', decoration,
-              style: DiagnosticsTreeStyle.errorProperty),
-          DiagnosticsProperty<BoxPainter>('The painter was', _painter,
-              style: DiagnosticsTreeStyle.errorProperty),
+            'Before painting the decoration, the canvas save count was $debugSaveCount. '
+            'After painting it, the canvas save count was ${context.canvas.getSaveCount()}. '
+            'Every call to save() or saveLayer() must be matched by a call to restore().',
+          ),
+          DiagnosticsProperty<Decoration>(
+            'The decoration was',
+            decoration,
+            style: DiagnosticsTreeStyle.errorProperty,
+          ),
+          DiagnosticsProperty<BoxPainter>(
+            'The painter was',
+            _painter,
+            style: DiagnosticsTreeStyle.errorProperty,
+          ),
         ]);
       }
       return true;

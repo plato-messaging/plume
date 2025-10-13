@@ -46,10 +46,12 @@ class FakeTextChannel implements MethodChannel {
     for (int i = 0; i < calls.length; i++) {
       final ByteData outgoingData = codec.encodeMethodCall(outgoingCalls[i]);
       final ByteData expectedData = codec.encodeMethodCall(calls[i]);
-      final String outgoingString =
-          utf8.decode(outgoingData.buffer.asUint8List());
-      final String expectedString =
-          utf8.decode(expectedData.buffer.asUint8List());
+      final String outgoingString = utf8.decode(
+        outgoingData.buffer.asUint8List(),
+      );
+      final String expectedString = utf8.decode(
+        expectedData.buffer.asUint8List(),
+      );
 
       if (outgoingString != expectedString) {
         output.writeln(

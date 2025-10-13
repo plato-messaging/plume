@@ -59,21 +59,26 @@ void main() {
         ..insert('mmmmm', {'i': true})
         ..insert('\n');
       final editor = EditorSandBox(
-          tester: tester, document: Document.fromDelta(documentDelta));
-      final endState = documentDelta.compose(Delta()
-        ..retain(initialLength - 5)
-        ..delete(5)
-        ..insert('mmmmm,', {'i': true}));
+        tester: tester,
+        document: Document.fromDelta(documentDelta),
+      );
+      final endState = documentDelta.compose(
+        Delta()
+          ..retain(initialLength - 5)
+          ..delete(5)
+          ..insert('mmmmm,', {'i': true}),
+      );
       await editor.pumpAndTap();
       final inputClient = getInputClient();
       inputClient.openConnectionIfNeeded();
       inputClient.updateEditingValueWithDeltas([
         const TextEditingDeltaInsertion(
-            oldText: 'Something in the way mmmmm',
-            textInserted: ',',
-            insertionOffset: initialLength,
-            selection: TextSelection.collapsed(offset: 26),
-            composing: TextRange.collapsed(26))
+          oldText: 'Something in the way mmmmm',
+          textInserted: ',',
+          insertionOffset: initialLength,
+          selection: TextSelection.collapsed(offset: 26),
+          composing: TextRange.collapsed(26),
+        ),
       ]);
 
       // Throttle time of 500ms in history
@@ -83,13 +88,17 @@ void main() {
 
       await undo(tester);
       expect(editor.controller.document.toDelta(), documentDelta);
-      expect(editor.controller.selection,
-          const TextSelection.collapsed(offset: initialLength));
+      expect(
+        editor.controller.selection,
+        const TextSelection.collapsed(offset: initialLength),
+      );
 
       await redo(tester);
       expect(editor.controller.document.toDelta(), endState);
-      expect(editor.controller.selection,
-          const TextSelection.collapsed(offset: initialLength + 1));
+      expect(
+        editor.controller.selection,
+        const TextSelection.collapsed(offset: initialLength + 1),
+      );
     });
 
     testWidgets('undo/redo formatting', (tester) async {
@@ -100,14 +109,21 @@ void main() {
         ..insert('mmmmm', {'i': true})
         ..insert('\n');
       final editor = EditorSandBox(
-          tester: tester, document: Document.fromDelta(documentDelta));
-      final endState = documentDelta.compose(Delta()
-        ..retain(initialLength - 5)
-        ..delete(5)
-        ..insert('mmmmm'));
+        tester: tester,
+        document: Document.fromDelta(documentDelta),
+      );
+      final endState = documentDelta.compose(
+        Delta()
+          ..retain(initialLength - 5)
+          ..delete(5)
+          ..insert('mmmmm'),
+      );
       await editor.pumpAndTap();
-      editor.controller
-          .formatText(initialLength - 5, 5, Attribute.italic.unset);
+      editor.controller.formatText(
+        initialLength - 5,
+        5,
+        Attribute.italic.unset,
+      );
       // Throttle time of 500ms in history
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -116,16 +132,22 @@ void main() {
       await undo(tester);
       expect(editor.controller.document.toDelta(), documentDelta);
       expect(
-          editor.controller.selection,
-          const TextSelection(
-              baseOffset: initialLength - 5, extentOffset: initialLength));
+        editor.controller.selection,
+        const TextSelection(
+          baseOffset: initialLength - 5,
+          extentOffset: initialLength,
+        ),
+      );
 
       await redo(tester);
       expect(editor.controller.document.toDelta(), endState);
       expect(
-          editor.controller.selection,
-          const TextSelection(
-              baseOffset: initialLength - 5, extentOffset: initialLength));
+        editor.controller.selection,
+        const TextSelection(
+          baseOffset: initialLength - 5,
+          extentOffset: initialLength,
+        ),
+      );
     });
 
     testWidgets('update widget', (tester) async {
@@ -145,7 +167,7 @@ void main() {
             insertionOffset: 0,
             selection: text.selection,
             composing: text.composing,
-          )
+          ),
         ]);
         tester.binding.testTextInput.updateEditingValue(text);
         await tester.idle();
@@ -154,9 +176,7 @@ void main() {
 
       final documentDelta = Delta()..insert('Something in the way mmmmm\n');
       await tester.pumpWidget(
-        MaterialApp(
-          home: TestUpdateWidget(focusNodeAfterChange: FocusNode()),
-        ),
+        MaterialApp(home: TestUpdateWidget(focusNodeAfterChange: FocusNode())),
       );
       await tester.pumpAndSettle();
 
@@ -164,9 +184,12 @@ void main() {
       await tester.tap(find.byType(TextButton));
       await tester.pump();
 
-      await enterText(const TextEditingValue(
+      await enterText(
+        const TextEditingValue(
           text: 'Something in the way mmmmm',
-          selection: TextSelection.collapsed(offset: 26)));
+          selection: TextSelection.collapsed(offset: 26),
+        ),
+      );
       // Throttle time of 500ms in history
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();

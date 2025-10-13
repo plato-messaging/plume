@@ -31,18 +31,23 @@ class MyTextSelectionControllers extends MaterialTextSelectionControls {
 
   @override
   Widget buildHandle(
-      BuildContext context, TextSelectionHandleType type, double textHeight,
-      [VoidCallback? onTap]) {
-    final Widget handle = MyTextSelectionHandle(
-      size: size,
-    );
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textHeight, [
+    VoidCallback? onTap,
+  ]) {
+    final Widget handle = MyTextSelectionHandle(size: size);
 
     return switch (type) {
       TextSelectionHandleType.left => Transform.rotate(
-          angle: math.pi / 2.0, child: handle), // points up-right
+        angle: math.pi / 2.0,
+        child: handle,
+      ), // points up-right
       TextSelectionHandleType.right => handle, // points up-left
-      TextSelectionHandleType.collapsed =>
-        Transform.rotate(angle: math.pi / 4.0, child: handle), // points up
+      TextSelectionHandleType.collapsed => Transform.rotate(
+        angle: math.pi / 4.0,
+        child: handle,
+      ), // points up
     };
   }
 }
@@ -51,24 +56,26 @@ void main() {
   group('CustomTextSelectionControllers', () {
     testWidgets('set customTextSelectionControllers', (tester) async {
       final document = Document.fromJson([
-        {'insert': 'some text\n'}
+        {'insert': 'some text\n'},
       ]);
       PlumeController controller = PlumeController(document: document);
       FocusNode focusNode = FocusNode();
       const Size testSize = Size(230, 5);
       final editor = MaterialApp(
         home: PlumeEditor(
-            controller: controller,
-            focusNode: focusNode,
-            textSelectionControls: MyTextSelectionControllers(testSize)),
+          controller: controller,
+          focusNode: focusNode,
+          textSelectionControls: MyTextSelectionControllers(testSize),
+        ),
       );
       await tester.pumpWidget(editor);
       await tester.tap(find.byType(RawEditor).first);
       await tester.pumpAndSettle();
       expect(focusNode.hasFocus, isTrue);
       tester.binding.scheduleWarmUpFrame();
-      final handleState = tester.state(find.byType(MyTextSelectionHandle))
-          as MyTextSelectionHandleState;
+      final handleState =
+          tester.state(find.byType(MyTextSelectionHandle))
+              as MyTextSelectionHandleState;
       expect(handleState.context.size, testSize);
     });
   });

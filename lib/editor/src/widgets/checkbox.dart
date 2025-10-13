@@ -143,9 +143,9 @@ class _PlumeCheckboxState extends State<PlumeCheckbox>
 
     final WidgetStateProperty<MouseCursor> effectiveMouseCursor =
         WidgetStateProperty.resolveWith<MouseCursor>((Set<WidgetState> states) {
-      return checkboxTheme.mouseCursor?.resolve(states) ??
-          WidgetStateMouseCursor.clickable.resolve(states);
-    });
+          return checkboxTheme.mouseCursor?.resolve(states) ??
+              WidgetStateMouseCursor.clickable.resolve(states);
+        });
 
     // Colors need to be resolved in selected and non selected states separately
     // so that they can be lerped between.
@@ -155,34 +155,35 @@ class _PlumeCheckboxState extends State<PlumeCheckbox>
     final Color? activeColor = checkboxTheme.fillColor?.resolve(activeStates);
     final Color effectiveActiveColor =
         activeColor ?? defaults.fillColor!.resolve(activeStates)!;
-    final Color? inactiveColor =
-        checkboxTheme.fillColor?.resolve(inactiveStates);
+    final Color? inactiveColor = checkboxTheme.fillColor?.resolve(
+      inactiveStates,
+    );
     final Color effectiveInactiveColor =
         inactiveColor ?? defaults.fillColor!.resolve(inactiveStates)!;
 
     final Set<WidgetState> focusedStates = states..add(WidgetState.focused);
     Color effectiveFocusOverlayColor =
         checkboxTheme.overlayColor?.resolve(focusedStates) ??
-            defaults.overlayColor!.resolve(focusedStates)!;
+        defaults.overlayColor!.resolve(focusedStates)!;
 
     final Set<WidgetState> hoveredStates = states..add(WidgetState.hovered);
     Color effectiveHoverOverlayColor =
         checkboxTheme.overlayColor?.resolve(hoveredStates) ??
-            defaults.overlayColor!.resolve(hoveredStates)!;
+        defaults.overlayColor!.resolve(hoveredStates)!;
 
     final Set<WidgetState> activePressedStates = activeStates
       ..add(WidgetState.pressed);
     final Color effectiveActivePressedOverlayColor =
         checkboxTheme.overlayColor?.resolve(activePressedStates) ??
-            activeColor?.withAlpha(kRadialReactionAlpha) ??
-            defaults.overlayColor!.resolve(activePressedStates)!;
+        activeColor?.withAlpha(kRadialReactionAlpha) ??
+        defaults.overlayColor!.resolve(activePressedStates)!;
 
     final Set<WidgetState> inactivePressedStates = inactiveStates
       ..add(WidgetState.pressed);
     final Color effectiveInactivePressedOverlayColor =
         checkboxTheme.overlayColor?.resolve(inactivePressedStates) ??
-            inactiveColor?.withAlpha(kRadialReactionAlpha) ??
-            defaults.overlayColor!.resolve(inactivePressedStates)!;
+        inactiveColor?.withAlpha(kRadialReactionAlpha) ??
+        defaults.overlayColor!.resolve(inactivePressedStates)!;
 
     if (downPosition != null) {
       effectiveHoverOverlayColor = states.contains(WidgetState.selected)
@@ -196,7 +197,7 @@ class _PlumeCheckboxState extends State<PlumeCheckbox>
     final Set<WidgetState> checkStates = states;
     final Color effectiveCheckColor =
         checkboxTheme.checkColor?.resolve(checkStates) ??
-            defaults.checkColor!.resolve(checkStates)!;
+        defaults.checkColor!.resolve(checkStates)!;
 
     const double effectiveSplashRadius = 0;
 
@@ -224,7 +225,8 @@ class _PlumeCheckboxState extends State<PlumeCheckbox>
           ..checkColor = effectiveCheckColor
           ..value = value
           ..previousValue = _previousValue
-          ..shape = checkboxTheme.shape ??
+          ..shape =
+              checkboxTheme.shape ??
               const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(1.0)),
               )
@@ -300,8 +302,12 @@ class _CheckboxPainter extends ToggleablePainter {
   Rect _outerRectAt(Offset origin, double t) {
     final double inset = 1.0 - (t - 0.5).abs() * 2.0;
     final double size = _kEdgeSize - inset * _kStrokeWidth;
-    final Rect rect =
-        Rect.fromLTWH(origin.dx + inset, origin.dy + inset, size, size);
+    final Rect rect = Rect.fromLTWH(
+      origin.dx + inset,
+      origin.dy + inset,
+      size,
+      size,
+    );
     return rect;
   }
 
@@ -323,7 +329,12 @@ class _CheckboxPainter extends ToggleablePainter {
   }
 
   void _drawBox(
-      Canvas canvas, Rect outer, Paint paint, BorderSide? side, bool fill) {
+    Canvas canvas,
+    Rect outer,
+    Paint paint,
+    BorderSide? side,
+    bool fill,
+  ) {
     if (fill) {
       canvas.drawPath(shape.getOuterPath(outer), paint);
     }
@@ -377,8 +388,8 @@ class _CheckboxPainter extends ToggleablePainter {
     final AnimationStatus status = position.status;
     final double tNormalized =
         status == AnimationStatus.forward || status == AnimationStatus.completed
-            ? position.value
-            : 1.0 - position.value;
+        ? position.value
+        : 1.0 - position.value;
 
     // Four cases: false to null, false to true, null to false, true to false
     if (previousValue == false || value == false) {
@@ -427,8 +438,8 @@ class _CheckboxPainter extends ToggleablePainter {
 // Hand coded defaults based on Material Design 2.
 class _CheckboxDefaultsM2 extends CheckboxThemeData {
   _CheckboxDefaultsM2(BuildContext context)
-      : _theme = Theme.of(context),
-        _colors = Theme.of(context).colorScheme;
+    : _theme = Theme.of(context),
+      _colors = Theme.of(context).colorScheme;
 
   final ThemeData _theme;
   final ColorScheme _colors;
@@ -489,8 +500,8 @@ class _CheckboxDefaultsM2 extends CheckboxThemeData {
 
 class _CheckboxDefaultsM3 extends CheckboxThemeData {
   _CheckboxDefaultsM3(BuildContext context)
-      : _theme = Theme.of(context),
-        _colors = Theme.of(context).colorScheme;
+    : _theme = Theme.of(context),
+      _colors = Theme.of(context).colorScheme;
 
   final ThemeData _theme;
   final ColorScheme _colors;

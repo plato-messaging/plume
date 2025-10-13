@@ -5,12 +5,15 @@ class RenderBaselineProxy extends RenderProxyBox {
     required TextStyle textStyle,
     RenderParagraph? child,
     EdgeInsets? padding,
-  })  : _prototypePainter = TextPainter(
-            text: TextSpan(text: ' ', style: textStyle),
-            textDirection: TextDirection.ltr,
-            strutStyle:
-                StrutStyle.fromTextStyle(textStyle, forceStrutHeight: true)),
-        super(child);
+  }) : _prototypePainter = TextPainter(
+         text: TextSpan(text: ' ', style: textStyle),
+         textDirection: TextDirection.ltr,
+         strutStyle: StrutStyle.fromTextStyle(
+           textStyle,
+           forceStrutHeight: true,
+         ),
+       ),
+       super(child);
 
   final TextPainter _prototypePainter;
 

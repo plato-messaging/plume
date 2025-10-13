@@ -176,9 +176,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
 
   void _linkSubmitted(String? value) {
     if (value == null || value.isEmpty) return;
-    widget.controller.formatSelection(
-      Attribute.link.fromString(value),
-    );
+    widget.controller.formatSelection(Attribute.link.fromString(value));
     PlumeToolbar._of(context).requestKeyboard();
   }
 }
@@ -299,9 +297,7 @@ class _ToggleStyleButtonState extends State<ToggleStyleButton> {
     // toggle style buttons (except the code block button itself) since there
     // is no point in applying styles to a unformatted block of text.
     // TODO: Add code block checks to heading and embed buttons as well.
-    final isInCodeBlock = _selectionStyle.containsSame(
-      Attribute.block.code,
-    );
+    final isInCodeBlock = _selectionStyle.containsSame(Attribute.block.code);
     final isEnabled =
         !isInCodeBlock || widget.attribute == Attribute.block.code;
     return widget.childBuilder(
@@ -608,17 +604,14 @@ class _SelectHeadingButtonState extends State<SelectHeadingButton> {
   void _didChangeEditingValue() {
     setState(() {
       current =
-          selectionStyle.get(Attribute.heading) ??
-          Attribute.heading.unset;
+          selectionStyle.get(Attribute.heading) ?? Attribute.heading.unset;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    current =
-        selectionStyle.get(Attribute.heading) ??
-        Attribute.heading.unset;
+    current = selectionStyle.get(Attribute.heading) ?? Attribute.heading.unset;
     widget.controller.addListener(_didChangeEditingValue);
   }
 
@@ -629,8 +622,7 @@ class _SelectHeadingButtonState extends State<SelectHeadingButton> {
       oldWidget.controller.removeListener(_didChangeEditingValue);
       widget.controller.addListener(_didChangeEditingValue);
       current =
-          selectionStyle.get(Attribute.heading) ??
-          Attribute.heading.unset;
+          selectionStyle.get(Attribute.heading) ?? Attribute.heading.unset;
     }
   }
 
@@ -703,11 +695,7 @@ class _HeadingList extends StatelessWidget {
     );
   }
 
-  Widget _listItem(
-    PlumeThemeData? theme,
-    Attribute<int> value,
-    String text,
-  ) {
+  Widget _listItem(PlumeThemeData? theme, Attribute<int> value, String text) {
     final valueToStyle = {
       Attribute.heading.unset: theme?.paragraph.style,
       Attribute.heading.level1: theme?.heading1.style,
@@ -803,9 +791,7 @@ class _IndentationButtonState extends State<IndentationButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isEnabled = !_selectionStyle.containsSame(
-      Attribute.block.code,
-    );
+    final isEnabled = !_selectionStyle.containsSame(Attribute.block.code);
     final theme = Theme.of(context);
     final iconColor = isEnabled ? theme.iconTheme.color : theme.disabledColor;
     return FLIconButton(
@@ -828,9 +814,7 @@ class _IndentationButtonState extends State<IndentationButton> {
                 return;
               }
               if (indentLevel == 1 && !widget.increase) {
-                widget.controller.formatSelection(
-                  Attribute.indent.unset,
-                );
+                widget.controller.formatSelection(Attribute.indent.unset);
               } else {
                 widget.controller.formatSelection(
                   Attribute.indent.withLevel(

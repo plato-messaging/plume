@@ -23,19 +23,23 @@ enum LinkMenuAction {
 /// Used internally by Plume widget layer.
 typedef LinkActionPicker = Future<LinkMenuAction> Function(Node linkNode);
 
-typedef LinkActionPickerDelegate = Future<LinkMenuAction> Function(
-    BuildContext context, String link);
+typedef LinkActionPickerDelegate =
+    Future<LinkMenuAction> Function(BuildContext context, String link);
 
 Future<LinkMenuAction> defaultLinkActionPickerDelegate(
-    BuildContext context, String link) async {
+  BuildContext context,
+  String link,
+) async {
   switch (defaultTargetPlatform) {
     case TargetPlatform.iOS:
       return _showCupertinoLinkMenu(context, link);
     case TargetPlatform.android:
       return _showMaterialMenu(context, link);
     default:
-      assert(false,
-          'defaultShowLinkActionsMenu not supposed to be invoked for $defaultTargetPlatform');
+      assert(
+        false,
+        'defaultShowLinkActionsMenu not supposed to be invoked for $defaultTargetPlatform',
+      );
       return LinkMenuAction.none;
   }
 }
@@ -103,7 +107,7 @@ class _CupertinoAction extends StatelessWidget {
               icon,
               size: theme.iconTheme.size,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
-            )
+            ),
           ],
         ),
       ),

@@ -18,39 +18,53 @@ void main() {
         ),
         link: const TextStyle(color: Colors.red),
         paragraph: TextBlockTheme(
-            style: const TextStyle(fontSize: 16.0),
-            spacing: const VerticalSpacing(top: 6.0, bottom: 10.0)),
+          style: const TextStyle(fontSize: 16.0),
+          spacing: const VerticalSpacing(top: 6.0, bottom: 10.0),
+        ),
         heading1: TextBlockTheme(
-            style: const TextStyle(fontSize: 34.0),
-            spacing: const VerticalSpacing(top: 16.0, bottom: 0.0)),
+          style: const TextStyle(fontSize: 34.0),
+          spacing: const VerticalSpacing(top: 16.0, bottom: 0.0),
+        ),
         heading2: TextBlockTheme(
-            style: const TextStyle(fontSize: 24.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 8.0)),
+          style: const TextStyle(fontSize: 24.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 8.0),
+        ),
         heading3: TextBlockTheme(
-            style: const TextStyle(fontSize: 20.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 8.0)),
+          style: const TextStyle(fontSize: 20.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 8.0),
+        ),
         heading4: TextBlockTheme(
-            style: const TextStyle(fontSize: 18),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 8.0)),
+          style: const TextStyle(fontSize: 18),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 8.0),
+        ),
         heading5: TextBlockTheme(
-            style: const TextStyle(fontSize: 16.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 8.0)),
+          style: const TextStyle(fontSize: 16.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 8.0),
+        ),
         heading6: TextBlockTheme(
-            style: const TextStyle(fontSize: 16.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 8.0)),
+          style: const TextStyle(fontSize: 16.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 8.0),
+        ),
         lists: TextBlockTheme(
-            style: const TextStyle(fontSize: 16.0),
-            spacing: const VerticalSpacing(top: 6.0, bottom: 10.0)),
+          style: const TextStyle(fontSize: 16.0),
+          spacing: const VerticalSpacing(top: 6.0, bottom: 10.0),
+        ),
         quote: TextBlockTheme(
-            style: TextStyle(color: Colors.grey.shade600),
-            spacing: const VerticalSpacing(top: 6, bottom: 2)),
+          style: TextStyle(color: Colors.grey.shade600),
+          spacing: const VerticalSpacing(top: 6, bottom: 2),
+        ),
         code: TextBlockTheme(
-            style: TextStyle(
-                color: Colors.blue.shade900.withValues(alpha: 0.9),
-                fontSize: 13.0),
-            spacing: const VerticalSpacing(top: 6.0, bottom: 10.0)),
-        horizontalRule:
-            HorizontalRuleThemeData(height: 2, thickness: 2, color: Colors.red),
+          style: TextStyle(
+            color: Colors.blue.shade900.withValues(alpha: 0.9),
+            fontSize: 13.0,
+          ),
+          spacing: const VerticalSpacing(top: 6.0, bottom: 10.0),
+        ),
+        horizontalRule: HorizontalRuleThemeData(
+          height: 2,
+          thickness: 2,
+          color: Colors.red,
+        ),
       );
 
       final theme2 = PlumeThemeData(
@@ -65,39 +79,53 @@ void main() {
         ),
         link: const TextStyle(color: Colors.blue),
         paragraph: TextBlockTheme(
-            style: const TextStyle(fontSize: 14.0),
-            spacing: const VerticalSpacing(top: 4.0, bottom: 8.0)),
+          style: const TextStyle(fontSize: 14.0),
+          spacing: const VerticalSpacing(top: 4.0, bottom: 8.0),
+        ),
         heading1: TextBlockTheme(
-            style: const TextStyle(fontSize: 32.0),
-            spacing: const VerticalSpacing(top: 18.0, bottom: 0.0)),
+          style: const TextStyle(fontSize: 32.0),
+          spacing: const VerticalSpacing(top: 18.0, bottom: 0.0),
+        ),
         heading2: TextBlockTheme(
-            style: const TextStyle(fontSize: 26.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 10.0)),
+          style: const TextStyle(fontSize: 26.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 10.0),
+        ),
         heading3: TextBlockTheme(
-            style: const TextStyle(fontSize: 22.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 10.0)),
+          style: const TextStyle(fontSize: 22.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 10.0),
+        ),
         heading4: TextBlockTheme(
-            style: const TextStyle(fontSize: 16),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 10.0)),
+          style: const TextStyle(fontSize: 16),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 10.0),
+        ),
         heading5: TextBlockTheme(
-            style: const TextStyle(fontSize: 14.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 10.0)),
+          style: const TextStyle(fontSize: 14.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 10.0),
+        ),
         heading6: TextBlockTheme(
-            style: const TextStyle(fontSize: 12.0),
-            spacing: const VerticalSpacing(bottom: 0.0, top: 10.0)),
+          style: const TextStyle(fontSize: 12.0),
+          spacing: const VerticalSpacing(bottom: 0.0, top: 10.0),
+        ),
         lists: TextBlockTheme(
-            style: const TextStyle(fontSize: 14.0),
-            spacing: const VerticalSpacing(top: 4.0, bottom: 8.0)),
+          style: const TextStyle(fontSize: 14.0),
+          spacing: const VerticalSpacing(top: 4.0, bottom: 8.0),
+        ),
         quote: TextBlockTheme(
-            style: TextStyle(color: Colors.grey.shade700),
-            spacing: const VerticalSpacing(top: 4, bottom: 4)),
+          style: TextStyle(color: Colors.grey.shade700),
+          spacing: const VerticalSpacing(top: 4, bottom: 4),
+        ),
         code: TextBlockTheme(
-            style: TextStyle(
-                color: Colors.blue.shade800.withValues(alpha: 0.9),
-                fontSize: 12.0),
-            spacing: const VerticalSpacing(top: 4.0, bottom: 8.0)),
+          style: TextStyle(
+            color: Colors.blue.shade800.withValues(alpha: 0.9),
+            fontSize: 12.0,
+          ),
+          spacing: const VerticalSpacing(top: 4.0, bottom: 8.0),
+        ),
         horizontalRule: HorizontalRuleThemeData(
-            height: 4, thickness: 4, color: Colors.green),
+          height: 4,
+          thickness: 4,
+          color: Colors.green,
+        ),
       );
 
       // Merge the two instances

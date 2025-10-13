@@ -68,9 +68,7 @@ Widget defaultSpellCheckMenuBuilder(
         editorState: editorState,
       );
     case TargetPlatform.android:
-      return PlumeSpellCheckSuggestionsToolbar.editor(
-        editorState: editorState,
-      );
+      return PlumeSpellCheckSuggestionsToolbar.editor(editorState: editorState);
     case TargetPlatform.macOS:
     case TargetPlatform.linux:
     case TargetPlatform.windows:
@@ -1786,9 +1784,7 @@ class RawEditorState extends EditorState
   }
 
   Future<LinkMenuAction> _linkActionPicker(Node linkNode) async {
-    final link = (linkNode as StyledNode).style
-        .get(Attribute.link)!
-        .value!;
+    final link = (linkNode as StyledNode).style.get(Attribute.link)!.value!;
     return widget.linkActionPickerDelegate(context, link);
   }
 
@@ -1990,8 +1986,7 @@ class RawEditorState extends EditorState
   }
 
   double _getIndentForLine(LineNode node) {
-    final indentationLevel =
-        node.style.get(Attribute.indent)?.value ?? 0;
+    final indentationLevel = node.style.get(Attribute.indent)?.value ?? 0;
     return indentationLevel * 16;
   }
 

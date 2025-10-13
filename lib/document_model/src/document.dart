@@ -46,28 +46,23 @@ class DocumentChange {
 /// A rich text document.
 class Document {
   /// Creates new empty [Document].
-  Document({
-    Heuristics heuristics = Heuristics.fallback,
-  }) : _heuristics = heuristics,
-       _delta = Delta()..insert('\n') {
+  Document({Heuristics heuristics = Heuristics.fallback})
+    : _heuristics = heuristics,
+      _delta = Delta()..insert('\n') {
     _loadDocument(_delta);
   }
 
   /// Creates new [Document] from provided JSON `data`.
-  Document.fromJson(
-    List data, {
-    Heuristics heuristics = Heuristics.fallback,
-  }) : _heuristics = heuristics,
-       _delta = _migrateDelta(Delta.fromJson(data)) {
+  Document.fromJson(List data, {Heuristics heuristics = Heuristics.fallback})
+    : _heuristics = heuristics,
+      _delta = _migrateDelta(Delta.fromJson(data)) {
     _loadDocument(_delta);
   }
 
   /// Creates new [Document] from provided `delta`.
-  Document.fromDelta(
-    Delta delta, {
-    Heuristics heuristics = Heuristics.fallback,
-  }) : _heuristics = heuristics,
-       _delta = _migrateDelta(delta) {
+  Document.fromDelta(Delta delta, {Heuristics heuristics = Heuristics.fallback})
+    : _heuristics = heuristics,
+      _delta = _migrateDelta(delta) {
     _loadDocument(_delta);
   }
 

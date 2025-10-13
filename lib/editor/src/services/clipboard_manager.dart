@@ -11,7 +11,7 @@ class PlumeClipboardData {
   final Delta? delta;
 
   PlumeClipboardData({this.plainText, this.delta})
-      : assert(plainText != null || delta != null);
+    : assert(plainText != null || delta != null);
 
   bool get hasDelta => delta != null;
 
@@ -43,9 +43,11 @@ class PlainTextClipboardManager extends ClipboardManager {
 
   @override
   Future<PlumeClipboardData?> getData() =>
-      Clipboard.getData(Clipboard.kTextPlain).then((data) => data?.text != null
-          ? PlumeClipboardData(plainText: data!.text!)
-          : null);
+      Clipboard.getData(Clipboard.kTextPlain).then(
+        (data) => data?.text != null
+            ? PlumeClipboardData(plainText: data!.text!)
+            : null,
+      );
 }
 
 /// Used by [PlumeCustomClipboardManager] to get clipboard data.
@@ -53,12 +55,11 @@ class PlainTextClipboardManager extends ClipboardManager {
 /// Null should be returned in case clipboard has no data
 /// or data is invalid and both [PlumeClipboardData.plainText]
 /// and [PlumeClipboardData.delta] are null.
-typedef PlumeCustomClipboardGetData = Future<PlumeClipboardData?>
-    Function();
+typedef PlumeCustomClipboardGetData = Future<PlumeClipboardData?> Function();
 
 /// Used by [PlumeCustomClipboardManager] to set clipboard data.
-typedef PlumeCustomClipboardSetData = Future<void> Function(
-    PlumeClipboardData data);
+typedef PlumeCustomClipboardSetData =
+    Future<void> Function(PlumeClipboardData data);
 
 /// A [ClipboardManager] which delegates getting and setting data to user and
 /// can be used to have rich clipboard.
@@ -69,8 +70,8 @@ final class PlumeCustomClipboardManager extends ClipboardManager {
   const PlumeCustomClipboardManager({
     required PlumeCustomClipboardGetData getData,
     required PlumeCustomClipboardSetData setData,
-  })  : _getData = getData,
-        _setData = setData;
+  }) : _getData = getData,
+       _setData = setData;
 
   @override
   Future<void> setData(PlumeClipboardData data) => _setData(data);

@@ -4,7 +4,7 @@ version: 0.0.1
 publish_to: None
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.9.0 <4.0.0"
   flutter: ">=3.0.0"
 
 flutter:
@@ -19,6 +19,7 @@ dependencies:
   # Common
   parchment_delta: ^1.0.0
   html: ^0.15.6
+  meta: ^1.16.0
 
   # Fleather
   collection: ^1.19.1
@@ -31,4 +32,3 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   fake_async: ^1.3.3
   mocktail: ^1.0.4
-  meta: ^1.16.0
