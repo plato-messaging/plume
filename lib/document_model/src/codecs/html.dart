@@ -6,8 +6,6 @@ import 'package:html/parser.dart';
 import 'package:parchment_delta/parchment_delta.dart';
 
 import '../document.dart';
-import '../document/attributes.dart';
-import '../document/embeds.dart';
 import 'html_utils.dart';
 
 final _inlineAttributesToHtml = {
@@ -59,12 +57,10 @@ class HtmlCodec extends Codec<Document, String> {
   const HtmlCodec();
 
   @override
-  Converter<String, Document> get decoder =>
-      const _HtmlDecoder();
+  Converter<String, Document> get decoder => const _HtmlDecoder();
 
   @override
-  Converter<Document, String> get encoder =>
-      const _HtmlEncoder();
+  Converter<Document, String> get encoder => const _HtmlEncoder();
 }
 
 // Mutable record for the state of the encoder
@@ -127,12 +123,10 @@ class _HtmlEncoder extends Converter<Document, String> {
     final c = current.style.values;
 
     // List items can have different positions (alignment, indent, direction)
-    final areOrderedUnorderedLists = (p.contains(Attribute.ol) ||
-            p.contains(Attribute.ul)) &&
-        (c.contains(Attribute.ol) ||
-            c.contains(Attribute.ul));
-    final areChecklists =
-        p.contains(Attribute.cl) && c.contains(Attribute.cl);
+    final areOrderedUnorderedLists =
+        (p.contains(Attribute.ol) || p.contains(Attribute.ul)) &&
+        (c.contains(Attribute.ol) || c.contains(Attribute.ul));
+    final areChecklists = p.contains(Attribute.cl) && c.contains(Attribute.cl);
     if (areOrderedUnorderedLists || areChecklists) {
       final positionAttributes = [
         Attribute.alignment.unset,
@@ -147,8 +141,7 @@ class _HtmlEncoder extends Converter<Document, String> {
       return modifiedCurrent == modifiedPrevious;
     }
     // block code
-    if (p.contains(Attribute.code) &&
-        c.contains(Attribute.code)) {
+    if (p.contains(Attribute.code) && c.contains(Attribute.code)) {
       return true;
     }
     return false;
@@ -157,34 +150,43 @@ class _HtmlEncoder extends Converter<Document, String> {
   // current and candidate are both blocks
   static bool isNestedList(Style parent, Style child) {
     final currentListAttribute = parent.values.firstWhereOrNull(
-        (e) => e == Attribute.ol || e == Attribute.ul);
+      (e) => e == Attribute.ol || e == Attribute.ul,
+    );
     final candidateListAttribute = child.values.firstWhereOrNull(
-        (e) => e == Attribute.ol || e == Attribute.ul);
+      (e) => e == Attribute.ol || e == Attribute.ul,
+    );
 
     if (currentListAttribute == null || candidateListAttribute == null) {
       return false;
     }
 
-    int currentLevel = parent.values
-            .firstWhere((e) => e.key == Attribute.indent.key,
-                orElse: () => Attribute.indent.withLevel(0))
+    int currentLevel =
+        parent.values
+            .firstWhere(
+              (e) => e.key == Attribute.indent.key,
+              orElse: () => Attribute.indent.withLevel(0),
+            )
             .value ??
         0;
-    int candidateLevel = child.values
-            .firstWhere((e) => e.key == Attribute.indent.key,
-                orElse: () => Attribute.indent.withLevel(0))
+    int candidateLevel =
+        child.values
+            .firstWhere(
+              (e) => e.key == Attribute.indent.key,
+              orElse: () => Attribute.indent.withLevel(0),
+            )
             .value ??
         0;
     return currentLevel < candidateLevel;
   }
 
   // Check if both attributes are lists of different type with same indentation
-  bool isDifferentListTypeWithSameIndentationLevel(
-      Style parent, Style child) {
+  bool isDifferentListTypeWithSameIndentationLevel(Style parent, Style child) {
     final currentListAttribute = parent.values.firstWhereOrNull(
-        (e) => e == Attribute.ol || e == Attribute.ul);
+      (e) => e == Attribute.ol || e == Attribute.ul,
+    );
     final candidateListAttribute = child.values.firstWhereOrNull(
-        (e) => e == Attribute.ol || e == Attribute.ul);
+      (e) => e == Attribute.ol || e == Attribute.ul,
+    );
 
     if (currentListAttribute == null || candidateListAttribute == null) {
       return false;
@@ -194,14 +196,20 @@ class _HtmlEncoder extends Converter<Document, String> {
       return false;
     }
 
-    int currentLevel = parent.values
-            .firstWhere((e) => e.key == Attribute.indent.key,
-                orElse: () => Attribute.indent.withLevel(0))
+    int currentLevel =
+        parent.values
+            .firstWhere(
+              (e) => e.key == Attribute.indent.key,
+              orElse: () => Attribute.indent.withLevel(0),
+            )
             .value ??
         0;
-    int candidateLevel = child.values
-            .firstWhere((e) => e.key == Attribute.indent.key,
-                orElse: () => Attribute.indent.withLevel(0))
+    int candidateLevel =
+        child.values
+            .firstWhere(
+              (e) => e.key == Attribute.indent.key,
+              orElse: () => Attribute.indent.withLevel(0),
+            )
             .value ??
         0;
 
@@ -231,9 +239,15 @@ class _HtmlEncoder extends Converter<Document, String> {
           final subOp = Operation.insert('\n', op.attributes);
           final currentLineStart = state.nextLineStartPosition;
           state.nextLineStartPosition = _handleNewLineLineStyle(
-              subOp, buffer, state.nextLineStartPosition);
-          int padding =
-              _handleNewLineBlockStyle(subOp, state, currentLineStart);
+            subOp,
+            buffer,
+            state.nextLineStartPosition,
+          );
+          int padding = _handleNewLineBlockStyle(
+            subOp,
+            state,
+            currentLineStart,
+          );
           state.nextLineStartPosition += padding;
         }
       }
@@ -241,8 +255,11 @@ class _HtmlEncoder extends Converter<Document, String> {
       if (_isNewLine(op)) {
         state.isSingleLine = false;
         final currentLineStart = state.nextLineStartPosition;
-        state.nextLineStartPosition =
-            _handleNewLineLineStyle(op, buffer, state.nextLineStartPosition);
+        state.nextLineStartPosition = _handleNewLineLineStyle(
+          op,
+          buffer,
+          state.nextLineStartPosition,
+        );
         int padding = _handleNewLineBlockStyle(op, state, currentLineStart);
         state.nextLineStartPosition += padding;
       }
@@ -270,8 +287,10 @@ class _HtmlEncoder extends Converter<Document, String> {
   }
 
   /// Closes all open blocks and returns the ending position.
-  int _closeOpenBlocks(_EncoderState state,
-      {bool beforePlainParagraphHandling = false}) {
+  int _closeOpenBlocks(
+    _EncoderState state, {
+    bool beforePlainParagraphHandling = false,
+  }) {
     final openBlockTags = state.openBlockTags;
     final buffer = state.buffer;
     final numToClose = openBlockTags.length;
@@ -288,9 +307,11 @@ class _HtmlEncoder extends Converter<Document, String> {
       }
 
       // Handles the case where a nested list is followed by a plain paragraph
-      bool isBlockTagNested = openBlockTags.length >= 2 &&
+      bool isBlockTagNested =
+          openBlockTags.length >= 2 &&
           openBlockTags[0].style.lineAttributes.firstWhereOrNull(
-                  (e) => e.key == Attribute.indent.key) !=
+                (e) => e.key == Attribute.indent.key,
+              ) !=
               null;
       if (i == numToClose - 1 &&
           (!beforePlainParagraphHandling || isBlockTagNested)) {
@@ -310,10 +331,12 @@ class _HtmlEncoder extends Converter<Document, String> {
   }
 
   void _processInlineTags(
-      Operation op, StringBuffer buffer, List<_HtmlInlineTag> openInlineTags) {
+    Operation op,
+    StringBuffer buffer,
+    List<_HtmlInlineTag> openInlineTags,
+  ) {
     final style = Style.fromJson(op.attributes);
-    final Set<Attribute> inlineAttributes =
-        Set.from(style.inlineAttributes);
+    final Set<Attribute> inlineAttributes = Set.from(style.inlineAttributes);
 
     // Close any tag absent from inline attributes
     // Closing tags effectively adds the opening tag at the appropriate position
@@ -388,7 +411,9 @@ class _HtmlEncoder extends Converter<Document, String> {
       if (i == lines.length - 1) {
         // Done with set of paragraphs, add last paragraph to block stack.
         openBlockTags.insert(
-            0, _HtmlBlockTag(Style(), initialPosition, buffer.length));
+          0,
+          _HtmlBlockTag(Style(), initialPosition, buffer.length),
+        );
         if (lines[i].isNotEmpty) {
           // Elements that do not belong to a paragraph but to block of next op
           _writeData(subOp, buffer);
@@ -403,8 +428,10 @@ class _HtmlEncoder extends Converter<Document, String> {
       position = buffer.length;
     }
 
-    assert(openBlockTags.length <= 1,
-        'At most one paragraph should be pushed in stack');
+    assert(
+      openBlockTags.length <= 1,
+      'At most one paragraph should be pushed in stack',
+    );
     state.nextLineStartPosition = position;
   }
 
@@ -412,7 +439,10 @@ class _HtmlEncoder extends Converter<Document, String> {
   // returns the start position in the buffer of the next line that will be
   // processed
   int _handleNewLineLineStyle(
-      Operation op, StringBuffer buffer, int currentLineStart) {
+    Operation op,
+    StringBuffer buffer,
+    int currentLineStart,
+  ) {
     final opStyle = Style.fromJson(op.attributes);
     final newLineTag = _HtmlLineTag(opStyle, currentLineStart);
     if (newLineTag.style.isNotEmpty) {
@@ -424,7 +454,10 @@ class _HtmlEncoder extends Converter<Document, String> {
   // used to write html tags of blocks themselves.
   // returns padding induced by ex-post addition of block tags
   int _handleNewLineBlockStyle(
-      Operation op, _EncoderState state, int currentLineStart) {
+    Operation op,
+    _EncoderState state,
+    int currentLineStart,
+  ) {
     final buffer = state.buffer;
     final openBlockTags = state.openBlockTags;
     final opStyle = Style.fromJson(op.attributes);
@@ -452,26 +485,32 @@ class _HtmlEncoder extends Converter<Document, String> {
     if (isNestedList(opStyle, openBlockTags[0].style)) {
       final currentBlockTag = openBlockTags[0];
       _writeBlockTag(
-          buffer, currentBlockTag..closingPosition = currentLineStart);
+        buffer,
+        currentBlockTag..closingPosition = currentLineStart,
+      );
       openBlockTags.removeAt(0);
       // This handle the case where a new list (different list style) is directly
       // succeeding another list that ends with a nest list item
       if (isDifferentListTypeWithSameIndentationLevel(
-          opStyle, openBlockTags[0].style)) {
+        opStyle,
+        openBlockTags[0].style,
+      )) {
         final nextBlockTag = openBlockTags[0];
         _writeBlockTag(
-            buffer,
-            nextBlockTag
-              ..closingPosition =
-                  currentLineStart + currentBlockTag.inducedPadding);
+          buffer,
+          nextBlockTag
+            ..closingPosition =
+                currentLineStart + currentBlockTag.inducedPadding,
+        );
         openBlockTags.removeAt(0);
         // If no previous style, let caller write surrounding tags
         if (openBlockTags.isEmpty) {
           var newBlockTag = _HtmlBlockTag(
-              opStyle,
-              currentLineStart +
-                  nextBlockTag.inducedPadding +
-                  currentBlockTag.inducedPadding);
+            opStyle,
+            currentLineStart +
+                nextBlockTag.inducedPadding +
+                currentBlockTag.inducedPadding,
+          );
           // If no previous style, let caller write surrounding tags
           openBlockTags.insert(0, newBlockTag..closingPosition = buffer.length);
         }
@@ -508,12 +547,7 @@ class _HtmlEncoder extends Converter<Document, String> {
     }
 
     buffer.clear();
-    buffer.writeAll([
-      preHtml,
-      openTag,
-      innerHtml,
-      closeTag,
-    ]);
+    buffer.writeAll([preHtml, openTag, innerHtml, closeTag]);
   }
 
   void _writeBlockTag(StringBuffer buffer, _HtmlBlockTag tag) {
@@ -657,8 +691,9 @@ class _HtmlLineTag extends _HtmlTag {
   }
 
   _HtmlLineTag(Style style, super.openingPosition)
-      : style = Style()
-            .putAll(style.lineAttributes.where((e) => isLineAttribute(e)));
+    : style = Style().putAll(
+        style.lineAttributes.where((e) => isLineAttribute(e)),
+      );
 
   final Style style;
 
@@ -681,8 +716,9 @@ class _HtmlLineTag extends _HtmlTag {
   }
 
   String? get alignmentCss {
-    var alignment = style.values
-        .firstWhereOrNull((e) => e.key == Attribute.alignment.key);
+    var alignment = style.values.firstWhereOrNull(
+      (e) => e.key == Attribute.alignment.key,
+    );
 
     if (alignment == null) return null;
 
@@ -713,8 +749,9 @@ class _HtmlLineTag extends _HtmlTag {
         style.values.contains(Attribute.ol)) {
       return null;
     }
-    var indentation = style.values
-        .firstWhereOrNull((e) => e.key == Attribute.indent.key);
+    var indentation = style.values.firstWhereOrNull(
+      (e) => e.key == Attribute.indent.key,
+    );
 
     if (indentation == null) return null;
     int value = indentation.value;
@@ -725,8 +762,9 @@ class _HtmlLineTag extends _HtmlTag {
 
   String? get directionAttribute {
     if (_directionAttribute == null) {
-      var direction = style.values
-          .firstWhereOrNull((e) => e.key == Attribute.direction.key);
+      var direction = style.values.firstWhereOrNull(
+        (e) => e.key == Attribute.direction.key,
+      );
 
       if (direction == null) {
         return _directionAttribute;
@@ -768,10 +806,12 @@ class _HtmlLineTag extends _HtmlTag {
           openTag += '<li$attribute$css>';
         }
         if (attr.value == Attribute.cl.value) {
-          final checked = style.values
-              .firstWhereOrNull((e) => e.key == Attribute.checked.key);
-          final checkedAttribute =
-              checked != null && checked.value ? ' checked' : '';
+          final checked = style.values.firstWhereOrNull(
+            (e) => e.key == Attribute.checked.key,
+          );
+          final checkedAttribute = checked != null && checked.value
+              ? ' checked'
+              : '';
           // Checkboxes disabled so user cannot toggle them.
           // &nbsp to give a little space between the checkbox and the label.
           openTag +=
@@ -840,11 +880,11 @@ class _HtmlBlockTag extends _HtmlTag {
         attribute.key == Attribute.indent.key;
   }
 
-  _HtmlBlockTag(Style style, super.openingPosition,
-      [int? closingPosition])
-      : style = Style()
-            .putAll(style.lineAttributes.where((e) => isBlockAttribute(e))),
-        closingPosition = closingPosition ?? openingPosition;
+  _HtmlBlockTag(Style style, super.openingPosition, [int? closingPosition])
+    : style = Style().putAll(
+        style.lineAttributes.where((e) => isBlockAttribute(e)),
+      ),
+      closingPosition = closingPosition ?? openingPosition;
 
   final Style style;
   int closingPosition;
@@ -853,7 +893,10 @@ class _HtmlBlockTag extends _HtmlTag {
 
   _HtmlBlockTag withPadding(int padding) {
     return _HtmlBlockTag(
-        style, openingPosition + padding, closingPosition + padding);
+      style,
+      openingPosition + padding,
+      closingPosition + padding,
+    );
   }
 
   @override
@@ -952,8 +995,7 @@ class _HtmlDecoder extends Converter<String, Document> {
             node.localName == 'h6');
   }
 
-  Delta _parseNode(html.Node node,
-      [Style? inlineStyle, Style? blockStyle]) {
+  Delta _parseNode(html.Node node, [Style? inlineStyle, Style? blockStyle]) {
     inlineStyle ??= Style();
     blockStyle ??= Style();
     Delta delta = Delta();
@@ -1004,8 +1046,7 @@ class _HtmlDecoder extends Converter<String, Document> {
     return delta;
   }
 
-  Style _updateInlineStyle(
-      html.Element element, Style inlineStyle) {
+  Style _updateInlineStyle(html.Element element, Style inlineStyle) {
     Style updated = inlineStyle;
     if (element.localName == 'strong') {
       updated = updated.put(Attribute.bold);
@@ -1016,8 +1057,7 @@ class _HtmlDecoder extends Converter<String, Document> {
     } else if (element.localName == 'em') {
       updated = updated.put(Attribute.italic);
     } else if (element.localName == 'a') {
-      final link =
-          Attribute.link.withValue(element.attributes['href']);
+      final link = Attribute.link.withValue(element.attributes['href']);
       updated = inlineStyle.put(link);
     } else if (element.localName == 'span') {
       final css = element.attributes['style'];
@@ -1026,22 +1066,19 @@ class _HtmlDecoder extends Converter<String, Document> {
         if (style.startsWith('background-color')) {
           final sValue = style.split(':')[1].trim();
           final color = colorValueFromCSS(sValue);
-          updated =
-              updated.put(Attribute.backgroundColor.withColor(color));
+          updated = updated.put(Attribute.backgroundColor.withColor(color));
         }
         if (style.startsWith('color')) {
           final sValue = style.split(':')[1].trim();
           final color = colorValueFromCSS(sValue);
-          updated =
-              updated.put(Attribute.foregroundColor.withColor(color));
+          updated = updated.put(Attribute.foregroundColor.withColor(color));
         }
       }
     }
     return updated;
   }
 
-  Style _updateBlockStyle(
-      html.Element element, Style blockStyle) {
+  Style _updateBlockStyle(html.Element element, Style blockStyle) {
     Style updated = blockStyle;
     if (element.localName == 'h1') {
       updated = updated.put(Attribute.h1);
@@ -1066,15 +1103,13 @@ class _HtmlDecoder extends Converter<String, Document> {
     } else if (element.localName == 'ol') {
       if (_hasList(updated)) {
         final indentLevel = updated.value(Attribute.indent) ?? 0;
-        updated =
-            updated.put(Attribute.indent.withLevel(indentLevel + 1));
+        updated = updated.put(Attribute.indent.withLevel(indentLevel + 1));
       }
       updated = updated.put(Attribute.ol);
     } else if (element.localName == 'ul') {
       if (_hasList(updated)) {
         final indentLevel = updated.value(Attribute.indent) ?? 0;
-        updated =
-            updated.put(Attribute.indent.withLevel(indentLevel + 1));
+        updated = updated.put(Attribute.indent.withLevel(indentLevel + 1));
       }
       updated = updated.put(Attribute.ul);
     } else if (element.localName == 'input' &&

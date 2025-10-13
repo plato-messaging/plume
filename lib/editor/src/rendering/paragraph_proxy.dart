@@ -17,16 +17,17 @@ class RenderParagraphProxy extends RenderProxyBox
     StrutStyle? strutStyle,
     Locale? locale,
     TextHeightBehavior? textHeightBehavior,
-  })  : _prototypePainter = TextPainter(
-            text: TextSpan(text: ' ', style: textStyle),
-            textAlign: TextAlign.left,
-            textDirection: textDirection,
-            textScaler: textScaler,
-            strutStyle: strutStyle,
-            locale: locale,
-            textWidthBasis: textWidthBasis,
-            textHeightBehavior: textHeightBehavior),
-        super(child);
+  }) : _prototypePainter = TextPainter(
+         text: TextSpan(text: ' ', style: textStyle),
+         textAlign: TextAlign.left,
+         textDirection: textDirection,
+         textScaler: textScaler,
+         strutStyle: strutStyle,
+         locale: locale,
+         textWidthBasis: textWidthBasis,
+         textHeightBehavior: textHeightBehavior,
+       ),
+       super(child);
 
   final TextPainter _prototypePainter;
 
@@ -106,14 +107,18 @@ class RenderParagraphProxy extends RenderProxyBox
 
   @override
   List<TextBox> getBoxesForSelection(TextSelection selection) {
-    return child!
-        .getBoxesForSelection(selection, boxHeightStyle: BoxHeightStyle.max);
+    return child!.getBoxesForSelection(
+      selection,
+      boxHeightStyle: BoxHeightStyle.max,
+    );
   }
 
   @override
   void performLayout() {
     super.performLayout();
     _prototypePainter.layout(
-        minWidth: constraints.minWidth, maxWidth: constraints.maxWidth);
+      minWidth: constraints.minWidth,
+      maxWidth: constraints.maxWidth,
+    );
   }
 }

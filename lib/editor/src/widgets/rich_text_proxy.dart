@@ -39,7 +39,9 @@ class RichTextProxy extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, covariant RenderParagraphProxy renderObject) {
+    BuildContext context,
+    covariant RenderParagraphProxy renderObject,
+  ) {
     renderObject.textStyle = textStyle;
     renderObject.textDirection = Directionality.of(context);
     renderObject.textAlign = textAlign;

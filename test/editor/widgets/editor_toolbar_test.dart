@@ -7,113 +7,114 @@ import '../testing.dart';
 Widget widget(PlumeController controller, {bool withBasic = false}) {
   FlutterError.onError = onErrorIgnoreOverflowErrors;
   Widget backgroundColorBuilder(context, value) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.mode_edit_outline_outlined,
-            size: 16,
-          ),
-          Container(
-            width: 18,
-            height: 4,
-            decoration: BoxDecoration(
-              color: value,
-              border: value == Colors.transparent
-                  ? Border.all(
-                      color: Theme.of(context).iconTheme.color ?? Colors.black)
-                  : null,
-            ),
-          )
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Icon(Icons.mode_edit_outline_outlined, size: 16),
+      Container(
+        width: 18,
+        height: 4,
+        decoration: BoxDecoration(
+          color: value,
+          border: value == Colors.transparent
+              ? Border.all(
+                  color: Theme.of(context).iconTheme.color ?? Colors.black,
+                )
+              : null,
+        ),
+      ),
+    ],
+  );
   Widget textColorBuilder(context, value) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.text_fields_sharp,
-            size: 16,
-          ),
-          Container(
-            width: 18,
-            height: 4,
-            decoration: BoxDecoration(
-              color: value,
-              border: value == Colors.transparent
-                  ? Border.all(
-                      color: Theme.of(context).iconTheme.color ?? Colors.black)
-                  : null,
-            ),
-          )
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Icon(Icons.text_fields_sharp, size: 16),
+      Container(
+        width: 18,
+        height: 4,
+        decoration: BoxDecoration(
+          color: value,
+          border: value == Colors.transparent
+              ? Border.all(
+                  color: Theme.of(context).iconTheme.color ?? Colors.black,
+                )
+              : null,
+        ),
+      ),
+    ],
+  );
   final editorKey = GlobalKey<EditorState>();
   return MaterialApp(
     home: Material(
-      child: Column(children: [
-        if (withBasic)
-          PlumeToolbar.basic(controller: controller, editorKey: editorKey)
-        else
-          PlumeToolbar(
-            editorKey: editorKey,
-            children: [
-              ToggleStyleButton(
-                attribute: Attribute.bold,
-                icon: Icons.format_bold,
-                controller: controller,
-              ),
-              ToggleStyleButton(
-                attribute: Attribute.italic,
-                icon: Icons.format_italic,
-                controller: controller,
-              ),
-              ToggleStyleButton(
-                attribute: Attribute.underline,
-                icon: Icons.format_underline,
-                controller: controller,
-              ),
-              ToggleStyleButton(
-                attribute: Attribute.strikethrough,
-                icon: Icons.format_strikethrough,
-                controller: controller,
-              ),
-              ToggleStyleButton(
-                attribute: Attribute.inlineCode,
-                icon: Icons.code,
-                controller: controller,
-              ),
-              ColorButton(
-                controller: controller,
-                attributeKey: Attribute.backgroundColor,
-                nullColorLabel: 'No color',
-                builder: backgroundColorBuilder,
-              ),
-              ColorButton(
-                controller: controller,
-                attributeKey: Attribute.foregroundColor,
-                nullColorLabel: 'Automatic',
-                builder: textColorBuilder,
-              ),
-              IndentationButton(controller: controller),
-              IndentationButton(controller: controller, increase: false),
-              SelectHeadingButton(controller: controller),
-              LinkStyleButton(controller: controller),
-              InsertEmbedButton(
-                  controller: controller, icon: Icons.horizontal_rule),
-              UndoRedoButton.undo(controller: controller),
-              UndoRedoButton.redo(controller: controller),
-            ],
-          ),
-        Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
-        Expanded(
+      child: Column(
+        children: [
+          if (withBasic)
+            PlumeToolbar.basic(controller: controller, editorKey: editorKey)
+          else
+            PlumeToolbar(
+              editorKey: editorKey,
+              children: [
+                ToggleStyleButton(
+                  attribute: Attribute.bold,
+                  icon: Icons.format_bold,
+                  controller: controller,
+                ),
+                ToggleStyleButton(
+                  attribute: Attribute.italic,
+                  icon: Icons.format_italic,
+                  controller: controller,
+                ),
+                ToggleStyleButton(
+                  attribute: Attribute.underline,
+                  icon: Icons.format_underline,
+                  controller: controller,
+                ),
+                ToggleStyleButton(
+                  attribute: Attribute.strikethrough,
+                  icon: Icons.format_strikethrough,
+                  controller: controller,
+                ),
+                ToggleStyleButton(
+                  attribute: Attribute.inlineCode,
+                  icon: Icons.code,
+                  controller: controller,
+                ),
+                ColorButton(
+                  controller: controller,
+                  attributeKey: Attribute.backgroundColor,
+                  nullColorLabel: 'No color',
+                  builder: backgroundColorBuilder,
+                ),
+                ColorButton(
+                  controller: controller,
+                  attributeKey: Attribute.foregroundColor,
+                  nullColorLabel: 'Automatic',
+                  builder: textColorBuilder,
+                ),
+                IndentationButton(controller: controller),
+                IndentationButton(controller: controller, increase: false),
+                SelectHeadingButton(controller: controller),
+                LinkStyleButton(controller: controller),
+                InsertEmbedButton(
+                  controller: controller,
+                  icon: Icons.horizontal_rule,
+                ),
+                UndoRedoButton.undo(controller: controller),
+                UndoRedoButton.redo(controller: controller),
+              ],
+            ),
+          Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
+          Expanded(
             child: PlumeEditor(
-          controller: controller,
-          maxContentWidth: 800,
-          editorKey: editorKey,
-        ))
-      ]),
+              controller: controller,
+              maxContentWidth: 800,
+              editorKey: editorKey,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
@@ -125,11 +126,15 @@ void main() {
       await tester.pumpWidget(widget(controller));
       await tester.pumpAndSettle();
       final undoButton = find.byType(UndoRedoButton).first;
-      final rawUndoButton =
-          find.descendant(of: undoButton, matching: find.byType(FLIconButton));
+      final rawUndoButton = find.descendant(
+        of: undoButton,
+        matching: find.byType(FLIconButton),
+      );
       final redoButton = find.byType(UndoRedoButton).last;
-      final rawRedoButton =
-          find.descendant(of: redoButton, matching: find.byType(FLIconButton));
+      final rawRedoButton = find.descendant(
+        of: redoButton,
+        matching: find.byType(FLIconButton),
+      );
 
       expect(tester.widget<FLIconButton>(rawUndoButton).onPressed, isNull);
 
@@ -208,8 +213,10 @@ void main() {
       await tester.tap(find.byKey(const Key('heading_entry6')));
       await tester.pumpAndSettle(throttleDuration);
 
-      expect(controller.document.toDelta().last,
-          Operation.insert('\n', {'heading': 6}));
+      expect(
+        controller.document.toDelta().last,
+        Operation.insert('\n', {'heading': 6}),
+      );
 
       final editor = tester.state<RawEditorState>(find.byType(RawEditor));
       expect(editor.effectiveFocusNode.hasFocus, true);
@@ -230,13 +237,17 @@ void main() {
 
       await tester.tap(indent);
       await tester.pumpAndSettle(throttleDuration);
-      expect(controller.document.toDelta().last,
-          Operation.insert('\n', {'indent': 1}));
+      expect(
+        controller.document.toDelta().last,
+        Operation.insert('\n', {'indent': 1}),
+      );
 
       await tester.tap(unindent);
       await tester.pumpAndSettle(throttleDuration);
-      expect(controller.document.toDelta().last,
-          Operation.insert('Hello world\n'));
+      expect(
+        controller.document.toDelta().last,
+        Operation.insert('Hello world\n'),
+      );
 
       final editor = tester.state<RawEditorState>(find.byType(RawEditor));
       expect(editor.effectiveFocusNode.hasFocus, true);
@@ -249,12 +260,17 @@ void main() {
       await tester.pumpAndSettle();
       final linkButton = find.byType(LinkStyleButton);
       final rawLinkButton = find.descendant(
-          of: linkButton, matching: find.byType(RawMaterialButton));
+        of: linkButton,
+        matching: find.byType(RawMaterialButton),
+      );
       controller.compose(Delta()..insert('Hello world'));
       await tester.pumpAndSettle(throttleDuration);
 
-      expect(tester.widget<RawMaterialButton>(rawLinkButton).onPressed, isNull,
-          reason: 'Button should be inactive when selection is collapsed');
+      expect(
+        tester.widget<RawMaterialButton>(rawLinkButton).onPressed,
+        isNull,
+        reason: 'Button should be inactive when selection is collapsed',
+      );
 
       const textSelection = TextSelection(baseOffset: 0, extentOffset: 5);
       controller.updateSelection(textSelection);
@@ -265,15 +281,17 @@ void main() {
       expect(find.byType(AlertDialog), findsOneWidget);
 
       await tester.enterText(
-          find.byType(TextField), 'https://plume-editor.github.io');
+        find.byType(TextField),
+        'https://plume-editor.github.io',
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(TextButton, 'Apply'));
       await tester.pumpAndSettle(throttleDuration);
 
       expect(
-          controller.document.toDelta().first,
-          Operation.insert(
-              'Hello', {'a': 'https://plume-editor.github.io'}));
+        controller.document.toDelta().first,
+        Operation.insert('Hello', {'a': 'https://plume-editor.github.io'}),
+      );
 
       final editor = tester.state<RawEditorState>(find.byType(RawEditor));
       expect(editor.effectiveFocusNode.hasFocus, true);
@@ -294,8 +312,10 @@ void main() {
       await tester.tap(insertButton);
       await tester.pumpAndSettle(throttleDuration);
 
-      expect(controller.document.toDelta().elementAt(1),
-          Operation.insert({'_type': 'hr', '_inline': false}));
+      expect(
+        controller.document.toDelta().elementAt(1),
+        Operation.insert({'_type': 'hr', '_inline': false}),
+      );
 
       final editor = tester.state<RawEditorState>(find.byType(RawEditor));
       expect(editor.effectiveFocusNode.hasFocus, true);
@@ -337,25 +357,32 @@ void main() {
       final backgroundButton = find.byType(ColorButton).first;
       controller.compose(Delta()..insert('Hello world'));
       await tester.pump(throttleDuration);
-      controller
-          .updateSelection(const TextSelection(baseOffset: 0, extentOffset: 5));
+      controller.updateSelection(
+        const TextSelection(baseOffset: 0, extentOffset: 5),
+      );
 
       await tester.pumpAndSettle();
       await tester.tap(backgroundButton);
       await tester.pumpAndSettle();
       final colorElement = find.descendant(
-          of: find.byKey(const Key('color_selector')),
-          matching: find.byType(RawMaterialButton));
+        of: find.byKey(const Key('color_selector')),
+        matching: find.byType(RawMaterialButton),
+      );
       expect(colorElement, findsNWidgets(17));
 
-      await tester.tap(find
-          .descendant(
+      await tester.tap(
+        find
+            .descendant(
               of: find.byKey(const Key('color_selector')),
-              matching: find.byType(RawMaterialButton))
-          .last);
+              matching: find.byType(RawMaterialButton),
+            )
+            .last,
+      );
       await tester.pumpAndSettle(throttleDuration);
-      expect(controller.document.toDelta().first,
-          Operation.insert('Hello', {'bg': Colors.black.value32Bits}));
+      expect(
+        controller.document.toDelta().first,
+        Operation.insert('Hello', {'bg': Colors.black.value32Bits}),
+      );
 
       final editor = tester.state<RawEditorState>(find.byType(RawEditor));
       expect(editor.effectiveFocusNode.hasFocus, true);
@@ -369,59 +396,61 @@ void main() {
       final backgroundButton = find.byType(ColorButton).last;
       controller.compose(Delta()..insert('Hello world'));
       await tester.pump(throttleDuration);
-      controller
-          .updateSelection(const TextSelection(baseOffset: 0, extentOffset: 5));
+      controller.updateSelection(
+        const TextSelection(baseOffset: 0, extentOffset: 5),
+      );
 
       await tester.pumpAndSettle();
       await tester.tap(backgroundButton);
       await tester.pumpAndSettle();
       final colorElement = find.descendant(
-          of: find.byKey(const Key('color_selector')),
-          matching: find.byType(RawMaterialButton));
-      expect(
-        colorElement,
-        findsNWidgets(17),
+        of: find.byKey(const Key('color_selector')),
+        matching: find.byType(RawMaterialButton),
       );
+      expect(colorElement, findsNWidgets(17));
 
-      await tester.tap(find
-          .descendant(
+      await tester.tap(
+        find
+            .descendant(
               of: find.byKey(const Key('color_selector')),
-              matching: find.byType(RawMaterialButton))
-          .last);
+              matching: find.byType(RawMaterialButton),
+            )
+            .last,
+      );
       await tester.pumpAndSettle(throttleDuration);
-      expect(controller.document.toDelta().first,
-          Operation.insert('Hello', {'fg': Colors.black.value32Bits}));
+      expect(
+        controller.document.toDelta().first,
+        Operation.insert('Hello', {'fg': Colors.black.value32Bits}),
+      );
 
       final editor = tester.state<RawEditorState>(find.byType(RawEditor));
       expect(editor.effectiveFocusNode.hasFocus, true);
       expect(editor.hasConnection, true);
     });
 
-    testWidgets('updating editor toolbar remove overlay entry if any',
-        (tester) async {
+    testWidgets('updating editor toolbar remove overlay entry if any', (
+      tester,
+    ) async {
       Widget backgroundColorBuilder(context, value) => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.mode_edit_outline_outlined,
-                size: 16,
-              ),
-              Container(
-                width: 18,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: value,
-                  border: value == Colors.transparent
-                      ? Border.all(
-                          color:
-                              Theme.of(context).iconTheme.color ?? Colors.black)
-                      : null,
-                ),
-              )
-            ],
-          );
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.mode_edit_outline_outlined, size: 16),
+          Container(
+            width: 18,
+            height: 4,
+            decoration: BoxDecoration(
+              color: value,
+              border: value == Colors.transparent
+                  ? Border.all(
+                      color: Theme.of(context).iconTheme.color ?? Colors.black,
+                    )
+                  : null,
+            ),
+          ),
+        ],
+      );
       final controller = PlumeController();
       final widget = MaterialApp(
         home: TestUpdateWidget(
@@ -430,10 +459,11 @@ void main() {
           toolbarBuilder: (context) => PlumeToolbar(
             children: [
               ColorButton(
-                  controller: controller,
-                  attributeKey: Attribute.backgroundColor,
-                  nullColorLabel: 'No color',
-                  builder: backgroundColorBuilder)
+                controller: controller,
+                attributeKey: Attribute.backgroundColor,
+                nullColorLabel: 'No color',
+                builder: backgroundColorBuilder,
+              ),
             ],
           ),
         ),
@@ -451,52 +481,57 @@ void main() {
   });
 
   group('SelectorScope', () {
-    testWidgets('Correctly places the selector in a visible area of screen',
-        (WidgetTester tester) async {
+    testWidgets('Correctly places the selector in a visible area of screen', (
+      WidgetTester tester,
+    ) async {
       const padding = EdgeInsets.all(32);
       final controller = PlumeController();
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(),
-          body: Column(
-            children: [
-              PlumeToolbar.basic(controller: controller),
-            ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(),
+            body: Column(
+              children: [PlumeToolbar.basic(controller: controller)],
+            ),
+          ),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(padding: padding),
+            child: child!,
           ),
         ),
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(padding: padding),
-          child: child!,
-        ),
-      ));
+      );
       final validRect = tester.getRect(find.byType(Scaffold)).deflate(32);
       await tester.tap(find.byType(SelectHeadingButton));
       await tester.pump();
       expect(
         validRect.expandToInclude(
-            tester.getRect(find.byKey(const Key('heading_selector')))),
+          tester.getRect(find.byKey(const Key('heading_selector'))),
+        ),
         equals(validRect),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(),
-          body: Column(
-            children: [
-              const Expanded(child: SizedBox()),
-              PlumeToolbar.basic(controller: controller),
-            ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(),
+            body: Column(
+              children: [
+                const Expanded(child: SizedBox()),
+                PlumeToolbar.basic(controller: controller),
+              ],
+            ),
+          ),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(padding: padding),
+            child: child!,
           ),
         ),
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(padding: padding),
-          child: child!,
-        ),
-      ));
+      );
       await tester.tap(find.byType(SelectHeadingButton));
       await tester.pump();
       expect(
         validRect.expandToInclude(
-            tester.getRect(find.byKey(const Key('heading_selector')))),
+          tester.getRect(find.byKey(const Key('heading_selector'))),
+        ),
         equals(validRect),
       );
       expect(
@@ -507,8 +542,12 @@ void main() {
   });
 }
 
-Future<void> performToggle(WidgetTester tester, PlumeController controller,
-    Finder button, Map<String, dynamic> expectedAttribute) async {
+Future<void> performToggle(
+  WidgetTester tester,
+  PlumeController controller,
+  Finder button,
+  Map<String, dynamic> expectedAttribute,
+) async {
   controller.compose(Delta()..insert('Hello world'));
   await tester.pumpAndSettle(throttleDuration);
   const textSelection = TextSelection(baseOffset: 0, extentOffset: 5);
@@ -516,13 +555,17 @@ Future<void> performToggle(WidgetTester tester, PlumeController controller,
   await tester.pumpAndSettle(throttleDuration);
   await tester.tap(button);
   await tester.pumpAndSettle(throttleDuration);
-  expect(controller.document.toDelta().first,
-      Operation.insert('Hello', expectedAttribute));
+  expect(
+    controller.document.toDelta().first,
+    Operation.insert('Hello', expectedAttribute),
+  );
 
   await tester.tap(button);
   await tester.pumpAndSettle(throttleDuration);
   expect(
-      controller.document.toDelta().first, Operation.insert('Hello world\n'));
+    controller.document.toDelta().first,
+    Operation.insert('Hello world\n'),
+  );
 
   final editor = tester.state<RawEditorState>(find.byType(RawEditor));
   expect(editor.effectiveFocusNode.hasFocus, true);
@@ -539,7 +582,8 @@ void onErrorIgnoreOverflowErrors(
   var exception = details.exception;
   if (exception is FlutterError) {
     ifIsOverflowError = !exception.diagnostics.any(
-        (e) => e.value.toString().startsWith('A RenderFlex overflowed by'));
+      (e) => e.value.toString().startsWith('A RenderFlex overflowed by'),
+    );
   }
 
   // Ignore if is overflow error.

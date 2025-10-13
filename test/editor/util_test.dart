@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plume/plume.dart';
-import 'package:parchment_delta/parchment_delta.dart';
 
 void main() {
   group('getPositionDelta', () {

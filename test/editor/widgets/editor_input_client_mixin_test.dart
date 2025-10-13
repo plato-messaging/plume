@@ -12,48 +12,62 @@ void main() {
 
     void bind(WidgetTester tester) {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          SystemChannels.textInput, (MethodCall methodCall) async {
-        if (methodCall.method == 'TextInput.setEditingState') {
-          final Map<String, dynamic> args =
-              methodCall.arguments as Map<String, dynamic>;
-          composingRanges.add(TextRange(
-              start: args['composingBase'], end: args['composingExtent']));
-        }
-        return null;
-      });
+        SystemChannels.textInput,
+        (MethodCall methodCall) async {
+          if (methodCall.method == 'TextInput.setEditingState') {
+            final Map<String, dynamic> args =
+                methodCall.arguments as Map<String, dynamic>;
+            composingRanges.add(
+              TextRange(
+                start: args['composingBase'],
+                end: args['composingExtent'],
+              ),
+            );
+          }
+          return null;
+        },
+      );
     }
 
     setUp(() => composingRanges.clear());
 
     testWidgets(
-        'sends empty composing range if composing range becomes invalid',
-        (tester) async {
-      bind(tester);
-      final document = Document.fromJson([
-        {'insert': 'some text\n'}
-      ]);
-      final editor = EditorSandBox(tester: tester, document: document);
-      await editor.pump();
-      await editor.tap();
-      tester.binding.scheduleWarmUpFrame();
-      final editorState =
-          tester.state(find.byType(RawEditor)) as RawEditorState;
-      editorState.updateEditingValueWithDeltas([
-        TextEditingDeltaNonTextUpdate(
-          oldText: editorState.textEditingValue.text,
-          selection: const TextSelection.collapsed(offset: 9),
-          composing: const TextRange(start: 5, end: 9),
-        )
-      ]);
-      await tester.pumpAndSettle();
-      editor.controller.replaceText(4, 5, '',
-          selection: const TextSelection.collapsed(offset: 4));
-      await tester.pumpAndSettle(throttleDuration);
-      expect(
+      'sends empty composing range if composing range becomes invalid',
+      (tester) async {
+        bind(tester);
+        final document = Document.fromJson([
+          {'insert': 'some text\n'},
+        ]);
+        final editor = EditorSandBox(tester: tester, document: document);
+        await editor.pump();
+        await editor.tap();
+        tester.binding.scheduleWarmUpFrame();
+        final editorState =
+            tester.state(find.byType(RawEditor)) as RawEditorState;
+        editorState.updateEditingValueWithDeltas([
+          TextEditingDeltaNonTextUpdate(
+            oldText: editorState.textEditingValue.text,
+            selection: const TextSelection.collapsed(offset: 9),
+            composing: const TextRange(start: 5, end: 9),
+          ),
+        ]);
+        await tester.pumpAndSettle();
+        editor.controller.replaceText(
+          4,
+          5,
+          '',
+          selection: const TextSelection.collapsed(offset: 4),
+        );
+        await tester.pumpAndSettle(throttleDuration);
+        expect(
           composingRanges.fold(
-              true, (v, e) => v && (e == TextRange.empty || e.isValid)),
-          isTrue);
-    });
+            true,
+            (v, e) => v && (e == TextRange.empty || e.isValid),
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('sets style to TextInputConnection', () {
@@ -61,32 +75,36 @@ void main() {
 
     void bind(WidgetTester tester) {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          SystemChannels.textInput, (MethodCall methodCall) async {
-        if (methodCall.method == 'TextInput.setStyle') {
-          final Map<String, dynamic> args =
-              methodCall.arguments as Map<String, dynamic>;
-          final fontFamily = args['fontFamily'];
-          final fontSize = args['fontSize'];
-          final fontWeightIndex = args['fontWeightIndex'];
-          final textAlignIndex = args['textAlignIndex'];
-          final textDirectionIndex = args['textDirectionIndex'];
-          final TextInputConnectionStyle style = TextInputConnectionStyle(
+        SystemChannels.textInput,
+        (MethodCall methodCall) async {
+          if (methodCall.method == 'TextInput.setStyle') {
+            final Map<String, dynamic> args =
+                methodCall.arguments as Map<String, dynamic>;
+            final fontFamily = args['fontFamily'];
+            final fontSize = args['fontSize'];
+            final fontWeightIndex = args['fontWeightIndex'];
+            final textAlignIndex = args['textAlignIndex'];
+            final textDirectionIndex = args['textDirectionIndex'];
+            final TextInputConnectionStyle style = TextInputConnectionStyle(
               textStyle: TextStyle(
-                  fontFamily: fontFamily,
-                  fontSize: fontSize,
-                  fontWeight: fontWeightIndex != null
-                      ? FontWeight.values[fontWeightIndex]
-                      : null),
+                fontFamily: fontFamily,
+                fontSize: fontSize,
+                fontWeight: fontWeightIndex != null
+                    ? FontWeight.values[fontWeightIndex]
+                    : null,
+              ),
               textAlign: textAlignIndex != null
                   ? TextAlign.values[textAlignIndex]
                   : TextAlign.left,
               textDirection: textDirectionIndex != null
                   ? TextDirection.values[textDirectionIndex]
-                  : TextDirection.ltr);
-          log.add(style);
-        }
-        return null;
-      });
+                  : TextDirection.ltr,
+            );
+            log.add(style);
+          }
+          return null;
+        },
+      );
     }
 
     setUp(() => log.clear());
@@ -94,7 +112,7 @@ void main() {
     testWidgets('sets style on position 0 by default', (tester) async {
       bind(tester);
       final document = Document.fromJson([
-        {'insert': 'some text\n'}
+        {'insert': 'some text\n'},
       ]);
       final editor = EditorSandBox(tester: tester, document: document);
       await editor.pump();
@@ -102,25 +120,29 @@ void main() {
       tester.binding.scheduleWarmUpFrame();
       expect(log.length, 1);
       expect(
-          log.first,
-          const TextInputConnectionStyle(
-              textStyle: TextStyle(
-                  inherit: true,
-                  fontFamily: 'Roboto',
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w400),
-              textDirection: TextDirection.ltr,
-              textAlign: TextAlign.left));
+        log.first,
+        const TextInputConnectionStyle(
+          textStyle: TextStyle(
+            inherit: true,
+            fontFamily: 'Roboto',
+            fontSize: 16.0,
+            fontWeight: FontWeight.w400,
+          ),
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.left,
+        ),
+      );
     });
 
-    testWidgets('changing selection updates text input connection style',
-        (tester) async {
+    testWidgets('changing selection updates text input connection style', (
+      tester,
+    ) async {
       bind(tester);
       final document = Document.fromJson([
         {'insert': 'Heading 1'},
         {
           'insert': '\n',
-          'attributes': {'heading': 1}
+          'attributes': {'heading': 1},
         },
         {'insert': 'Normal paragraph\n'},
       ]);
@@ -128,45 +150,56 @@ void main() {
       await editor.pump();
       final context = tester.element(find.byType(RawEditor));
       final themeData = PlumeThemeData.fallback(context);
-      await tester.tapAt(tester.getTopLeft(find.byType(PlumeEditor)) +
-          Offset(20, themeData.heading1.spacing.top));
+      await tester.tapAt(
+        tester.getTopLeft(find.byType(PlumeEditor)) +
+            Offset(20, themeData.heading1.spacing.top),
+      );
       tester.binding.scheduleWarmUpFrame();
       expect(log.length, 1);
       expect(
-          log.first,
-          TextInputConnectionStyle(
-              textStyle: TextStyle(
-                  inherit: true,
-                  fontFamily: 'Roboto',
-                  fontSize: themeData.heading1.style.fontSize,
-                  fontWeight: themeData.heading1.style.fontWeight),
-              textDirection: TextDirection.ltr,
-              textAlign: TextAlign.left));
+        log.first,
+        TextInputConnectionStyle(
+          textStyle: TextStyle(
+            inherit: true,
+            fontFamily: 'Roboto',
+            fontSize: themeData.heading1.style.fontSize,
+            fontWeight: themeData.heading1.style.fontWeight,
+          ),
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.left,
+        ),
+      );
       log.clear();
       final paragraphOffset = Offset(
-          20,
-          themeData.heading1.spacing.top +
-              (themeData.heading1.style.fontSize ?? 0) +
-              themeData.paragraph.spacing.top +
-              10);
+        20,
+        themeData.heading1.spacing.top +
+            (themeData.heading1.style.fontSize ?? 0) +
+            themeData.paragraph.spacing.top +
+            10,
+      );
       await tester.tapAt(
-          tester.getTopLeft(find.byType(PlumeEditor)) + paragraphOffset);
+        tester.getTopLeft(find.byType(PlumeEditor)) + paragraphOffset,
+      );
       tester.binding.scheduleWarmUpFrame();
       expect(log.length, 1);
       expect(
-          log.first,
-          TextInputConnectionStyle(
-              textStyle: TextStyle(
-                  inherit: true,
-                  fontFamily: 'Roboto',
-                  fontSize: themeData.paragraph.style.fontSize,
-                  fontWeight: themeData.paragraph.style.fontWeight),
-              textDirection: TextDirection.ltr,
-              textAlign: TextAlign.left));
+        log.first,
+        TextInputConnectionStyle(
+          textStyle: TextStyle(
+            inherit: true,
+            fontFamily: 'Roboto',
+            fontSize: themeData.paragraph.style.fontSize,
+            fontWeight: themeData.paragraph.style.fontWeight,
+          ),
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.left,
+        ),
+      );
     });
 
-    testWidgets('sets style to TextInputConnection for all line/block styles',
-        (tester) async {
+    testWidgets('sets style to TextInputConnection for all line/block styles', (
+      tester,
+    ) async {
       bind(tester);
       final coveredAttributes = [
         Attribute.h2,
@@ -177,14 +210,16 @@ void main() {
         Attribute.code,
       ];
       TextBlockTheme themeFromAttribute(
-          Attribute attribute, PlumeThemeData themeData) {
+        Attribute attribute,
+        PlumeThemeData themeData,
+      ) {
         final styles = {
           Attribute.h2: themeData.heading2,
           Attribute.h3: themeData.heading3,
           Attribute.h4: themeData.heading4,
           Attribute.h5: themeData.heading5,
           Attribute.h6: themeData.heading6,
-          Attribute.code: themeData.code
+          Attribute.code: themeData.code,
         };
         return styles[attribute]!;
       }
@@ -194,7 +229,7 @@ void main() {
           {'insert': 'text that will be tapped'},
           {
             'insert': '\n',
-            'attributes': {attribute.key: attribute.value}
+            'attributes': {attribute.key: attribute.value},
           },
         ]);
         final editor = EditorSandBox(tester: tester, document: document);
@@ -206,31 +241,31 @@ void main() {
         tester.binding.scheduleWarmUpFrame();
         expect(log.length, 1);
         expect(
-            log.first,
-            TextInputConnectionStyle(
-                textStyle: TextStyle(
-                    inherit: true,
-                    fontFamily: attribute == Attribute.code
-                        ? 'Roboto Mono'
-                        : null,
-                    fontSize: themeDataItem.style.fontSize,
-                    fontWeight: themeDataItem.style.fontWeight),
-                textDirection: TextDirection.ltr,
-                textAlign: TextAlign.left));
+          log.first,
+          TextInputConnectionStyle(
+            textStyle: TextStyle(
+              inherit: true,
+              fontFamily: attribute == Attribute.code ? 'Roboto Mono' : null,
+              fontSize: themeDataItem.style.fontSize,
+              fontWeight: themeDataItem.style.fontWeight,
+            ),
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.left,
+          ),
+        );
         log.clear();
       }
     });
 
-    testWidgets('sets style to TextInputConnection for RTL direction',
-        (tester) async {
+    testWidgets('sets style to TextInputConnection for RTL direction', (
+      tester,
+    ) async {
       bind(tester);
       final document = Document.fromJson([
         {'insert': 'text that will be tapped'},
         {
           'insert': '\n',
-          'attributes': {
-            Attribute.rtl.key: Attribute.rtl.value
-          }
+          'attributes': {Attribute.rtl.key: Attribute.rtl.value},
         },
       ]);
       final editor = EditorSandBox(tester: tester, document: document);
@@ -241,25 +276,29 @@ void main() {
       tester.binding.scheduleWarmUpFrame();
       expect(log.length, 1);
       expect(
-          log.first,
-          TextInputConnectionStyle(
-              textStyle: TextStyle(
-                  inherit: true,
-                  fontFamily: 'Roboto',
-                  fontSize: themeData.paragraph.style.fontSize,
-                  fontWeight: themeData.paragraph.style.fontWeight),
-              textDirection: TextDirection.rtl,
-              textAlign: TextAlign.left));
+        log.first,
+        TextInputConnectionStyle(
+          textStyle: TextStyle(
+            inherit: true,
+            fontFamily: 'Roboto',
+            fontSize: themeData.paragraph.style.fontSize,
+            fontWeight: themeData.paragraph.style.fontWeight,
+          ),
+          textDirection: TextDirection.rtl,
+          textAlign: TextAlign.left,
+        ),
+      );
     });
 
-    testWidgets('sets style to TextInputConnection for all TextAlign',
-        (tester) async {
+    testWidgets('sets style to TextInputConnection for all TextAlign', (
+      tester,
+    ) async {
       bind(tester);
       final coveredAlignments = {
         Attribute.left: TextAlign.left,
         Attribute.justify: TextAlign.justify,
         Attribute.center: TextAlign.center,
-        Attribute.right: TextAlign.right
+        Attribute.right: TextAlign.right,
       };
 
       for (final alignmentMapping in coveredAlignments.entries) {
@@ -269,14 +308,15 @@ void main() {
           {'insert': 'text that will be tapped'},
           {
             'insert': '\n',
-            'attributes': {attribute.key: attribute.value}
+            'attributes': {attribute.key: attribute.value},
           },
         ]);
         final editor = EditorSandBox(tester: tester, document: document);
         await editor.pump();
         if (alignment == TextAlign.right) {
-          await tester.tapAt(tester.getTopRight(find.byType(RawEditor)) +
-              const Offset(-20, 10));
+          await tester.tapAt(
+            tester.getTopRight(find.byType(RawEditor)) + const Offset(-20, 10),
+          );
         } else {
           await editor.tap();
         }
@@ -285,15 +325,18 @@ void main() {
         tester.binding.scheduleWarmUpFrame();
         expect(log.length, 1);
         expect(
-            log.first,
-            TextInputConnectionStyle(
-                textStyle: TextStyle(
-                    inherit: true,
-                    fontFamily: 'Roboto',
-                    fontSize: themeData.paragraph.style.fontSize,
-                    fontWeight: themeData.paragraph.style.fontWeight),
-                textDirection: TextDirection.ltr,
-                textAlign: alignment));
+          log.first,
+          TextInputConnectionStyle(
+            textStyle: TextStyle(
+              inherit: true,
+              fontFamily: 'Roboto',
+              fontSize: themeData.paragraph.style.fontSize,
+              fontWeight: themeData.paragraph.style.fontWeight,
+            ),
+            textDirection: TextDirection.ltr,
+            textAlign: alignment,
+          ),
+        );
         log.clear();
       }
     });
@@ -303,23 +346,26 @@ void main() {
     Map<String, dynamic>? textInputSetClientProperties;
     Map<String, dynamic>? textInputUpdateConfigProperties;
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.textInput, (MethodCall methodCall) async {
-      if (methodCall.method == 'TextInput.setClient') {
-        textInputSetClientProperties = methodCall.arguments[1];
-      } else if (methodCall.method == 'TextInput.updateConfig') {
-        textInputUpdateConfigProperties = methodCall.arguments;
-      }
-      return null;
-    });
+      SystemChannels.textInput,
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'TextInput.setClient') {
+          textInputSetClientProperties = methodCall.arguments[1];
+        } else if (methodCall.method == 'TextInput.updateConfig') {
+          textInputUpdateConfigProperties = methodCall.arguments;
+        }
+        return null;
+      },
+    );
 
     final controller = PlumeController();
     Future<void> pumpEditor(bool enable) async {
       final editor = MaterialApp(
-          home: PlumeField(
-        controller: controller,
-        enableSuggestions: enable,
-        autocorrect: enable,
-      ));
+        home: PlumeField(
+          controller: controller,
+          enableSuggestions: enable,
+          autocorrect: enable,
+        ),
+      );
       await tester.pumpWidget(editor);
       await tester.tapAt(tester.getCenter(find.byType(RawEditor)));
       tester.binding.scheduleWarmUpFrame();

@@ -73,38 +73,39 @@ class EditableTextBlock extends StatelessWidget {
     var index = 0;
     for (final line in lineNodes) {
       final nodeTextDirection = getDirectionOfNode(line);
-      children.add(Directionality(
-        textDirection: nodeTextDirection,
-        child: EditableTextLine(
-          node: line,
-          spacing: _getSpacingForLine(line, index, count, theme),
-          leading: leadingWidgets?[index],
-          indentWidth: _getIndentWidth(line),
-          devicePixelRatio: MediaQuery.of(context).devicePixelRatio,
-          body: TextLine(
+      children.add(
+        Directionality(
+          textDirection: nodeTextDirection,
+          child: EditableTextLine(
             node: line,
-            readOnly: readOnly,
-            controller: controller,
-            embedBuilder: embedBuilder,
-            spanEmbedConfigurations: spanEmbedConfigurations,
-            linkActionPicker: linkActionPicker,
-            onLaunchUrl: onLaunchUrl,
-            textWidthBasis: textWidthBasis,
+            spacing: _getSpacingForLine(line, index, count, theme),
+            leading: leadingWidgets?[index],
+            indentWidth: _getIndentWidth(line),
+            devicePixelRatio: MediaQuery.of(context).devicePixelRatio,
+            body: TextLine(
+              node: line,
+              readOnly: readOnly,
+              controller: controller,
+              embedBuilder: embedBuilder,
+              spanEmbedConfigurations: spanEmbedConfigurations,
+              linkActionPicker: linkActionPicker,
+              onLaunchUrl: onLaunchUrl,
+              textWidthBasis: textWidthBasis,
+            ),
+            cursorController: cursorController,
+            selection: selection,
+            selectionColor: selectionColor,
+            enableInteractiveSelection: enableInteractiveSelection,
+            hasFocus: hasFocus,
           ),
-          cursorController: cursorController,
-          selection: selection,
-          selectionColor: selectionColor,
-          enableInteractiveSelection: enableInteractiveSelection,
-          hasFocus: hasFocus,
         ),
-      ));
+      );
       index++;
     }
     return children.toList(growable: false);
   }
 
-  List<Widget>? _buildLeading(
-      PlumeThemeData theme, List<LineNode> children) {
+  List<Widget>? _buildLeading(PlumeThemeData theme, List<LineNode> children) {
     final block = node.style.get(Attribute.block);
     if (block == Attribute.block.numberList) {
       return _buildNumberPointsForNumberList(theme, children);
@@ -120,47 +121,55 @@ class EditableTextBlock extends StatelessWidget {
   }
 
   List<Widget> _buildCheckboxForCheckList(
-          PlumeThemeData theme, List<LineNode> children) =>
-      children.map((node) {
-        return _CheckboxPoint(
-          value: node.style.containsSame(Attribute.checked),
-          enabled: !readOnly,
-          onChanged: (checked) => _toggle(node, checked),
-        );
-      }).toList();
+    PlumeThemeData theme,
+    List<LineNode> children,
+  ) => children.map((node) {
+    return _CheckboxPoint(
+      value: node.style.containsSame(Attribute.checked),
+      enabled: !readOnly,
+      onChanged: (checked) => _toggle(node, checked),
+    );
+  }).toList();
 
   List<Widget> _buildBulletPointForBulletList(
-          PlumeThemeData theme, List<Node> children) =>
-      children
-          .map((_) => _BulletPoint(
-                style:
-                    theme.paragraph.style.copyWith(fontWeight: FontWeight.bold),
-                strutStyle: theme.strutStyle,
-              ))
-          .toList();
+    PlumeThemeData theme,
+    List<Node> children,
+  ) => children
+      .map(
+        (_) => _BulletPoint(
+          style: theme.paragraph.style.copyWith(fontWeight: FontWeight.bold),
+          strutStyle: theme.strutStyle,
+        ),
+      )
+      .toList();
 
   List<Widget> _buildNumberPointsForCodeBlock(
-          PlumeThemeData theme, List<LineNode> children) =>
-      children
-          .mapIndexed((i, _) => _NumberPoint(
-                number: i + 1,
-                style: theme.code.style.copyWith(
-                    color: theme.code.style.color?.withValues(alpha: 0.4)),
-                width: 32.0,
-                padding: 8,
-                withDot: false,
-                strutStyle: theme.strutStyle,
-              ))
-          .toList();
+    PlumeThemeData theme,
+    List<LineNode> children,
+  ) => children
+      .mapIndexed(
+        (i, _) => _NumberPoint(
+          number: i + 1,
+          style: theme.code.style.copyWith(
+            color: theme.code.style.color?.withValues(alpha: 0.4),
+          ),
+          width: 32.0,
+          padding: 8,
+          withDot: false,
+          strutStyle: theme.strutStyle,
+        ),
+      )
+      .toList();
 
   List<Widget> _buildNumberPointsForNumberList(
-      PlumeThemeData theme, List<LineNode> children) {
+    PlumeThemeData theme,
+    List<LineNode> children,
+  ) {
     final leadingWidgets = <Widget>[];
     final levelsIndexes = <int, int>{};
     int? lastLevel;
     for (final element in children) {
-      final currentLevel =
-          element.style.get(Attribute.indent)?.value ?? 0;
+      final currentLevel = element.style.get(Attribute.indent)?.value ?? 0;
       var currentIndex = 0;
 
       if (lastLevel != null) {
@@ -172,13 +181,15 @@ class EditableTextBlock extends StatelessWidget {
         }
       }
 
-      leadingWidgets.add(_NumberPoint(
-        number: currentIndex + 1,
-        style: theme.lists.style,
-        width: 32.0,
-        padding: 8.0,
-        strutStyle: theme.strutStyle,
-      ));
+      leadingWidgets.add(
+        _NumberPoint(
+          number: currentIndex + 1,
+          style: theme.lists.style,
+          width: 32.0,
+          padding: 8.0,
+          strutStyle: theme.strutStyle,
+        ),
+      );
       levelsIndexes[currentLevel] = currentIndex;
       lastLevel = currentLevel;
     }
@@ -188,8 +199,7 @@ class EditableTextBlock extends StatelessWidget {
   double _getIndentWidth(LineNode line) {
     final block = node.style.get(Attribute.block);
 
-    final indentationLevel =
-        line.style.get(Attribute.indent)?.value ?? 0;
+    final indentationLevel = line.style.get(Attribute.indent)?.value ?? 0;
     var extraIndent = indentationLevel * 16;
 
     if (block == Attribute.block.quote) {
@@ -200,7 +210,11 @@ class EditableTextBlock extends StatelessWidget {
   }
 
   VerticalSpacing _getSpacingForLine(
-      LineNode node, int index, int count, PlumeThemeData theme) {
+    LineNode node,
+    int index,
+    int count,
+    PlumeThemeData theme,
+  ) {
     final heading = node.style.get(Attribute.heading);
 
     double? top;
@@ -254,8 +268,7 @@ class EditableTextBlock extends StatelessWidget {
     return VerticalSpacing(top: top ?? 0, bottom: bottom ?? 0);
   }
 
-  BoxDecoration? _getDecorationForBlock(
-      BlockNode node, PlumeThemeData theme) {
+  BoxDecoration? _getDecorationForBlock(BlockNode node, PlumeThemeData theme) {
     final style = node.style.get(Attribute.block);
     if (style == Attribute.block.quote) {
       return theme.quote.decoration;
@@ -266,8 +279,7 @@ class EditableTextBlock extends StatelessWidget {
   }
 
   void _toggle(LineNode node, bool checked) {
-    final attr =
-        checked ? Attribute.checked : Attribute.checked.unset;
+    final attr = checked ? Attribute.checked : Attribute.checked.unset;
     controller.formatText(node.documentOffset, 0, attr, notify: false);
   }
 }
@@ -307,7 +319,9 @@ class _EditableBlock extends MultiChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, covariant RenderEditableTextBlock renderObject) {
+    BuildContext context,
+    covariant RenderEditableTextBlock renderObject,
+  ) {
     renderObject.node = node;
     renderObject.textDirection = Directionality.of(context);
     renderObject.padding = _padding;
@@ -355,10 +369,7 @@ class _BulletPoint extends StatelessWidget {
   final TextStyle style;
   final StrutStyle? strutStyle;
 
-  const _BulletPoint({
-    required this.style,
-    this.strutStyle,
-  });
+  const _BulletPoint({required this.style, this.strutStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -366,11 +377,7 @@ class _BulletPoint extends StatelessWidget {
       alignment: AlignmentDirectional.topEnd,
       width: 32,
       padding: const EdgeInsetsDirectional.only(end: 13.0),
-      child: Text(
-        '•',
-        style: style,
-        strutStyle: strutStyle,
-      ),
+      child: Text('•', style: style, strutStyle: strutStyle),
     );
   }
 }

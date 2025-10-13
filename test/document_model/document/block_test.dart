@@ -84,8 +84,7 @@ void main() {
       expect(block.childCount, 1);
       expect(block.first, const TypeMatcher<LineNode>());
       final line = block.first as LineNode;
-      expect(line.style.get(Attribute.alignment),
-          Attribute.right);
+      expect(line.style.get(Attribute.alignment), Attribute.right);
     });
 
     test('format two sibling lines as list', () {
@@ -103,7 +102,10 @@ void main() {
 
     test('format to split first line from block', () {
       root.insert(
-          0, 'London Grammar Songs\nHey now\nStrong\nIf You Wait', null);
+        0,
+        'London Grammar Songs\nHey now\nStrong\nIf You Wait',
+        null,
+      );
       root.retain(20, 1, h1Attrs);
       root.retain(28, 1, ulAttrs);
       root.retain(35, 1, ulAttrs);
@@ -125,7 +127,10 @@ void main() {
 
     test('format to split last line from block', () {
       root.insert(
-          0, 'London Grammar Songs\nHey now\nStrong\nIf You Wait', null);
+        0,
+        'London Grammar Songs\nHey now\nStrong\nIf You Wait',
+        null,
+      );
       root.retain(20, 1, h1Attrs);
       root.retain(28, 1, ulAttrs);
       root.retain(35, 1, ulAttrs);
@@ -147,7 +152,10 @@ void main() {
 
     test('format to split middle line from block', () {
       root.insert(
-          0, 'London Grammar Songs\nHey now\nStrong\nIf You Wait', null);
+        0,
+        'London Grammar Songs\nHey now\nStrong\nIf You Wait',
+        null,
+      );
       root.retain(20, 1, h1Attrs);
       root.retain(28, 1, ulAttrs);
       root.retain(35, 1, ulAttrs);
@@ -169,7 +177,10 @@ void main() {
 
     test('insert line-break at the beginning of the document', () {
       root.insert(
-          0, 'London Grammar Songs\nHey now\nStrong\nIf You Wait', null);
+        0,
+        'London Grammar Songs\nHey now\nStrong\nIf You Wait',
+        null,
+      );
       root.retain(20, 1, ulAttrs);
       root.retain(28, 1, ulAttrs);
       root.retain(35, 1, ulAttrs);

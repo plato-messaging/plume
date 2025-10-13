@@ -403,10 +403,7 @@ mixin RawEditorStateTextInputClientMixin on EditorState
   @visibleForTesting
   TextInputConnectionStyle getTextStyle([TextPosition? position]) {
     final document = renderEditor.document;
-    Style parchmentStyle = document.collectStyle(
-      position?.offset ?? 0,
-      0,
-    );
+    Style parchmentStyle = document.collectStyle(position?.offset ?? 0, 0);
     TextInputConnectionStyle style = TextInputConnectionStyle(
       textStyle: themeData.paragraph.style,
     );

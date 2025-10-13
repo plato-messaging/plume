@@ -49,13 +49,24 @@ class EditorSandBox {
     }
     widget = MaterialApp(home: widget, builder: appBuilder);
 
-    return EditorSandBox._(tester, focusNode, document, controller, widget,
-        spellCheckService: spellCheckService);
+    return EditorSandBox._(
+      tester,
+      focusNode,
+      document,
+      controller,
+      widget,
+      spellCheckService: spellCheckService,
+    );
   }
 
   EditorSandBox._(
-      this.tester, this.focusNode, this.document, this.controller, this.widget,
-      {this.spellCheckService});
+    this.tester,
+    this.focusNode,
+    this.document,
+    this.controller,
+    this.widget, {
+    this.spellCheckService,
+  });
 
   final WidgetTester tester;
   final FocusNode focusNode;
@@ -116,14 +127,16 @@ class EditorSandBox {
   }
 
   RawMaterialButton findButtonWithIcon(IconData icon) {
-    final button = tester.widget(find.widgetWithIcon(RawMaterialButton, icon))
-        as RawMaterialButton;
+    final button =
+        tester.widget(find.widgetWithIcon(RawMaterialButton, icon))
+            as RawMaterialButton;
     return button;
   }
 
   RawMaterialButton findButtonWithText(String text) {
-    final button = tester.widget(find.widgetWithText(RawMaterialButton, text))
-        as RawMaterialButton;
+    final button =
+        tester.widget(find.widgetWithText(RawMaterialButton, text))
+            as RawMaterialButton;
     return button;
   }
 
@@ -233,14 +246,14 @@ class _PlumeSandboxState extends State<_PlumeSandbox> {
 }
 
 class TestUpdateWidget extends StatefulWidget {
-  const TestUpdateWidget(
-      {super.key,
-      required this.focusNodeAfterChange,
-      this.testField = false,
-      this.toolbarBuilder,
-      this.controller,
-      this.document})
-      : assert((toolbarBuilder != null) == (controller != null));
+  const TestUpdateWidget({
+    super.key,
+    required this.focusNodeAfterChange,
+    this.testField = false,
+    this.toolbarBuilder,
+    this.controller,
+    this.document,
+  }) : assert((toolbarBuilder != null) == (controller != null));
 
   final FocusNode focusNodeAfterChange;
   final bool testField;
@@ -257,30 +270,32 @@ class TestUpdateWidgetState extends State<TestUpdateWidget> {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextButton(
-            onPressed: () =>
-                setState(() => focusNode = widget.focusNodeAfterChange),
-            child: const Text('Change state'),
-          ),
-          if (widget.toolbarBuilder != null) widget.toolbarBuilder!(context),
-          Expanded(
-            child: widget.testField
-                ? PlumeField(
-                    controller: widget.controller ??
-                        PlumeController(document: widget.document),
-                    focusNode: focusNode,
-                  )
-                : PlumeEditor(
-                    controller: widget.controller ??
-                        PlumeController(document: widget.document),
-                    focusNode: focusNode,
-                    scrollable: true,
-                  ),
-          ),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      TextButton(
+        onPressed: () =>
+            setState(() => focusNode = widget.focusNodeAfterChange),
+        child: const Text('Change state'),
+      ),
+      if (widget.toolbarBuilder != null) widget.toolbarBuilder!(context),
+      Expanded(
+        child: widget.testField
+            ? PlumeField(
+                controller:
+                    widget.controller ??
+                    PlumeController(document: widget.document),
+                focusNode: focusNode,
+              )
+            : PlumeEditor(
+                controller:
+                    widget.controller ??
+                    PlumeController(document: widget.document),
+                focusNode: focusNode,
+                scrollable: true,
+              ),
+      ),
+    ],
+  );
 }
 
 RawEditorStateTextInputClientMixin getInputClient() =>
@@ -292,7 +307,9 @@ class FakeSpellCheckService implements SpellCheckService {
 
   @override
   Future<List<SuggestionSpan>?> fetchSpellCheckSuggestions(
-      Locale locale, String text) async {
+    Locale locale,
+    String text,
+  ) async {
     return await (stub ?? (() => Future.value(null)))(locale, text);
   }
 }

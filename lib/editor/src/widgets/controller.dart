@@ -24,10 +24,10 @@ List<String> _toggleableStyleKeys = [
 
 class PlumeController extends ChangeNotifier {
   PlumeController({Document? document, AutoFormats? autoFormats})
-      : _document = document ?? Document(),
-        _history = HistoryStack.doc(document),
-        _autoFormats = autoFormats ?? AutoFormats.fallback(),
-        _selection = const TextSelection.collapsed(offset: 0) {
+    : _document = document ?? Document(),
+      _history = HistoryStack.doc(document),
+      _autoFormats = autoFormats ?? AutoFormats.fallback(),
+      _selection = const TextSelection.collapsed(offset: 0) {
     _throttledPush = _throttle(
       duration: throttleDuration,
       function: _history.push,
@@ -79,8 +79,9 @@ class PlumeController extends ChangeNotifier {
       }
     }
 
-    final inlineAttributes =
-        document.collectStyle(start, length).inlineAttributes;
+    final inlineAttributes = document
+        .collectStyle(start, length)
+        .inlineAttributes;
     final lineAttributes = document.collectStyle(start, length).lineAttributes;
 
     return Style()
@@ -125,8 +126,12 @@ class PlumeController extends ChangeNotifier {
   /// in any cases as we don't want to keep it except on inserts.
   ///
   /// Optionally updates selection if provided.
-  void replaceText(int index, int length, Object data,
-      {TextSelection? selection}) {
+  void replaceText(
+    int index,
+    int length,
+    Object data, {
+    TextSelection? selection,
+  }) {
     assert(data is String || data is EmbeddableObject);
     Delta? delta;
 
@@ -171,8 +176,10 @@ class PlumeController extends ChangeNotifier {
         // We do not want to update it when selection is changed
         _updateHistory();
         if (autoFormatPerformed && _autoFormats.selection != null) {
-          _updateSelectionSilent(_autoFormats.selection!,
-              source: ChangeSource.local);
+          _updateSelectionSilent(
+            _autoFormats.selection!,
+            source: ChangeSource.local,
+          );
         }
       }
     }
@@ -183,7 +190,11 @@ class PlumeController extends ChangeNotifier {
   // Returns `true` is auto format undo should let deletion propagate to
   // document; `false` otherwise
   bool _captureAutoFormatCancellationOrUndo(
-      Document document, int position, int length, Object data) {
+    Document document,
+    int position,
+    int length,
+    Object data,
+  ) {
     // Platform (iOS for example) may send TextEditingDeltaNonTextUpdate
     // before the TextEditingDeltaDeletion that may cancel all active autoformats
     // We ignore these changes
@@ -214,8 +225,12 @@ class PlumeController extends ChangeNotifier {
   /// we do not want a widget to update the document without triggering a
   /// rebuild if the editor (e.g.: [PlumeCheckbox] toggling should not cause
   /// scrolling to cursor).
-  void formatText(int index, int length, Attribute attribute,
-      {bool notify = true}) {
+  void formatText(
+    int index,
+    int length,
+    Attribute attribute, {
+    bool notify = true,
+  }) {
     final change = document.format(index, length, attribute);
     // _lastChangeSource = ChangeSource.local;
     const source = ChangeSource.local;
@@ -230,8 +245,10 @@ class PlumeController extends ChangeNotifier {
     // inserts data into the document (e.g. embeds).
     final base = change.transformPosition(_selection.baseOffset);
     final extent = change.transformPosition(_selection.extentOffset);
-    final adjustedSelection =
-        _selection.copyWith(baseOffset: base, extentOffset: extent);
+    final adjustedSelection = _selection.copyWith(
+      baseOffset: base,
+      extentOffset: extent,
+    );
     if (_selection != adjustedSelection) {
       _updateSelectionSilent(adjustedSelection, source: source);
     }
@@ -249,8 +266,10 @@ class PlumeController extends ChangeNotifier {
   /// Updates selection with specified [value].
   ///
   /// [value] and [source] cannot be `null`.
-  void updateSelection(TextSelection value,
-      {ChangeSource source = ChangeSource.remote}) {
+  void updateSelection(
+    TextSelection value, {
+    ChangeSource source = ChangeSource.remote,
+  }) {
     _updateSelectionSilent(value, source: source);
     _toggledStyles = Style();
     notifyListeners();
@@ -282,10 +301,14 @@ class PlumeController extends ChangeNotifier {
     if (selection != null) {
       _updateSelectionSilent(selection, source: source);
     } else {
-      final base = change.transformPosition(_selection.baseOffset,
-          force: forceUpdateSelection);
-      final extent = change.transformPosition(_selection.extentOffset,
-          force: forceUpdateSelection);
+      final base = change.transformPosition(
+        _selection.baseOffset,
+        force: forceUpdateSelection,
+      );
+      final extent = change.transformPosition(
+        _selection.extentOffset,
+        force: forceUpdateSelection,
+      );
       selection = _selection.copyWith(baseOffset: base, extentOffset: extent);
       if (_selection != selection) {
         _updateSelectionSilent(selection, source: source);
@@ -302,8 +325,10 @@ class PlumeController extends ChangeNotifier {
   }
 
   /// Updates selection without triggering notifications to listeners.
-  void _updateSelectionSilent(TextSelection value,
-      {ChangeSource source = ChangeSource.remote}) {
+  void _updateSelectionSilent(
+    TextSelection value, {
+    ChangeSource source = ChangeSource.remote,
+  }) {
     _selection = value;
     _ensureSelectionBeforeLastBreak();
   }
@@ -381,9 +406,11 @@ extension HistoryHandler on PlumeController {
       return;
     }
 
-    compose(changeDelta,
-        selection: HistoryStack.selectionFromDelta(changeDelta),
-        source: ChangeSource.history);
+    compose(
+      changeDelta,
+      selection: HistoryStack.selectionFromDelta(changeDelta),
+      source: ChangeSource.history,
+    );
   }
 
   void _updateHistory() {

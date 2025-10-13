@@ -339,10 +339,7 @@ void main() {
           delta,
           Delta()
             ..insert('This is an H$level')
-            ..insert(
-              '\n',
-              Attribute.heading.withValue(level).toJson(),
-            ),
+            ..insert('\n', Attribute.heading.withValue(level).toJson()),
         );
 
         final andBack = markdownCodec.encode(document);
@@ -435,17 +432,11 @@ void main() {
           ..insert('quote')
           ..insert('\n', Attribute.bq.toJson())
           ..insert('Heading in Quote')
-          ..insert('\n', {
-            ...Attribute.bq.toJson(),
-            ...Attribute.h1.toJson(),
-          })
+          ..insert('\n', {...Attribute.bq.toJson(), ...Attribute.h1.toJson()})
           ..insert('Styled', Attribute.bold.toJson())
           ..insert(' heading in ')
           ..insert('block quote', Attribute.italic.toJson())
-          ..insert('\n', {
-            ...Attribute.bq.toJson(),
-            ...Attribute.h1.toJson(),
-          })
+          ..insert('\n', {...Attribute.bq.toJson(), ...Attribute.h1.toJson()})
           ..insert('bold text', Attribute.bold.toJson())
           ..insert('\n', Attribute.bq.toJson())
           ..insert('text in italics', Attribute.italic.toJson())
@@ -509,10 +500,7 @@ void main() {
 
       runFor(Attribute.bold, 'This **house** is a **circus**\n\n');
       runFor(Attribute.italic, 'This _house_ is a _circus_\n\n');
-      runFor(
-        Attribute.strikethrough,
-        'This ~~house~~ is a ~~circus~~\n\n',
-      );
+      runFor(Attribute.strikethrough, 'This ~~house~~ is a ~~circus~~\n\n');
     });
 
     test('intersecting inline styles', () {
@@ -575,11 +563,7 @@ void main() {
     });
 
     test('heading styles', () {
-      void runFor(
-        Attribute<int> attribute,
-        String source,
-        String expected,
-      ) {
+      void runFor(Attribute<int> attribute, String source, String expected) {
         final delta = Delta()
           ..insert(source)
           ..insert('\n', attribute.toJson());
@@ -596,11 +580,7 @@ void main() {
     });
 
     test('block styles', () {
-      void runFor(
-        Attribute<String> attribute,
-        String source,
-        String expected,
-      ) {
+      void runFor(Attribute<String> attribute, String source, String expected) {
         final delta = Delta()
           ..insert(source)
           ..insert('\n', attribute.toJson());
@@ -618,10 +598,7 @@ void main() {
       final delta = Delta()
         ..insert('Hello')
         ..insert('\n', Attribute.ul.toJson());
-      expect(
-        markdownCodec.encode(Document.fromDelta(delta)),
-        '* Hello\n\n',
-      );
+      expect(markdownCodec.encode(Document.fromDelta(delta)), '* Hello\n\n');
       expect(
         MarkdownCodec(
           unorderedListToken: '-',
@@ -679,11 +656,7 @@ void main() {
     });
 
     test('multiline blocks', () {
-      void runFor(
-        Attribute<String> attribute,
-        String source,
-        String expected,
-      ) {
+      void runFor(Attribute<String> attribute, String source, String expected) {
         final delta = Delta()
           ..insert(source)
           ..insert('\n', attribute.toJson())

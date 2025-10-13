@@ -155,8 +155,7 @@ void main() {
       final doc = Delta()..insert('\n', ul);
       final actual = rule.apply(doc, 0, '\n');
       expect(actual, isNotNull);
-      final expected = Delta()
-        ..retain(1, Attribute.block.unset.toJson());
+      final expected = Delta()..retain(1, Attribute.block.unset.toJson());
       expect(actual, expected);
     });
 

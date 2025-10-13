@@ -34,8 +34,10 @@ class TestRenderingFlutterBinding extends BindingBase
   TestRenderingFlutterBinding({this.onErrors}) {
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.dumpErrorToConsole(details);
-      Zone.current.parent!
-          .handleUncaughtError(details.exception, details.stack!);
+      Zone.current.parent!.handleUncaughtError(
+        details.exception,
+        details.stack!,
+      );
     };
   }
 
@@ -95,8 +97,9 @@ class TestRenderingFlutterBinding extends BindingBase
   /// Creates and initializes the binding. This function is
   /// idempotent; calling it a second time will just return the
   /// previously-created instance.
-  static TestRenderingFlutterBinding ensureInitialized(
-      {VoidCallback? onErrors}) {
+  static TestRenderingFlutterBinding ensureInitialized({
+    VoidCallback? onErrors,
+  }) {
     if (_instance != null) {
       return _instance!;
     }
@@ -172,12 +175,14 @@ class TestRenderingFlutterBinding extends BindingBase
           if (_errors.isNotEmpty) {
             _errors.forEach(FlutterError.dumpErrorToConsole);
             fail(
-                'There are more errors than the test inspected using TestRenderingFlutterBinding.takeFlutterErrorDetails.');
+              'There are more errors than the test inspected using TestRenderingFlutterBinding.takeFlutterErrorDetails.',
+            );
           }
         } else {
           _errors.forEach(FlutterError.dumpErrorToConsole);
           fail(
-              'Caught error while rendering frame. See preceding logs for details.');
+            'Caught error while rendering frame. See preceding logs for details.',
+          );
         }
       }
     }
@@ -185,8 +190,10 @@ class TestRenderingFlutterBinding extends BindingBase
 
   @override
   void drawFrame() {
-    assert(phase != EnginePhase.build,
-        'rendering_tester does not support testing the build phase; use flutter_test instead');
+    assert(
+      phase != EnginePhase.build,
+      'rendering_tester does not support testing the build phase; use flutter_test instead',
+    );
     final FlutterExceptionHandler? oldErrorHandler = FlutterError.onError;
     FlutterError.onError = _errors.add;
     try {
@@ -212,8 +219,10 @@ class TestRenderingFlutterBinding extends BindingBase
       if (phase == EnginePhase.flushSemantics) {
         return;
       }
-      assert(phase == EnginePhase.flushSemantics ||
-          phase == EnginePhase.sendSemanticsUpdate);
+      assert(
+        phase == EnginePhase.flushSemantics ||
+            phase == EnginePhase.sendSemanticsUpdate,
+      );
     } finally {
       FlutterError.onError = oldErrorHandler;
       if (_errors.isNotEmpty) {
@@ -222,12 +231,14 @@ class TestRenderingFlutterBinding extends BindingBase
           if (_errors.isNotEmpty) {
             _errors.forEach(FlutterError.dumpErrorToConsole);
             fail(
-                'There are more errors than the test inspected using TestRenderingFlutterBinding.takeFlutterErrorDetails.');
+              'There are more errors than the test inspected using TestRenderingFlutterBinding.takeFlutterErrorDetails.',
+            );
           }
         } else {
           _errors.forEach(FlutterError.dumpErrorToConsole);
           fail(
-              'Caught error while rendering frame. See preceding logs for details.');
+            'Caught error while rendering frame. See preceding logs for details.',
+          );
         }
       }
     }
@@ -256,8 +267,9 @@ void layout(
   EnginePhase phase = EnginePhase.layout,
   VoidCallback? onErrors,
 }) {
-  assert(box.parent ==
-      null); // We stick the box in another, so you can't reuse it easily, sorry.
+  assert(
+    box.parent == null,
+  ); // We stick the box in another, so you can't reuse it easily, sorry.
 
   TestRenderingFlutterBinding.instance.renderView.child = null;
   if (constraints != null) {
@@ -277,10 +289,13 @@ void layout(
 /// Pumps a single frame.
 ///
 /// If `onErrors` is not null, it is set as [TestRenderingFlutterBinding.onError].
-void pumpFrame(
-    {EnginePhase phase = EnginePhase.layout, VoidCallback? onErrors}) {
-  assert(TestRenderingFlutterBinding.instance.renderView.child !=
-      null); // call layout() first!
+void pumpFrame({
+  EnginePhase phase = EnginePhase.layout,
+  VoidCallback? onErrors,
+}) {
+  assert(
+    TestRenderingFlutterBinding.instance.renderView.child != null,
+  ); // call layout() first!
 
   if (onErrors != null) {
     TestRenderingFlutterBinding.instance.onErrors = onErrors;
@@ -395,8 +410,11 @@ class FakeTicker implements Ticker {
 
   @override
   DiagnosticsNode describeForError(String name) {
-    return DiagnosticsProperty<Ticker>(name, this,
-        style: DiagnosticsTreeStyle.errorProperty);
+    return DiagnosticsProperty<Ticker>(
+      name,
+      this,
+      style: DiagnosticsTreeStyle.errorProperty,
+    );
   }
 }
 
@@ -404,7 +422,7 @@ class TestClipPaintingContext extends PaintingContext {
   TestClipPaintingContext() : this._(ContainerLayer());
 
   TestClipPaintingContext._(this._containerLayer)
-      : super(_containerLayer, Rect.zero);
+    : super(_containerLayer, Rect.zero);
 
   final ContainerLayer _containerLayer;
 
@@ -436,20 +454,29 @@ class TestPushLayerPaintingContext extends PaintingContext {
 
   @override
   void pushLayer(
-      ContainerLayer childLayer, PaintingContextCallback painter, Offset offset,
-      {Rect? childPaintBounds}) {
+    ContainerLayer childLayer,
+    PaintingContextCallback painter,
+    Offset offset, {
+    Rect? childPaintBounds,
+  }) {
     pushedLayers.add(childLayer);
-    super.pushLayer(childLayer, painter, offset,
-        childPaintBounds: childPaintBounds);
+    super.pushLayer(
+      childLayer,
+      painter,
+      offset,
+      childPaintBounds: childPaintBounds,
+    );
   }
 }
 
 // Absorbs errors that don't have "overflowed" in their error details.
 void absorbOverflowedErrors() {
-  final Iterable<FlutterErrorDetails> errorDetails =
-      TestRenderingFlutterBinding.instance.takeAllFlutterErrorDetails();
-  final Iterable<FlutterErrorDetails> filtered =
-      errorDetails.where((FlutterErrorDetails details) {
+  final Iterable<FlutterErrorDetails> errorDetails = TestRenderingFlutterBinding
+      .instance
+      .takeAllFlutterErrorDetails();
+  final Iterable<FlutterErrorDetails> filtered = errorDetails.where((
+    FlutterErrorDetails details,
+  ) {
     return !details.toString().contains('overflowed');
   });
   if (filtered.isNotEmpty) {
@@ -459,11 +486,15 @@ void absorbOverflowedErrors() {
 
 // Reports any FlutterErrors.
 void expectNoFlutterErrors() {
-  final Iterable<FlutterErrorDetails> errorDetails =
-      TestRenderingFlutterBinding.instance.takeAllFlutterErrorDetails();
+  final Iterable<FlutterErrorDetails> errorDetails = TestRenderingFlutterBinding
+      .instance
+      .takeAllFlutterErrorDetails();
   errorDetails.forEach(FlutterError.reportError);
 }
 
 RenderConstrainedBox get box200x200 => RenderConstrainedBox(
-    additionalConstraints:
-        const BoxConstraints.tightFor(height: 200.0, width: 200.0));
+  additionalConstraints: const BoxConstraints.tightFor(
+    height: 200.0,
+    width: 200.0,
+  ),
+);

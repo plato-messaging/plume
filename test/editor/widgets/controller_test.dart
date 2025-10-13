@@ -30,9 +30,10 @@ void main() {
 
     test('new selection reset toggled styles', () {
       controller = PlumeController(
-          document: Document.fromJson([
-        {'insert': 'Some text\n'}
-      ]));
+        document: Document.fromJson([
+          {'insert': 'Some text\n'},
+        ]),
+      );
       controller.formatText(2, 0, Attribute.bold);
       expect(controller.toggledStyles, Style.fromJson({'b': true}));
       controller.updateSelection(const TextSelection.collapsed(offset: 0));
@@ -132,30 +133,31 @@ void main() {
       controller.formatText(0, 0, Attribute.strikethrough);
       controller.formatText(0, 0, Attribute.inlineCode);
       controller.formatText(
-          0,
-          0,
-          Attribute.backgroundColor
-              .withColor(Colors.black.value32Bits));
+        0,
+        0,
+        Attribute.backgroundColor.withColor(Colors.black.value32Bits),
+      );
       controller.formatText(
-          0,
-          0,
-          Attribute.foregroundColor
-              .withColor(Colors.black.value32Bits));
+        0,
+        0,
+        Attribute.foregroundColor.withColor(Colors.black.value32Bits),
+      );
       expect(
-          controller.toggledStyles,
-          Style.fromJson({
-            ...Attribute.bold.toJson(),
-            ...Attribute.italic.toJson(),
-            ...Attribute.underline.toJson(),
-            ...Attribute.strikethrough.toJson(),
-            ...Attribute.inlineCode.toJson(),
-            ...Attribute.backgroundColor
-                .withColor(Colors.black.value32Bits)
-                .toJson(),
-            ...Attribute.foregroundColor
-                .withColor(Colors.black.value32Bits)
-                .toJson(),
-          }));
+        controller.toggledStyles,
+        Style.fromJson({
+          ...Attribute.bold.toJson(),
+          ...Attribute.italic.toJson(),
+          ...Attribute.underline.toJson(),
+          ...Attribute.strikethrough.toJson(),
+          ...Attribute.inlineCode.toJson(),
+          ...Attribute.backgroundColor
+              .withColor(Colors.black.value32Bits)
+              .toJson(),
+          ...Attribute.foregroundColor
+              .withColor(Colors.black.value32Bits)
+              .toJson(),
+        }),
+      );
     });
 
     test('replaceText only applies toggled styles to non new line parts', () {
@@ -261,30 +263,34 @@ void main() {
       expect(result.values, []);
     });
 
-    test('preserve inline format when replacing text from the first character',
-        () {
-      var notified = false;
-      controller.addListener(() {
-        notified = true;
-      });
-      controller.formatText(0, 0, Attribute.bold);
-      controller.replaceText(0, 0, 'Word');
-      expect(notified, isTrue);
-      expect(
-        controller.document.toDelta(),
-        Delta()
-          ..insert('Word', Attribute.bold.toJson())
-          ..insert('\n'),
-      );
-      // expect(controller.lastChangeSource, ChangeSource.local);
-    });
+    test(
+      'preserve inline format when replacing text from the first character',
+      () {
+        var notified = false;
+        controller.addListener(() {
+          notified = true;
+        });
+        controller.formatText(0, 0, Attribute.bold);
+        controller.replaceText(0, 0, 'Word');
+        expect(notified, isTrue);
+        expect(
+          controller.document.toDelta(),
+          Delta()
+            ..insert('Word', Attribute.bold.toJson())
+            ..insert('\n'),
+        );
+        // expect(controller.lastChangeSource, ChangeSource.local);
+      },
+    );
 
     group('clear', () {
       test('closes the document by default', () {
         fakeAsync((async) {
           final doc = controller.document;
-          controller.compose(Delta()..insert('word'),
-              selection: const TextSelection.collapsed(offset: 4));
+          controller.compose(
+            Delta()..insert('word'),
+            selection: const TextSelection.collapsed(offset: 4),
+          );
           async.flushTimers();
           var notified = false;
           controller.addListener(() => notified = true);
@@ -293,7 +299,9 @@ void main() {
           expect(controller.document.toDelta(), Delta()..insert('\n'));
           expect(doc.isClosed, isTrue);
           expect(
-              controller.selection, const TextSelection.collapsed(offset: 0));
+            controller.selection,
+            const TextSelection.collapsed(offset: 0),
+          );
           expect(controller.canUndo, isFalse);
           expect(controller.canRedo, isFalse);
           expect(controller.toggledStyles, Style());
@@ -304,8 +312,10 @@ void main() {
       test('closeDocument is false', () {
         fakeAsync((async) {
           final doc = controller.document;
-          controller.compose(Delta()..insert('word'),
-              selection: const TextSelection.collapsed(offset: 4));
+          controller.compose(
+            Delta()..insert('word'),
+            selection: const TextSelection.collapsed(offset: 4),
+          );
           async.flushTimers();
           var notified = false;
           controller.addListener(() => notified = true);
@@ -314,7 +324,9 @@ void main() {
           expect(controller.document.toDelta(), Delta()..insert('\n'));
           expect(doc.isClosed, isFalse);
           expect(
-              controller.selection, const TextSelection.collapsed(offset: 0));
+            controller.selection,
+            const TextSelection.collapsed(offset: 0),
+          );
           expect(controller.canUndo, isFalse);
           expect(controller.canRedo, isFalse);
           expect(controller.toggledStyles, Style());
@@ -344,20 +356,28 @@ void main() {
         fakeAsync((async) {
           controller.compose(Delta()..insert('Hello'));
           async.flushTimers();
-          controller.compose(Delta()
-            ..retain(5)
-            ..insert(' world'));
+          controller.compose(
+            Delta()
+              ..retain(5)
+              ..insert(' world'),
+          );
           async.flushTimers();
-          controller.compose(Delta()
-            ..retain(11)
-            ..insert(' ok'));
+          controller.compose(
+            Delta()
+              ..retain(11)
+              ..insert(' ok'),
+          );
           async.flushTimers();
           expect(controller.canUndo, true);
-          expect(controller.document.toDelta(),
-              Delta()..insert('Hello world ok\n'));
+          expect(
+            controller.document.toDelta(),
+            Delta()..insert('Hello world ok\n'),
+          );
           controller.undo();
           expect(
-              controller.document.toDelta(), Delta()..insert('Hello world\n'));
+            controller.document.toDelta(),
+            Delta()..insert('Hello world\n'),
+          );
           expect(controller.canUndo, true);
           controller.undo();
           expect(controller.document.toDelta(), Delta()..insert('Hello\n'));
@@ -392,16 +412,21 @@ void main() {
         fakeAsync((async) {
           const text = 'Some link https://plume-editor.github.io';
           const selection = TextSelection.collapsed(offset: text.length);
-          controller.replaceText(0, 0, text,
-              selection:
-                  const TextSelection.collapsed(offset: text.length - 1));
+          controller.replaceText(
+            0,
+            0,
+            text,
+            selection: const TextSelection.collapsed(offset: text.length - 1),
+          );
           async.flushTimers();
           controller.replaceText(text.length, 0, ' ', selection: selection);
           async.flushTimers();
           controller.undo();
           expect(controller.document.toDelta().length, 1);
-          expect(controller.document.toDelta()[0].data,
-              'Some link https://plume-editor.github.io\n');
+          expect(
+            controller.document.toDelta()[0].data,
+            'Some link https://plume-editor.github.io\n',
+          );
           expect(controller.document.toDelta()[0].attributes, isNull);
         });
       });
@@ -411,8 +436,12 @@ void main() {
         const selection = TextSelection.collapsed(offset: text.length);
         controller.replaceText(0, 0, text);
         controller.replaceText(text.length, 0, ' ', selection: selection);
-        controller.replaceText(text.length, 1, '',
-            selection: const TextSelection.collapsed(offset: text.length));
+        controller.replaceText(
+          text.length,
+          1,
+          '',
+          selection: const TextSelection.collapsed(offset: text.length),
+        );
         final documentDelta = controller.document.toDelta();
         expect(documentDelta.length, 1);
         expect(documentDelta.first.attributes, isNull);
@@ -424,10 +453,18 @@ void main() {
         controller.replaceText(0, 0, text);
         controller.replaceText(text.length, 0, ' ', selection: selection);
         controller.replaceText(text.length + 1, 0, ' ', selection: selection);
-        controller.replaceText(text.length + 1, 1, '',
-            selection: const TextSelection.collapsed(offset: text.length + 1));
-        controller.replaceText(text.length, 1, '',
-            selection: const TextSelection.collapsed(offset: text.length));
+        controller.replaceText(
+          text.length + 1,
+          1,
+          '',
+          selection: const TextSelection.collapsed(offset: text.length + 1),
+        );
+        controller.replaceText(
+          text.length,
+          1,
+          '',
+          selection: const TextSelection.collapsed(offset: text.length),
+        );
         final attributes = controller.document.toDelta().toList()[1].attributes;
         expect(attributes!.containsKey(Attribute.link.key), isTrue);
         expect(controller.selection, selection);
@@ -439,8 +476,12 @@ void main() {
         controller.replaceText(0, 0, text);
         controller.replaceText(text.length, 0, ' ', selection: selection);
         controller.replaceText(0, 0, '', selection: selection);
-        controller.replaceText(text.length, 1, '',
-            selection: const TextSelection.collapsed(offset: text.length));
+        controller.replaceText(
+          text.length,
+          1,
+          '',
+          selection: const TextSelection.collapsed(offset: text.length),
+        );
         final expDelta = Delta()..insert('$text \n');
         expect(controller.document.toDelta(), expDelta);
         expect(controller.selection, selection);
@@ -453,10 +494,14 @@ void main() {
         controller.replaceText(text.length, 0, ' ', selection: selection);
         final attributes = controller.document.toDelta().toList()[1].attributes;
         expect(attributes!.containsKey(Attribute.block.key), isTrue);
-        expect(attributes[Attribute.block.key],
-            Attribute.block.bulletList.value);
-        expect(controller.selection,
-            const TextSelection.collapsed(offset: text.length - 1));
+        expect(
+          attributes[Attribute.block.key],
+          Attribute.block.bulletList.value,
+        );
+        expect(
+          controller.selection,
+          const TextSelection.collapsed(offset: text.length - 1),
+        );
       });
 
       test('Undo markdown shortcuts', () {
@@ -464,43 +509,73 @@ void main() {
         const selection = TextSelection.collapsed(offset: text.length);
         controller.replaceText(0, 0, '$text\n');
         controller.replaceText(text.length, 0, ' ', selection: selection);
-        controller.replaceText('Some line\n'.length - 1, 1, '',
-            selection: const TextSelection.collapsed(offset: text.length));
+        controller.replaceText(
+          'Some line\n'.length - 1,
+          1,
+          '',
+          selection: const TextSelection.collapsed(offset: text.length),
+        );
         final documentDelta = controller.document.toDelta();
         expect(documentDelta.length, 1);
         expect(documentDelta.first.attributes, isNull);
         expect(
-            controller.selection,
-            const TextSelection.collapsed(
-                offset: text.length + 1 /* added space*/));
+          controller.selection,
+          const TextSelection.collapsed(
+            offset: text.length + 1 /* added space*/,
+          ),
+        );
       });
       test('Emoji shortcuts', () {
         controller.replaceText(0, 0, ':');
-        controller.replaceText(1, 0, ')',
-            selection: TextSelection.collapsed(offset: 1));
+        controller.replaceText(
+          1,
+          0,
+          ')',
+          selection: TextSelection.collapsed(offset: 1),
+        );
         expect(controller.document.toDelta(), Delta()..insert('😊\n'));
-        expect(controller.selection,
-            const TextSelection.collapsed(offset: '😊'.length));
+        expect(
+          controller.selection,
+          const TextSelection.collapsed(offset: '😊'.length),
+        );
       });
 
       test('Consecutive emoji shortcuts', () {
         controller.replaceText(0, 0, ':');
-        controller.replaceText(1, 0, ')',
-            selection: TextSelection.collapsed(offset: 1));
+        controller.replaceText(
+          1,
+          0,
+          ')',
+          selection: TextSelection.collapsed(offset: 1),
+        );
         controller.replaceText(2, 0, ':');
-        controller.replaceText(3, 0, ')',
-            selection: TextSelection.collapsed(offset: 3));
+        controller.replaceText(
+          3,
+          0,
+          ')',
+          selection: TextSelection.collapsed(offset: 3),
+        );
         expect(controller.document.toDelta(), Delta()..insert('😊😊\n'));
-        expect(controller.selection,
-            const TextSelection.collapsed(offset: '😊😊'.length));
+        expect(
+          controller.selection,
+          const TextSelection.collapsed(offset: '😊😊'.length),
+        );
       });
 
       test('Undo emoji shortcuts', () {
         controller.replaceText(0, 0, ':');
-        controller.replaceText(1, 0, ')',
-            selection: TextSelection.collapsed(offset: 1));
-        controller.replaceText(0, '😊'.length, '',
-            selection: const TextSelection.collapsed(offset: 0));
+        controller.replaceText(
+          1,
+          0,
+          ')',
+          selection: TextSelection.collapsed(offset: 1),
+        );
+        controller.replaceText(
+          0,
+          '😊'.length,
+          '',
+          selection: const TextSelection.collapsed(offset: 0),
+        );
         expect(controller.document.toDelta(), Delta()..insert(':)\n'));
         expect(controller.selection, const TextSelection.collapsed(offset: 2));
       });

@@ -16,7 +16,7 @@ void main() {
 
       test('plain text', () {
         final doc = Document.fromJson([
-          {'insert': 'Something in the way mmmm...\n'}
+          {'insert': 'Something in the way mmmm...\n'},
         ]);
         expect(codec.encode(doc), 'Something in the way mmmm...');
       });
@@ -26,12 +26,14 @@ void main() {
           {'insert': 'Something '},
           {
             'insert': 'in the way',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
-          {'insert': ' mmmm...\n'}
+          {'insert': ' mmmm...\n'},
         ]);
         expect(
-            codec.encode(doc), 'Something <strong>in the way</strong> mmmm...');
+          codec.encode(doc),
+          'Something <strong>in the way</strong> mmmm...',
+        );
       });
 
       test('background color', () {
@@ -39,12 +41,14 @@ void main() {
           {'insert': 'Something '},
           {
             'insert': 'in the way',
-            'attributes': {'bg': 0xFFFF0000}
+            'attributes': {'bg': 0xFFFF0000},
           },
-          {'insert': ' mmmm...\n'}
+          {'insert': ' mmmm...\n'},
         ]);
-        expect(codec.encode(doc),
-            'Something <span style="background-color: rgba(255,0,0,1.0)">in the way</span> mmmm...');
+        expect(
+          codec.encode(doc),
+          'Something <span style="background-color: rgba(255,0,0,1.0)">in the way</span> mmmm...',
+        );
       });
 
       test('text color', () {
@@ -52,52 +56,58 @@ void main() {
           {'insert': 'Something '},
           {
             'insert': 'in the way',
-            'attributes': {'fg': 0xFFFF0000}
+            'attributes': {'fg': 0xFFFF0000},
           },
-          {'insert': ' mmmm...\n'}
+          {'insert': ' mmmm...\n'},
         ]);
-        expect(codec.encode(doc),
-            'Something <span style="color: rgba(255,0,0,1.0)">in the way</span> mmmm...');
+        expect(
+          codec.encode(doc),
+          'Something <span style="color: rgba(255,0,0,1.0)">in the way</span> mmmm...',
+        );
       });
 
       test('italic + code + underlined + strikethrough text', () {
         final doc = Document.fromJson([
           {
             'insert': 'Something ',
-            'attributes': {'s': true, 'u': true}
+            'attributes': {'s': true, 'u': true},
           },
           {
             'insert': 'in the way',
-            'attributes': {'i': true}
+            'attributes': {'i': true},
           },
           {
             'insert': ' mmmm...',
-            'attributes': {'c': true}
+            'attributes': {'c': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
-        expect(codec.encode(doc),
-            '<del><u>Something </u></del><em>in the way</em><code> mmmm...</code>');
+        expect(
+          codec.encode(doc),
+          '<del><u>Something </u></del><em>in the way</em><code> mmmm...</code>',
+        );
       });
 
       test('embedded inline attributes text', () {
         final doc = Document.fromJson([
           {
             'insert': 'Something ',
-            'attributes': {'a': 'https://wikipedia.org', 'u': true}
+            'attributes': {'a': 'https://wikipedia.org', 'u': true},
           },
           {
             'insert': 'in the way',
-            'attributes': {'i': true, 'u': true}
+            'attributes': {'i': true, 'u': true},
           },
           {
             'insert': ' mmmm...',
-            'attributes': {'u': true}
+            'attributes': {'u': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
-        expect(codec.encode(doc),
-            '<u><a href="https://wikipedia.org">Something </a><em>in the way</em> mmmm...</u>');
+        expect(
+          codec.encode(doc),
+          '<u><a href="https://wikipedia.org">Something </a><em>in the way</em> mmmm...</u>',
+        );
       });
 
       test('tangled inline tags', () {
@@ -105,20 +115,22 @@ void main() {
           {'insert': 'AAA'},
           {
             'insert': 'BB',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {
             'insert': 'B',
-            'attributes': {'b': true, 's': true}
+            'attributes': {'b': true, 's': true},
           },
           {
             'insert': 'CCC',
-            'attributes': {'s': true}
+            'attributes': {'s': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
-        expect(codec.encode(doc),
-            'AAA<strong>BB<del>B</del></strong><del>CCC</del>');
+        expect(
+          codec.encode(doc),
+          'AAA<strong>BB<del>B</del></strong><del>CCC</del>',
+        );
       });
 
       test('html escaping', () {
@@ -128,12 +140,13 @@ void main() {
                 'HTML special characters like < > & are escaped, but not \' " /.\n',
           },
         ]);
-        expect(codec.encode(doc),
-            'HTML special characters like &lt; &gt; &amp; are escaped, but not \' " /.');
+        expect(
+          codec.encode(doc),
+          'HTML special characters like &lt; &gt; &amp; are escaped, but not \' " /.',
+        );
       });
 
-      test('multiple line breaks in a row should render as actual line breaks',
-          () {
+      test('multiple line breaks in a row should render as actual line breaks', () {
         // This has three blank lines between the Line 1/Line2 pair.
         // The Line3/Line4 pair does not have blank lines, but both pairs should render to the
         // same height. The Line5/Line6 pair has 3 blank lines but also were emboldened in Plume.
@@ -142,36 +155,37 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert':
-                'Line 1\n\n\n\nLine 2\nLine3\nnot blank1\nnot blank2\nnot blank3\nLine 4\n'
+                'Line 1\n\n\n\nLine 2\nLine3\nnot blank1\nnot blank2\nnot blank3\nLine 4\n',
           },
           {
             'insert': 'Line 5',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': '\n \n\n\n'},
           {
             'insert': 'Line 6',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         expect(
-            codec.encode(doc),
-            '<p>Line 1</p>'
-            '<p><br></p>'
-            '<p><br></p>'
-            '<p><br></p>'
-            '<p>Line 2</p>'
-            '<p>Line3</p>'
-            '<p>not blank1</p>'
-            '<p>not blank2</p>'
-            '<p>not blank3</p>'
-            '<p>Line 4</p>'
-            '<p><strong>Line 5</strong></p>'
-            '<p> <br></p>'
-            '<p><br></p>'
-            '<p><br></p>'
-            '<p><strong>Line 6</strong></p>');
+          codec.encode(doc),
+          '<p>Line 1</p>'
+          '<p><br></p>'
+          '<p><br></p>'
+          '<p><br></p>'
+          '<p>Line 2</p>'
+          '<p>Line3</p>'
+          '<p>not blank1</p>'
+          '<p>not blank2</p>'
+          '<p>not blank3</p>'
+          '<p>Line 4</p>'
+          '<p><strong>Line 5</strong></p>'
+          '<p> <br></p>'
+          '<p><br></p>'
+          '<p><br></p>'
+          '<p><strong>Line 6</strong></p>',
+        );
       });
 
       test('several styled lines in a row', () {
@@ -179,37 +193,38 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Bold',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': '\n'},
           {
             'insert': 'Italic',
-            'attributes': {'i': true}
+            'attributes': {'i': true},
           },
           {'insert': '\n'},
           {
             'insert': 'Bold',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': '\n'},
           {
             'insert': 'Italic',
-            'attributes': {'i': true}
+            'attributes': {'i': true},
           },
           {'insert': '\n'},
           {
             'insert': 'Bold',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': '\n'},
         ]);
         expect(
-            codec.encode(doc),
-            '<p><strong>Bold</strong></p>'
-            '<p><em>Italic</em></p>'
-            '<p><strong>Bold</strong></p>'
-            '<p><em>Italic</em></p>'
-            '<p><strong>Bold</strong></p>');
+          codec.encode(doc),
+          '<p><strong>Bold</strong></p>'
+          '<p><em>Italic</em></p>'
+          '<p><strong>Bold</strong></p>'
+          '<p><em>Italic</em></p>'
+          '<p><strong>Bold</strong></p>',
+        );
       });
     });
 
@@ -219,7 +234,7 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 1}
+            'attributes': {'heading': 1},
           },
         ]);
 
@@ -231,8 +246,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 2}
-          }
+            'attributes': {'heading': 2},
+          },
         ]);
 
         expect(codec.encode(doc), '<h2>Hello World!</h2>');
@@ -243,8 +258,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 3}
-          }
+            'attributes': {'heading': 3},
+          },
         ]);
 
         expect(codec.encode(doc), '<h3>Hello World!</h3>');
@@ -255,8 +270,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 4}
-          }
+            'attributes': {'heading': 4},
+          },
         ]);
 
         expect(codec.encode(doc), '<h4>Hello World!</h4>');
@@ -267,8 +282,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 5}
-          }
+            'attributes': {'heading': 5},
+          },
         ]);
 
         expect(codec.encode(doc), '<h5>Hello World!</h5>');
@@ -279,8 +294,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 6}
-          }
+            'attributes': {'heading': 6},
+          },
         ]);
 
         expect(codec.encode(doc), '<h6>Hello World!</h6>');
@@ -300,17 +315,19 @@ void main() {
           final doc = Document.fromJson([
             {
               'insert': 'Hello World!',
-              'attributes': {'b': true}
+              'attributes': {'b': true},
             },
             {'insert': '\n'},
             {
               'insert': 'Bye World!',
-              'attributes': {'b': true}
+              'attributes': {'b': true},
             },
-            {'insert': '\n'}
+            {'insert': '\n'},
           ]);
-          expect(codec.encode(doc),
-              '<p><strong>Hello World!</strong></p><p><strong>Bye World!</strong></p>');
+          expect(
+            codec.encode(doc),
+            '<p><strong>Hello World!</strong></p><p><strong>Bye World!</strong></p>',
+          );
         });
       });
 
@@ -320,12 +337,14 @@ void main() {
             {'insert': 'Hello World!'},
             {
               'insert': '\n',
-              'attributes': {'block': 'quote'}
-            }
+              'attributes': {'block': 'quote'},
+            },
           ]);
 
-          expect(codec.encode(doc),
-              '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>');
+          expect(
+            codec.encode(doc),
+            '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>',
+          );
         });
 
         test('Consecutive with same style', () {
@@ -333,19 +352,20 @@ void main() {
             {'insert': 'Hello World!'},
             {
               'insert': '\n',
-              'attributes': {'block': 'quote'}
+              'attributes': {'block': 'quote'},
             },
             {'insert': 'Hello World!'},
             {
               'insert': '\n',
-              'attributes': {'block': 'quote'}
-            }
+              'attributes': {'block': 'quote'},
+            },
           ]);
 
           expect(
-              codec.encode(doc),
-              '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>'
-              '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>');
+            codec.encode(doc),
+            '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>'
+            '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>',
+          );
         });
 
         test('Consecutive with different styles', () {
@@ -353,19 +373,20 @@ void main() {
             {'insert': 'Hello World!'},
             {
               'insert': '\n',
-              'attributes': {'block': 'quote'}
+              'attributes': {'block': 'quote'},
             },
             {'insert': 'Hello World!'},
             {
               'insert': '\n',
-              'attributes': {'block': 'quote', 'alignment': 'center'}
-            }
+              'attributes': {'block': 'quote', 'alignment': 'center'},
+            },
           ]);
 
           expect(
-              codec.encode(doc),
-              '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>'
-              '<blockquote style="text-align:center;margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>');
+            codec.encode(doc),
+            '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>'
+            '<blockquote style="text-align:center;margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Hello World!</blockquote>',
+          );
         });
       });
 
@@ -374,18 +395,18 @@ void main() {
           {'insert': 'void main() {'},
           {
             'insert': '\n\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': '  print("Hello World!");'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': '}'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
-          }
+            'attributes': {'block': 'code'},
+          },
         ]);
 
         expect(
@@ -403,7 +424,7 @@ void main() {
           {'insert': 'some code'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': 'Hello world\n'},
         ]);
@@ -419,13 +440,13 @@ void main() {
           {'insert': 'some code'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {
             'insert': 'Hello world',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         expect(
           codec.encode(doc),
@@ -439,17 +460,17 @@ void main() {
           {'insert': 'Hello world\n'},
           {
             'insert': 'Another',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': ' one\n'},
           {'insert': 'some '},
           {
             'insert': 'quote',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {
             'insert': '\n',
-            'attributes': {'block': 'quote'}
+            'attributes': {'block': 'quote'},
           },
         ]);
         expect(
@@ -464,16 +485,16 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert':
-                'Hello world\nHello world\nHello world\nHello world\nsome code'
+                'Hello world\nHello world\nHello world\nHello world\nsome code',
           },
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': 'Hello world\nsome quote'},
           {
             'insert': '\n',
-            'attributes': {'block': 'quote'}
+            'attributes': {'block': 'quote'},
           },
           {'insert': 'Hello world\n'},
         ]);
@@ -495,38 +516,42 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'This is Plume!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
-          }
+            'attributes': {'block': 'ol'},
+          },
         ]);
 
-        expect(codec.encode(doc),
-            '<ol><li>Hello World!</li><li>This is Plume!</li></ol>');
+        expect(
+          codec.encode(doc),
+          '<ol><li>Hello World!</li><li>This is Plume!</li></ol>',
+        );
       });
 
       test('List with bold', () {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'This is Plume!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
-          }
+            'attributes': {'block': 'ol'},
+          },
         ]);
 
-        expect(codec.encode(doc),
-            '<ol><li><strong>Hello World!</strong></li><li>This is Plume!</li></ol>');
+        expect(
+          codec.encode(doc),
+          '<ol><li><strong>Hello World!</strong></li><li>This is Plume!</li></ol>',
+        );
       });
 
       test('Unordered list', () {
@@ -534,17 +559,19 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
+            'attributes': {'block': 'ul'},
           },
           {'insert': 'This is Plume!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
-          }
+            'attributes': {'block': 'ul'},
+          },
         ]);
 
-        expect(codec.encode(doc),
-            '<ul><li>Hello World!</li><li>This is Plume!</li></ul>');
+        expect(
+          codec.encode(doc),
+          '<ul><li>Hello World!</li><li>This is Plume!</li></ul>',
+        );
       });
 
       test('Successive list', () {
@@ -552,23 +579,23 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'This is Plume!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': '\nHello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
+            'attributes': {'block': 'ul'},
           },
           {'insert': 'This is Plume!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
-          }
+            'attributes': {'block': 'ul'},
+          },
         ]);
 
         expect(
@@ -590,21 +617,22 @@ void main() {
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'cl', 'checked': true}
+            'attributes': {'block': 'cl', 'checked': true},
           },
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'cl'}
-          }
+            'attributes': {'block': 'cl'},
+          },
         ]);
 
         expect(
-            codec.encode(doc),
-            '<div class="checklist">'
-            '<div class="checklist-item"><input type="checkbox" checked disabled><label>&nbsp;item</label></div>'
-            '<div class="checklist-item"><input type="checkbox" disabled><label>&nbsp;item</label></div>'
-            '</div>');
+          codec.encode(doc),
+          '<div class="checklist">'
+          '<div class="checklist-item"><input type="checkbox" checked disabled><label>&nbsp;item</label></div>'
+          '<div class="checklist-item"><input type="checkbox" disabled><label>&nbsp;item</label></div>'
+          '</div>',
+        );
       });
 
       test('Checklist followed by a link', () {
@@ -612,28 +640,29 @@ void main() {
           {'insert': 'Check - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'cl', 'checked': true}
+            'attributes': {'block': 'cl', 'checked': true},
           },
           {'insert': 'Check - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'cl'}
+            'attributes': {'block': 'cl'},
           },
           {'insert': 'A link to a '},
           {
             'insert': 'site',
-            'attributes': {'a': 'https://example.com'}
+            'attributes': {'a': 'https://example.com'},
           },
-          {'insert': '.\n'}
+          {'insert': '.\n'},
         ]);
 
         expect(
-            codec.encode(doc),
-            '<div class="checklist">'
-            '<div class="checklist-item"><input type="checkbox" checked disabled><label>&nbsp;Check - 1</label></div>'
-            '<div class="checklist-item"><input type="checkbox" disabled><label>&nbsp;Check - 2</label></div>'
-            '</div>'
-            '<p>A link to a <a href="https://example.com">site</a>.</p>');
+          codec.encode(doc),
+          '<div class="checklist">'
+          '<div class="checklist-item"><input type="checkbox" checked disabled><label>&nbsp;Check - 1</label></div>'
+          '<div class="checklist-item"><input type="checkbox" disabled><label>&nbsp;Check - 2</label></div>'
+          '</div>'
+          '<p>A link to a <a href="https://example.com">site</a>.</p>',
+        );
       });
 
       test('Checklist followed by a paragraph', () {
@@ -641,22 +670,23 @@ void main() {
           {'insert': 'Check - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'cl', 'checked': true}
+            'attributes': {'block': 'cl', 'checked': true},
           },
           {'insert': 'Check - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'cl'}
+            'attributes': {'block': 'cl'},
           },
           {'insert': 'Paragraph\n'},
         ]);
 
         expect(
-            codec.encode(doc),
-            '<div class="checklist">'
-            '<div class="checklist-item"><input type="checkbox" checked disabled><label>&nbsp;Check - 1</label></div>'
-            '<div class="checklist-item"><input type="checkbox" disabled><label>&nbsp;Check - 2</label></div></div>'
-            '<p>Paragraph</p>');
+          codec.encode(doc),
+          '<div class="checklist">'
+          '<div class="checklist-item"><input type="checkbox" checked disabled><label>&nbsp;Check - 1</label></div>'
+          '<div class="checklist-item"><input type="checkbox" disabled><label>&nbsp;Check - 2</label></div></div>'
+          '<p>Paragraph</p>',
+        );
       });
     });
 
@@ -667,11 +697,13 @@ void main() {
             'insert': 'Hello World!',
             'attributes': {'a': 'http://fake.link'},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
 
         expect(
-            codec.encode(doc), '<a href="http://fake.link">Hello World!</a>');
+          codec.encode(doc),
+          '<a href="http://fake.link">Hello World!</a>',
+        );
       });
 
       test('Italic', () {
@@ -680,11 +712,13 @@ void main() {
             'insert': 'Hello World!',
             'attributes': {'a': 'http://fake.link', 'i': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
 
-        expect(codec.encode(doc),
-            '<a href="http://fake.link"><em>Hello World!</em></a>');
+        expect(
+          codec.encode(doc),
+          '<a href="http://fake.link"><em>Hello World!</em></a>',
+        );
       });
 
       test('In list', () {
@@ -696,11 +730,13 @@ void main() {
           {
             'insert': '\n',
             'attributes': {'block': 'ul'},
-          }
+          },
         ]);
 
-        expect(codec.encode(doc),
-            '<ul><li><a href="http://fake.link">Hello World!</a></li></ul>');
+        expect(
+          codec.encode(doc),
+          '<ul><li><a href="http://fake.link">Hello World!</a></li></ul>',
+        );
       });
     });
 
@@ -712,12 +748,14 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'direction': 'rtl'}
-          }
+            'attributes': {'direction': 'rtl'},
+          },
         ]);
 
-        expect(codec.encode(doc),
-            '<p>Hello World!</p><p dir="rtl">Hello World!</p>');
+        expect(
+          codec.encode(doc),
+          '<p>Hello World!</p><p dir="rtl">Hello World!</p>',
+        );
       });
 
       test('In list', () {
@@ -733,13 +771,15 @@ void main() {
             'attributes': {
               'direction': 'rtl',
               'block': 'ol',
-              'alignment': 'center'
+              'alignment': 'center',
             },
           },
         ]);
 
-        expect(codec.encode(doc),
-            '<ol><li>Hello World!</li><li dir="rtl" style="text-align:center;">Hello World!</li></ol>');
+        expect(
+          codec.encode(doc),
+          '<ol><li>Hello World!</li><li dir="rtl" style="text-align:center;">Hello World!</li></ol>',
+        );
       });
     });
 
@@ -749,11 +789,13 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'center'}
-          }
+            'attributes': {'alignment': 'center'},
+          },
         ]);
-        expect(codec.encode(doc),
-            '<p style="text-align:center;">Hello World!</p>');
+        expect(
+          codec.encode(doc),
+          '<p style="text-align:center;">Hello World!</p>',
+        );
       });
 
       test('all paragraph alignments', () {
@@ -761,23 +803,23 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': null}
+            'attributes': {'alignment': null},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'right'}
+            'attributes': {'alignment': 'right'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'center'}
+            'attributes': {'alignment': 'center'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'justify'}
-          }
+            'attributes': {'alignment': 'justify'},
+          },
         ]);
         expect(
           codec.encode(doc),
@@ -793,32 +835,33 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': null}
+            'attributes': {'block': 'ol', 'alignment': null},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': 'right'}
+            'attributes': {'block': 'ol', 'alignment': 'right'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': 'center'}
+            'attributes': {'block': 'ol', 'alignment': 'center'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': 'justify'}
-          }
+            'attributes': {'block': 'ol', 'alignment': 'justify'},
+          },
         ]);
         expect(
-            codec.encode(doc),
-            '<ol>'
-            '<li>Hello World!</li>'
-            '<li style="text-align:right;">Hello World!</li>'
-            '<li style="text-align:center;">Hello World!</li>'
-            '<li style="text-align:justify;">Hello World!</li>'
-            '</ol>');
+          codec.encode(doc),
+          '<ol>'
+          '<li>Hello World!</li>'
+          '<li style="text-align:right;">Hello World!</li>'
+          '<li style="text-align:center;">Hello World!</li>'
+          '<li style="text-align:justify;">Hello World!</li>'
+          '</ol>',
+        );
       });
     });
 
@@ -828,49 +871,50 @@ void main() {
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
         ]);
 
         expect(
-            codec.encode(doc),
-            '<ol>'
-            '<li>item</li>'
-            '<ul>'
-            '<li>sub-item</li>'
-            '<ol>'
-            '<li>sub-sub-item</li>'
-            '<li>sub-sub-item</li>'
-            '</ol>'
-            '<li>sub-item</li>'
-            '</ul>'
-            '<li>item</li>'
-            '</ol>');
+          codec.encode(doc),
+          '<ol>'
+          '<li>item</li>'
+          '<ul>'
+          '<li>sub-item</li>'
+          '<ol>'
+          '<li>sub-sub-item</li>'
+          '<li>sub-sub-item</li>'
+          '</ol>'
+          '<li>sub-item</li>'
+          '</ul>'
+          '<li>item</li>'
+          '</ol>',
+        );
       });
 
       test('Multiple nested lists - 4 levels', () {
@@ -878,62 +922,62 @@ void main() {
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 2}
+            'attributes': {'block': 'ul', 'indent': 2},
           },
           {'insert': 'sub-sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 3}
+            'attributes': {'block': 'ol', 'indent': 3},
           },
           {'insert': 'sub-sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 3}
+            'attributes': {'block': 'ol', 'indent': 3},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 2}
+            'attributes': {'block': 'ul', 'indent': 2},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
         ]);
 
@@ -972,27 +1016,29 @@ void main() {
           {'insert': 'Level 1 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Level 1 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Level 2 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Level 2 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
-          {'insert': 'No longer in list\n'}
+          {'insert': 'No longer in list\n'},
         ]);
-        expect(codec.encode(doc),
-            '<p>Test</p><ol><li>Level 1 - 1</li><li>Level 1 - 2</li><ol><li>Level 2 - 1</li><li>Level 2 - 2</li></ol></ol><p>No longer in list</p>');
+        expect(
+          codec.encode(doc),
+          '<p>Test</p><ol><li>Level 1 - 1</li><li>Level 1 - 2</li><ol><li>Level 2 - 1</li><li>Level 2 - 2</li></ol></ol><p>No longer in list</p>',
+        );
       });
 
       test('Extreme multi-level lists with trailing paragraph', () {
@@ -1001,44 +1047,44 @@ void main() {
           {'insert': 'Level 1 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Level 1 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Level 2 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Level 2 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Level 3 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'Level 3 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'Level 4 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 3}
+            'attributes': {'block': 'ol', 'indent': 3},
           },
           {'insert': 'Level 4 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 3}
+            'attributes': {'block': 'ol', 'indent': 3},
           },
-          {'insert': 'No longer in list\n'}
+          {'insert': 'No longer in list\n'},
         ]);
         expect(
           codec.encode(doc),
@@ -1069,37 +1115,39 @@ void main() {
           {'insert': 'Level 1 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Level 1 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Level 2 - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Level 2 - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'No longer in list\n'},
           {'insert': 'In a new list - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'In a new list - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
         ]);
-        expect(codec.encode(doc),
-            '<p>Test</p><ol><li>Level 1 - 1</li><li>Level 1 - 2</li><ol><li>Level 2 - 1</li><li>Level 2 - 2</li></ol></ol><p>No longer in list</p><ol><li>In a new list - 1</li><li>In a new list - 2</li></ol>');
+        expect(
+          codec.encode(doc),
+          '<p>Test</p><ol><li>Level 1 - 1</li><li>Level 1 - 2</li><ol><li>Level 2 - 1</li><li>Level 2 - 2</li></ol></ol><p>No longer in list</p><ol><li>In a new list - 1</li><li>In a new list - 2</li></ol>',
+        );
       });
 
       test('Successive multi-level lists', () {
@@ -1107,33 +1155,33 @@ void main() {
           {'insert': 'Unordered'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
+            'attributes': {'block': 'ul'},
           },
           {'insert': 'Sub - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Ordered - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Sub - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'Sub - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'Ordered - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
-          }
+            'attributes': {'block': 'ol'},
+          },
         ]);
         expect(
           codec.encode(doc),
@@ -1159,38 +1207,38 @@ void main() {
           {'insert': 'Unordered'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
+            'attributes': {'block': 'ul'},
           },
           {'insert': 'Sub - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Sub - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': '\n'},
           {'insert': 'Ordered - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Sub - 1'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Sub - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 1}
+            'attributes': {'block': 'ol', 'indent': 1},
           },
           {'insert': 'Ordered - 2'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
         ]);
         expect(
@@ -1219,13 +1267,14 @@ void main() {
           {'insert': 'Something in the way...\nSomething in the way...'},
           {
             'insert': '\n',
-            'attributes': {'indent': 1}
+            'attributes': {'indent': 1},
           },
         ]);
         expect(
-            codec.encode(doc),
-            '<p>Something in the way...</p>'
-            '<p style="padding-left:32px;">Something in the way...</p>');
+          codec.encode(doc),
+          '<p>Something in the way...</p>'
+          '<p style="padding-left:32px;">Something in the way...</p>',
+        );
       });
 
       test('Quotes with indent', () {
@@ -1233,13 +1282,14 @@ void main() {
           {'insert': 'Something in the way...\nSomething in the way...'},
           {
             'insert': '\n',
-            'attributes': {'block': 'quote', 'indent': 1}
+            'attributes': {'block': 'quote', 'indent': 1},
           },
         ]);
         expect(
-            codec.encode(doc),
-            '<p>Something in the way...</p>'
-            '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;padding-left:32px;">Something in the way...</blockquote>');
+          codec.encode(doc),
+          '<p>Something in the way...</p>'
+          '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;padding-left:32px;">Something in the way...</blockquote>',
+        );
       });
 
       test('Quote with embedded heading', () {
@@ -1247,17 +1297,19 @@ void main() {
           {'insert': 'Quote'},
           {
             'insert': '\n',
-            'attributes': {'block': 'quote'}
+            'attributes': {'block': 'quote'},
           },
           {'insert': 'header'},
           {
             'insert': '\n',
-            'attributes': {'block': 'quote', 'heading': 1}
+            'attributes': {'block': 'quote', 'heading': 1},
           },
           {'insert': 'Not in quote\n'},
         ]);
-        expect(codec.encode(doc),
-            '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Quote</blockquote><blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;"><h1 style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">header</blockquote></h1><p>Not in quote</p>');
+        expect(
+          codec.encode(doc),
+          '<blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">Quote</blockquote><blockquote style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;"><h1 style="margin: 0 0 0 0.8ex; border-left: 1px solid rgb(204, 204, 204); padding-left: 1ex;">header</blockquote></h1><p>Not in quote</p>',
+        );
       });
     });
 
@@ -1266,7 +1318,7 @@ void main() {
         final html =
             '<img src="http://fake.link/image.png" style="max-width: 100%; object-fit: contain;">';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(0, BlockEmbed.image('http://fake.link/image.png'));
 
@@ -1277,12 +1329,15 @@ void main() {
         final html =
             '<img src="http://fake.link/image.png" style="max-width: 100%; object-fit: cover;">';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(
-            0,
-            BlockEmbed.image('http://fake.link/image.png',
-                data: {'style': 'max-width: 100%; object-fit: cover;'}));
+          0,
+          BlockEmbed.image(
+            'http://fake.link/image.png',
+            data: {'style': 'max-width: 100%; object-fit: cover;'},
+          ),
+        );
 
         expect(codec.encode(doc), html);
       });
@@ -1290,7 +1345,7 @@ void main() {
       test('Line', () {
         final html = '<hr>';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(0, BlockEmbed.horizontalRule);
 
@@ -1309,7 +1364,7 @@ void main() {
       test('Plain paragraph', () {
         final html = 'Hello World!';
         final doc = Document.fromJson([
-          {'insert': 'Hello World!\n'}
+          {'insert': 'Hello World!\n'},
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1321,9 +1376,9 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello',
-            'attributes': {'bg': 0xffff0000}
+            'attributes': {'bg': 0xffff0000},
           },
-          {'insert': ' world!\n'}
+          {'insert': ' world!\n'},
         ]);
 
         expect(codec.decode(htmlRGBA).toDelta(), doc.toDelta());
@@ -1335,9 +1390,9 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello',
-            'attributes': {'fg': 0xffff0000}
+            'attributes': {'fg': 0xffff0000},
           },
-          {'insert': ' world!\n'}
+          {'insert': ' world!\n'},
         ]);
 
         expect(codec.decode(htmlRGBA).toDelta(), doc.toDelta());
@@ -1348,7 +1403,7 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': '\n'},
         ]);
@@ -1361,7 +1416,7 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'u': true}
+            'attributes': {'u': true},
           },
           {'insert': '\n'},
         ]);
@@ -1374,7 +1429,7 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'s': true}
+            'attributes': {'s': true},
           },
           {'insert': '\n'},
         ]);
@@ -1387,7 +1442,7 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'i': true}
+            'attributes': {'i': true},
           },
           {'insert': '\n'},
         ]);
@@ -1400,7 +1455,7 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'i': true, 'b': true}
+            'attributes': {'i': true, 'b': true},
           },
           {'insert': '\n'},
         ]);
@@ -1414,17 +1469,17 @@ void main() {
           {'insert': 'AAA'},
           {
             'insert': 'BB',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {
             'insert': 'B',
-            'attributes': {'b': true, 's': true}
+            'attributes': {'b': true, 's': true},
           },
           {
             'insert': 'CCC',
-            'attributes': {'s': true}
+            'attributes': {'s': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
@@ -1435,17 +1490,17 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Something ',
-            'attributes': {'a': 'https://wikipedia.org', 'u': true}
+            'attributes': {'a': 'https://wikipedia.org', 'u': true},
           },
           {
             'insert': 'in the way',
-            'attributes': {'i': true, 'u': true}
+            'attributes': {'i': true, 'u': true},
           },
           {
             'insert': ' mmmm...',
-            'attributes': {'u': true}
+            'attributes': {'u': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
@@ -1458,7 +1513,7 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 1}
+            'attributes': {'heading': 1},
           },
         ]);
 
@@ -1471,8 +1526,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 2}
-          }
+            'attributes': {'heading': 2},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1484,8 +1539,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 3}
-          }
+            'attributes': {'heading': 3},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1497,8 +1552,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 4}
-          }
+            'attributes': {'heading': 4},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1510,8 +1565,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 5}
-          }
+            'attributes': {'heading': 5},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1523,8 +1578,8 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'heading': 6}
-          }
+            'attributes': {'heading': 6},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1536,9 +1591,7 @@ void main() {
         test('simple', () {
           final html = '<p>Hello World!</p>';
           final doc = Document.fromJson([
-            {
-              'insert': 'Hello World!\n',
-            }
+            {'insert': 'Hello World!\n'},
           ]);
           expect(codec.decode(html).toDelta(), doc.toDelta());
         });
@@ -1547,26 +1600,23 @@ void main() {
           final html = '<p style=padding-left:32px>Hello World!</p>';
           final doc = HtmlCodec().decode(html);
           expect(
-              doc.toDelta(),
-              Delta()
-                ..insert('Hello World!')
-                ..insert('\n', {'indent': 1}));
+            doc.toDelta(),
+            Delta()
+              ..insert('Hello World!')
+              ..insert('\n', {'indent': 1}),
+          );
         });
 
         test('Paragraph with link', () {
           final html =
               '<p>Hello World!<a href="http://fake.link">Hello World!</a> Another hello world!</p>';
           final doc = Document.fromJson([
-            {
-              'insert': 'Hello World!',
-            },
+            {'insert': 'Hello World!'},
             {
               'insert': 'Hello World!',
               'attributes': {'a': 'http://fake.link'},
             },
-            {
-              'insert': ' Another hello world!\n',
-            }
+            {'insert': ' Another hello world!\n'},
           ]);
 
           expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1576,26 +1626,18 @@ void main() {
           final html =
               '<p>Hello World!<a href="http://fake.link">Hello World!</a> Another hello world!</p><p>Hello World!<a href="http://fake.link">Hello World!</a> Another hello world!</p>';
           final doc = Document.fromJson([
-            {
-              'insert': 'Hello World!',
-            },
-            {
-              'insert': 'Hello World!',
-              'attributes': {'a': 'http://fake.link'},
-            },
-            {
-              'insert': ' Another hello world!\n',
-            },
-            {
-              'insert': 'Hello World!',
-            },
+            {'insert': 'Hello World!'},
             {
               'insert': 'Hello World!',
               'attributes': {'a': 'http://fake.link'},
             },
+            {'insert': ' Another hello world!\n'},
+            {'insert': 'Hello World!'},
             {
-              'insert': ' Another hello world!\n',
-            }
+              'insert': 'Hello World!',
+              'attributes': {'a': 'http://fake.link'},
+            },
+            {'insert': ' Another hello world!\n'},
           ]);
 
           expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1608,14 +1650,15 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'quote'}
-          }
+            'attributes': {'block': 'quote'},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
       test('Code', () {
-        final html = '<pre>'
+        final html =
+            '<pre>'
             '<code>void main() {</code>'
             '<code>  print("Hello world!");</code>'
             '<code>}</code>'
@@ -1624,31 +1667,32 @@ void main() {
           {'insert': 'void main() {'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': '  print("Hello world!");'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': '}'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
-          }
+            'attributes': {'block': 'code'},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
 
       test('Code then paragraph', () {
-        final html = '<pre><code>some code</code></pre>'
+        final html =
+            '<pre><code>some code</code></pre>'
             '<p>Hello world</p>';
         final doc = Document.fromJson([
           {'insert': 'some code'},
           {
             'insert': '\n',
-            'attributes': {'block': 'code'}
+            'attributes': {'block': 'code'},
           },
           {'insert': 'Hello world\n'},
         ]);
@@ -1656,24 +1700,25 @@ void main() {
       });
 
       test('Paragraphs then quote', () {
-        final html = '<p>Hello world</p>'
+        final html =
+            '<p>Hello world</p>'
             '<p><strong>Another</strong> one</p>'
             '<blockquote>some <strong>quote</strong></blockquote>';
         final doc = Document.fromJson([
           {'insert': 'Hello world\n'},
           {
             'insert': 'Another',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {'insert': ' one\n'},
           {'insert': 'some '},
           {
             'insert': 'quote',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {
             'insert': '\n',
-            'attributes': {'block': 'quote'}
+            'attributes': {'block': 'quote'},
           },
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1685,13 +1730,13 @@ void main() {
           {'insert': 'an item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'another item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
-          }
+            'attributes': {'block': 'ol'},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1701,12 +1746,12 @@ void main() {
         final doc = Document.fromJson([
           {
             'insert': 'Hello World!',
-            'attributes': {'b': true}
+            'attributes': {'b': true},
           },
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
-          }
+            'attributes': {'block': 'ol'},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1718,13 +1763,13 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
+            'attributes': {'block': 'ul'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul'}
-          }
+            'attributes': {'block': 'ul'},
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1738,14 +1783,15 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'center'}
-          }
+            'attributes': {'alignment': 'center'},
+          },
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
 
       test('all paragraph alignments', () {
-        final html = '<p>Hello World!</p>'
+        final html =
+            '<p>Hello World!</p>'
             '<p style="text-align:right;">Hello World!</p>'
             '<p style="text-align:center;">Hello World!</p>'
             '<p style="text-align:justify;">Hello World!</p>';
@@ -1753,24 +1799,25 @@ void main() {
           {'insert': 'Hello World!\nHello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'right'}
+            'attributes': {'alignment': 'right'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'center'}
+            'attributes': {'alignment': 'center'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'alignment': 'justify'}
-          }
+            'attributes': {'alignment': 'justify'},
+          },
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
 
       test('all list alignments', () {
-        final html = '<ol>'
+        final html =
+            '<ol>'
             '<li>Hello World!</li>'
             '<li style="text-align:right;">Hello World!</li>'
             '<li style="text-align:center;">Hello World!</li>'
@@ -1780,23 +1827,23 @@ void main() {
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': 'right'}
+            'attributes': {'block': 'ol', 'alignment': 'right'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': 'center'}
+            'attributes': {'block': 'ol', 'alignment': 'center'},
           },
           {'insert': 'Hello World!'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'alignment': 'justify'}
-          }
+            'attributes': {'block': 'ol', 'alignment': 'justify'},
+          },
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
@@ -1804,7 +1851,8 @@ void main() {
 
     group('Indentation', () {
       test('Nested lists', () {
-        final html = '<ol>'
+        final html =
+            '<ol>'
             '<li>item</li>'
             '<ul>'
             '<li>sub-item</li>'
@@ -1832,62 +1880,62 @@ void main() {
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 2}
+            'attributes': {'block': 'ol', 'indent': 2},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol'}
+            'attributes': {'block': 'ol'},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 2}
+            'attributes': {'block': 'ul', 'indent': 2},
           },
           {'insert': 'sub-sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 3}
+            'attributes': {'block': 'ol', 'indent': 3},
           },
           {'insert': 'sub-sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ol', 'indent': 3}
+            'attributes': {'block': 'ol', 'indent': 3},
           },
           {'insert': 'sub-sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 2}
+            'attributes': {'block': 'ul', 'indent': 2},
           },
           {'insert': 'sub-item'},
           {
             'insert': '\n',
-            'attributes': {'block': 'ul', 'indent': 1}
+            'attributes': {'block': 'ul', 'indent': 1},
           },
         ]);
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1896,10 +1944,11 @@ void main() {
 
     group('Embeds', () {
       test('Block embeds special treatment', () {
-        String html = '<p><hr><p><img src="http://fake.link/image.png"></p>'
+        String html =
+            '<p><hr><p><img src="http://fake.link/image.png"></p>'
             '<img src="http://another.fake.link/image.png"></p><p>a</p>';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(0, 'a');
         doc.insert(0, BlockEmbed.image('http://another.fake.link/image.png'));
@@ -1911,7 +1960,7 @@ void main() {
       test('Image (no style)', () {
         final html = '<img src="http://fake.link/image.png">';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(0, BlockEmbed.image('http://fake.link/image.png'));
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1921,14 +1970,15 @@ void main() {
         final html =
             '<img src="http://fake.link/image.png" width="100" height="100">';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(
-            0,
-            BlockEmbed.image('http://fake.link/image.png', data: {
-              'width': 100,
-              'height': 100,
-            }));
+          0,
+          BlockEmbed.image(
+            'http://fake.link/image.png',
+            data: {'width': 100, 'height': 100},
+          ),
+        );
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
       });
@@ -1936,7 +1986,7 @@ void main() {
       test('Line', () {
         final html = '<hr>';
         final doc = Document.fromJson([
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
         doc.insert(0, BlockEmbed.horizontalRule);
 
@@ -1952,7 +2002,7 @@ void main() {
             'insert': 'Hello World!',
             'attributes': {'a': 'http://fake.link'},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1966,7 +2016,7 @@ void main() {
             'insert': 'Hello World!',
             'attributes': {'a': 'http://fake.link', 'i': true},
           },
-          {'insert': '\n'}
+          {'insert': '\n'},
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1983,7 +2033,7 @@ void main() {
           {
             'insert': '\n',
             'attributes': {'block': 'ul'},
-          }
+          },
         ]);
 
         expect(codec.decode(html).toDelta(), doc.toDelta());
@@ -1996,89 +2046,90 @@ final doc = [
   {'insert': 'Plume'},
   {
     'insert': '\n',
-    'attributes': {'heading': 1}
+    'attributes': {'heading': 1},
   },
   {
     'insert': 'Soft and gentle rich text editing for Flutter applications.',
-    'attributes': {'i': true}
+    'attributes': {'i': true},
   },
   {'insert': '\nPlume is an '},
   {
     'insert': 'early preview',
-    'attributes': {'b': true, 'fg': 0xFFFF0000}
+    'attributes': {'b': true, 'fg': 0xFFFF0000},
   },
   {'insert': ' open source library.\nDocumentation'},
   {
     'insert': '\n',
-    'attributes': {'heading': 3}
+    'attributes': {'heading': 3},
   },
   {'insert': 'Quick Start'},
   {
     'insert': '\n',
-    'attributes': {'block': 'ul'}
+    'attributes': {'block': 'ul'},
   },
   {'insert': 'Data format and Document Model'},
   {
     'insert': '\n',
-    'attributes': {'block': 'ul'}
+    'attributes': {'block': 'ul'},
   },
   {'insert': 'Style attributes'},
   {
     'insert': '\n',
-    'attributes': {'block': 'ul'}
+    'attributes': {'block': 'ul'},
   },
   {'insert': 'Heuristic rules'},
   {
     'insert': '\n',
-    'attributes': {'block': 'ul'}
+    'attributes': {'block': 'ul'},
   },
   {'insert': 'Clean and modern look'},
   {
     'insert': '\n',
-    'attributes': {'heading': 2}
+    'attributes': {'heading': 2},
   },
   {'insert': 'Plume’s rich text editor is built with '},
   {
     'insert': 'simplicity and flexibility',
-    'attributes': {'i': true}
+    'attributes': {'i': true},
   },
   {
     'insert':
-        ' in mind. It provides clean interface for distraction-free editing. Think '
+        ' in mind. It provides clean interface for distraction-free editing. Think ',
   },
   {
     'insert': 'Medium.com',
-    'attributes': {'c': true}
+    'attributes': {'c': true},
   },
   // {'insert': '-like experience.\n'},
   {'insert': '-like experience.\nimport ‘package:flutter/material.dart’;'},
   {
     'insert': '\n',
-    'attributes': {'block': 'code'}
+    'attributes': {'block': 'code'},
   },
   {'insert': 'import ‘package:parchment/parchment.dart’;'},
   {
     'insert': '\n\n',
-    'attributes': {'block': 'code'}
+    'attributes': {'block': 'code'},
   },
   {'insert': 'void main() {'},
   {
     'insert': '\n',
-    'attributes': {'block': 'code'}
+    'attributes': {'block': 'code'},
   },
   {'insert': ' print(“Hello world!”);'},
   {
     'insert': '\n',
-    'attributes': {'block': 'code'}
+    'attributes': {'block': 'code'},
   },
   {'insert': '}'},
   {
     'insert': '\n',
-    'attributes': {'block': 'code'}
-  }
+    'attributes': {'block': 'code'},
+  },
 ];
 final delta = Delta.fromJson(doc);
-final htmlDoc = '<h1>Plume</h1>'
+final htmlDoc =
+    '<h1>Plume</h1>'
     '<p><em>Soft and gentle rich text editing for Flutter applications.</em></p>'
     '<p>Plume is an <strong><span style="color: rgba(255,0,0,1.0)">early preview</span></strong> open source library.</p>'
     '<h3>Documentation</h3>'

@@ -69,8 +69,12 @@ class Heuristics {
 
   /// Applies heuristic rules to specified format operation based on current
   /// state of [document].
-  Delta applyFormatRules(Document document, int index, int length,
-      Attribute value) {
+  Delta applyFormatRules(
+    Document document,
+    int index,
+    int length,
+    Attribute value,
+  ) {
     final delta = document.toDelta();
     for (var rule in formatRules) {
       final result = rule.apply(delta, index, length, value);

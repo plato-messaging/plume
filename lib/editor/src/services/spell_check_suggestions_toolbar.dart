@@ -24,9 +24,8 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
   PlumeSpellCheckSuggestionsToolbar.editor({
     super.key,
     required EditorState editorState,
-  })  : buttonItems =
-            buildButtonItems(editorState) ?? <ContextMenuButtonItem>[],
-        anchor = getToolbarAnchor(editorState.contextMenuAnchors);
+  }) : buttonItems = buildButtonItems(editorState) ?? <ContextMenuButtonItem>[],
+       anchor = getToolbarAnchor(editorState.contextMenuAnchors);
 
   /// The focal point below which the toolbar attempts to position itself.
   final Offset anchor;
@@ -53,10 +52,10 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
     EditorState editorState,
   ) {
     // Determine if composing region is misspelled.
-    final SuggestionSpan? spanAtCursorIndex =
-        editorState.findSuggestionSpanAtCursorIndex(
-      editorState.textEditingValue.selection.baseOffset,
-    );
+    final SuggestionSpan? spanAtCursorIndex = editorState
+        .findSuggestionSpanAtCursorIndex(
+          editorState.textEditingValue.selection.baseOffset,
+        );
 
     if (spanAtCursorIndex == null) {
       return null;
@@ -65,21 +64,20 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
     final List<ContextMenuButtonItem> buttonItems = <ContextMenuButtonItem>[];
 
     // Build suggestion buttons.
-    for (final String suggestion
-        in spanAtCursorIndex.suggestions.take(_kMaxSuggestions)) {
-      buttonItems.add(ContextMenuButtonItem(
-        onPressed: () {
-          if (!editorState.mounted) {
-            return;
-          }
-          _replaceText(
-            editorState,
-            suggestion,
-            spanAtCursorIndex.range,
-          );
-        },
-        label: suggestion,
-      ));
+    for (final String suggestion in spanAtCursorIndex.suggestions.take(
+      _kMaxSuggestions,
+    )) {
+      buttonItems.add(
+        ContextMenuButtonItem(
+          onPressed: () {
+            if (!editorState.mounted) {
+              return;
+            }
+            _replaceText(editorState, suggestion, spanAtCursorIndex.range);
+          },
+          label: suggestion,
+        ),
+      );
     }
 
     // Build delete button.
@@ -88,11 +86,7 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
         if (!editorState.mounted) {
           return;
         }
-        _replaceText(
-          editorState,
-          '',
-          editorState.textEditingValue.composing,
-        );
+        _replaceText(editorState, '', editorState.textEditingValue.composing);
       },
       type: ContextMenuButtonType.delete,
     );
@@ -102,7 +96,10 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
   }
 
   static void _replaceText(
-      EditorState editorState, String text, TextRange replacementRange) {
+    EditorState editorState,
+    String text,
+    TextRange replacementRange,
+  ) {
     // Replacement cannot be performed if the text is read only or obscured.
     assert(!editorState.widget.readOnly);
 
@@ -111,13 +108,16 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
       text,
     );
     editorState.userUpdateTextEditingValue(
-        newValue, SelectionChangedCause.toolbar);
+      newValue,
+      SelectionChangedCause.toolbar,
+    );
 
     // Schedule a call to bringIntoView() after renderEditable updates.
     SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
       if (editorState.mounted) {
-        editorState
-            .bringIntoView(editorState.textEditingValue.selection.extent);
+        editorState.bringIntoView(
+          editorState.textEditingValue.selection.extent,
+        );
       }
     });
     editorState.hideToolbar();
@@ -137,23 +137,24 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
     return buttonItems.map((ContextMenuButtonItem buttonItem) {
       final TextSelectionToolbarTextButton button =
           TextSelectionToolbarTextButton(
-        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-        onPressed: buttonItem.onPressed,
-        alignment: Alignment.centerLeft,
-        child: Text(
-          AdaptiveTextSelectionToolbar.getButtonLabel(context, buttonItem),
-          style: buttonItem.type == ContextMenuButtonType.delete
-              ? const TextStyle(color: Colors.blue)
-              : null,
-        ),
-      );
+            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            onPressed: buttonItem.onPressed,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              AdaptiveTextSelectionToolbar.getButtonLabel(context, buttonItem),
+              style: buttonItem.type == ContextMenuButtonType.delete
+                  ? const TextStyle(color: Colors.blue)
+                  : null,
+            ),
+          );
 
       if (buttonItem.type != ContextMenuButtonType.delete) {
         return button;
       }
       return DecoratedBox(
         decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.grey))),
+          border: Border(top: BorderSide(color: Colors.grey)),
+        ),
         child: button,
       );
     }).toList();
@@ -172,7 +173,8 @@ class PlumeSpellCheckSuggestionsToolbar extends StatelessWidget {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     final double softKeyboardViewInsetsBottom =
         mediaQueryData.viewInsets.bottom;
-    final double paddingAbove = mediaQueryData.padding.top +
+    final double paddingAbove =
+        mediaQueryData.padding.top +
         CupertinoTextSelectionToolbar.kToolbarScreenPadding;
     // Makes up for the Padding.
     final Offset localAdjustment = Offset(
@@ -253,9 +255,8 @@ class PlumeCupertinoSpellCheckSuggestionsToolbar extends StatelessWidget {
   PlumeCupertinoSpellCheckSuggestionsToolbar.editor({
     super.key,
     required EditorState editorState,
-  })  : buttonItems =
-            buildButtonItems(editorState) ?? <ContextMenuButtonItem>[],
-        anchors = editorState.contextMenuAnchors;
+  }) : buttonItems = buildButtonItems(editorState) ?? <ContextMenuButtonItem>[],
+       anchors = editorState.contextMenuAnchors;
 
   /// The location on which to anchor the menu.
   final TextSelectionToolbarAnchors anchors;
@@ -281,71 +282,74 @@ class PlumeCupertinoSpellCheckSuggestionsToolbar extends StatelessWidget {
     EditorState editorState,
   ) {
     // Determine if composing region is misspelled.
-    final SuggestionSpan? spanAtCursorIndex =
-        editorState.findSuggestionSpanAtCursorIndex(
-      editorState.textEditingValue.selection.baseOffset,
-    );
+    final SuggestionSpan? spanAtCursorIndex = editorState
+        .findSuggestionSpanAtCursorIndex(
+          editorState.textEditingValue.selection.baseOffset,
+        );
 
     if (spanAtCursorIndex == null) {
       return null;
     }
     if (spanAtCursorIndex.suggestions.isEmpty) {
       assert(debugCheckHasCupertinoLocalizations(editorState.context));
-      final CupertinoLocalizations localizations =
-          CupertinoLocalizations.of(editorState.context);
+      final CupertinoLocalizations localizations = CupertinoLocalizations.of(
+        editorState.context,
+      );
       return <ContextMenuButtonItem>[
         ContextMenuButtonItem(
           onPressed: null,
           label: localizations.noSpellCheckReplacementsLabel,
-        )
+        ),
       ];
     }
 
     final List<ContextMenuButtonItem> buttonItems = <ContextMenuButtonItem>[];
 
     // Build suggestion buttons.
-    for (final String suggestion
-        in spanAtCursorIndex.suggestions.take(_kMaxSuggestions)) {
-      buttonItems.add(ContextMenuButtonItem(
-        onPressed: () {
-          if (!editorState.mounted) {
-            return;
-          }
-          _replaceText(
-            editorState,
-            suggestion,
-            spanAtCursorIndex.range,
-          );
-        },
-        label: suggestion,
-      ));
+    for (final String suggestion in spanAtCursorIndex.suggestions.take(
+      _kMaxSuggestions,
+    )) {
+      buttonItems.add(
+        ContextMenuButtonItem(
+          onPressed: () {
+            if (!editorState.mounted) {
+              return;
+            }
+            _replaceText(editorState, suggestion, spanAtCursorIndex.range);
+          },
+          label: suggestion,
+        ),
+      );
     }
     return buttonItems;
   }
 
   static void _replaceText(
-      EditorState editorState, String text, TextRange replacementRange) {
+    EditorState editorState,
+    String text,
+    TextRange replacementRange,
+  ) {
     // Replacement cannot be performed if the text is read only or obscured.
     assert(!editorState.widget.readOnly);
 
     final TextEditingValue newValue = editorState.textEditingValue
-        .replaced(
-          replacementRange,
-          text,
-        )
+        .replaced(replacementRange, text)
         .copyWith(
           selection: TextSelection.collapsed(
             offset: replacementRange.start + text.length,
           ),
         );
     editorState.userUpdateTextEditingValue(
-        newValue, SelectionChangedCause.toolbar);
+      newValue,
+      SelectionChangedCause.toolbar,
+    );
 
     // Schedule a call to bringIntoView() after renderEditable updates.
     SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
       if (editorState.mounted) {
-        editorState
-            .bringIntoView(editorState.textEditingValue.selection.extent);
+        editorState.bringIntoView(
+          editorState.textEditingValue.selection.extent,
+        );
       }
     });
     editorState.hideToolbar();
