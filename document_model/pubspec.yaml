@@ -1,0 +1,19 @@
+name: document_model
+description: Platform-agnostic rich text document model based on Delta format.
+version: 0.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+resolution: workspace
+
+dependencies:
+  parchment_delta:
+  collection:
+  html: ^0.15.6
+  meta: ^1.16.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
