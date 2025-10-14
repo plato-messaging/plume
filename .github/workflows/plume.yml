@@ -1,6 +1,9 @@
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
   build:
@@ -15,6 +18,24 @@ jobs:
           # Manually Update this `key`
           cache-key: "3.35.6"
       - run: dart pub global activate coverage
+
+      - name: Document Model - Install dependencies
+        working-directory: ./document_model
+        run: flutter pub get
+
+      - name: Document Model - Verify formatting
+        working-directory: ./document_model
+        run: dart format . --output=none --set-exit-if-changed
+
+      - name: Document Model - Analyze project source
+        working-directory: ./document_model
+        run: dart analyze --fatal-infos
+
+      - name: Document Model - Run tests
+        working-directory: ./document_model
+        run : | 
+          dart test --coverage coverage
+          dart pub global run coverage:format_coverage --lcov --in ./coverage --out ./coverage/lcov.info --report-on:lib
 
       - name: Plume - Install dependencies
         run: flutter pub get
@@ -31,7 +52,7 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: ./coverage/lcov.info,./packages/parchment/coverage/lcov.info
+          files: ./coverage/lcov.info,./document_model/coverage/lcov.info
           fail_ci_if_error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
