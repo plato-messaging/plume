@@ -1896,10 +1896,8 @@ class RawEditorState extends EditorState
       );
     }
 
-    final constraints = widget.scrollable
-        ? widget.expands
-              ? const BoxConstraints.expand()
-              : const BoxConstraints.expand().copyWith(minHeight: 0)
+    final constraints = widget.scrollable && widget.expands
+        ? BoxConstraints.expand()
         : BoxConstraints(
             minHeight: widget.minHeight ?? 0.0,
             maxHeight: widget.maxHeight ?? double.infinity,
