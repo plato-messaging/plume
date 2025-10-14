@@ -1,6 +1,5 @@
 name: document_model
 description: Platform-agnostic rich text document model based on Delta format.
-version: 0.0.0
 publish_to: none
 
 environment:
