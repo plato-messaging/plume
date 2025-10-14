@@ -7,8 +7,8 @@ import 'package:plume/document_model/document_model.dart';
 
 import 'controller.dart';
 import 'editable_text_line.dart';
-import 'editor.dart';
 import 'embed_proxy.dart';
+import 'embed_registry.dart';
 import 'keyboard_listener.dart';
 import 'link.dart';
 import 'rich_text_proxy.dart';
@@ -23,8 +23,7 @@ class TextLine extends StatefulWidget {
   final LineNode node;
   final bool readOnly;
   final PlumeController controller;
-  final PlumeEmbedBuilder embedBuilder;
-  final Map<String, PlumeSpanEmbedConfiguration> spanEmbedConfigurations;
+  final EmbedRegistry embedRegistry;
   final ValueChanged<String?>? onLaunchUrl;
   final LinkActionPicker linkActionPicker;
   final TextWidthBasis textWidthBasis;
@@ -34,8 +33,7 @@ class TextLine extends StatefulWidget {
     required this.node,
     required this.readOnly,
     required this.controller,
-    required this.embedBuilder,
-    required this.spanEmbedConfigurations,
+    required this.embedRegistry,
     required this.onLaunchUrl,
     required this.linkActionPicker,
     required this.textWidthBasis,
@@ -125,7 +123,8 @@ class _TextLineState extends State<TextLine> {
     assert(debugCheckHasMediaQuery(context));
     if (widget.node.hasBlockEmbed) {
       final embed = widget.node.children.single as EmbedNode;
-      return EmbedProxy(child: widget.embedBuilder(context, embed));
+      final blocEmbed = widget.embedRegistry.blockEmbed(embed.value);
+      return EmbedProxy(child: blocEmbed.build(context, embed.value.data));
     }
     final theme = PlumeTheme.of(context)!;
     final text = buildText(context, widget.node, theme);
@@ -182,20 +181,12 @@ class _TextLineState extends State<TextLine> {
 
   InlineSpan _segmentToTextSpan(Node segment, PlumeThemeData theme) {
     if (segment is EmbedNode) {
-      final spanConfiguration =
-          widget.spanEmbedConfigurations[segment.value.type];
-      if (spanConfiguration != null) {
-        return WidgetSpan(
-          child: EmbedProxy(
-            child: spanConfiguration.embedBuilder(context, segment),
-          ),
-          alignment: spanConfiguration.placeholderAlignment,
-          baseline: spanConfiguration.textBaseline,
-          style: spanConfiguration.textStyle,
-        );
-      }
+      final spanEmbed = widget.embedRegistry.spanEmbed(segment.value);
       return WidgetSpan(
-        child: EmbedProxy(child: widget.embedBuilder(context, segment)),
+        child: EmbedProxy(child: spanEmbed.build(context, segment.value.data)),
+        alignment: spanEmbed.alignment,
+        baseline: spanEmbed.baseline,
+        style: spanEmbed.style,
       );
     }
     final text = segment as TextNode;

@@ -1,14 +1,14 @@
-import 'package:plume/plume.dart';
-import 'package:plume/editor/src/services/spell_check_suggestions_toolbar.dart';
-import 'package:plume/editor/src/widgets/checkbox.dart';
-import 'package:plume/editor/src/widgets/keyboard_listener.dart';
-import 'package:plume/editor/src/widgets/system_context_menu.dart';
-import 'package:plume/editor/src/widgets/text_selection.dart';
 import 'package:flutter/cupertino.dart' hide SystemContextMenu;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide SystemContextMenu;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:plume/editor/src/services/spell_check_suggestions_toolbar.dart';
+import 'package:plume/editor/src/widgets/checkbox.dart';
+import 'package:plume/editor/src/widgets/keyboard_listener.dart';
+import 'package:plume/editor/src/widgets/system_context_menu.dart';
+import 'package:plume/editor/src/widgets/text_selection.dart';
+import 'package:plume/plume.dart';
 
 import '../testing.dart';
 
@@ -147,8 +147,11 @@ void main() {
                 Expanded(
                   child: PlumeEditor(
                     controller: controller,
-                    embedBuilder: (context, node) =>
-                        SizedBox(width: 100, height: embedHeight),
+                    embedRegistry: EmbedRegistry.withConfigurations([
+                      FakeImageBlockEmbedConfiguration(
+                        embedHeight: embedHeight,
+                      ),
+                    ]),
                   ),
                 ),
               ],
@@ -202,8 +205,9 @@ void main() {
                 child: PlumeEditor(
                   controller: controller,
                   scrollController: scrollController,
-                  embedBuilder: (context, node) =>
-                      SizedBox(width: 100, height: embedHeight),
+                  embedRegistry: EmbedRegistry.withConfigurations([
+                    FakeImageBlockEmbedConfiguration(embedHeight: embedHeight),
+                  ]),
                 ),
               ),
             ],
@@ -1619,20 +1623,9 @@ void main() {
             tester: tester,
             document: document,
             autofocus: true,
-            embedBuilder: (BuildContext context, EmbedNode node) {
-              if (node.value.type == 'icon') {
-                final data = node.value.data;
-                return Icon(
-                  IconData(
-                    int.parse(data['codePoint']),
-                    fontFamily: data['fontFamily'],
-                  ),
-                  color: Color(int.parse(data['color'])),
-                  size: 100,
-                );
-              }
-              throw UnimplementedError();
-            },
+            embedRegistry: EmbedRegistry.withConfigurations([
+              IconSpanEmbedConfiguration(),
+            ]),
           );
           await editor.pump();
           editor.controller.updateSelection(
@@ -1671,20 +1664,9 @@ void main() {
             tester: tester,
             document: document,
             autofocus: true,
-            embedBuilder: (BuildContext context, EmbedNode node) {
-              if (node.value.type == 'something') {
-                return const Padding(
-                  padding: EdgeInsets.only(
-                    left: 4,
-                    right: 2,
-                    top: 2,
-                    bottom: 2,
-                  ),
-                  child: SizedBox(width: 300, height: 300),
-                );
-              }
-              throw UnimplementedError();
-            },
+            embedRegistry: EmbedRegistry.withConfigurations([
+              FakeSpanEmbedConfiguration(),
+            ]),
           );
           await editor.pump();
           editor.controller.updateSelection(
@@ -1723,20 +1705,9 @@ void main() {
           tester: tester,
           document: document,
           autofocus: true,
-          embedBuilder: (BuildContext context, EmbedNode node) {
-            if (node.value.type == 'icon') {
-              final data = node.value.data;
-              return Icon(
-                IconData(
-                  int.parse(data['codePoint']),
-                  fontFamily: data['fontFamily'],
-                ),
-                color: Color(int.parse(data['color'])),
-                size: 100,
-              );
-            }
-            throw UnimplementedError();
-          },
+          embedRegistry: EmbedRegistry.withConfigurations([
+            IconSpanEmbedConfiguration(),
+          ]),
         );
         await editor.pump();
         editor.controller.updateSelection(
@@ -2155,6 +2126,43 @@ void main() {
       );
     });
   });
+}
+
+class FakeImageBlockEmbedConfiguration extends BlockEmbedConfiguration {
+  const FakeImageBlockEmbedConfiguration({required this.embedHeight})
+    : super(key: 'image');
+
+  final double embedHeight;
+
+  @override
+  Widget build(BuildContext context, Map<String, dynamic> data) {
+    return SizedBox(width: 100, height: embedHeight);
+  }
+}
+
+class FakeSpanEmbedConfiguration extends SpanEmbedConfiguration {
+  const FakeSpanEmbedConfiguration() : super(key: 'something');
+
+  @override
+  Widget build(BuildContext context, Map<String, dynamic> data) {
+    return const Padding(
+      padding: EdgeInsets.only(left: 4, right: 2, top: 2, bottom: 2),
+      child: SizedBox(width: 300, height: 300),
+    );
+  }
+}
+
+class IconSpanEmbedConfiguration extends SpanEmbedConfiguration {
+  IconSpanEmbedConfiguration() : super(key: 'icon');
+
+  @override
+  Widget build(BuildContext context, Map<String, dynamic> data) {
+    return Icon(
+      IconData(int.parse(data['codePoint']), fontFamily: data['fontFamily']),
+      color: Color(int.parse(data['color'])),
+      size: 100,
+    );
+  }
 }
 
 const clipboardText = 'copied text';

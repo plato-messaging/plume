@@ -4,6 +4,7 @@ import 'package:plume/document_model/document_model.dart';
 import '../services/clipboard_manager.dart';
 import 'controller.dart';
 import 'editor.dart';
+import 'embed_registry.dart';
 
 class PlumeField extends StatefulWidget {
   /// Controller object which establishes a link between a rich text document
@@ -167,17 +168,8 @@ class PlumeField extends StatefulWidget {
   /// If this configuration is left null, then spell check is disabled by default.
   final SpellCheckConfiguration? spellCheckConfiguration;
 
-  /// Builder function for embeddable objects.
-  ///
-  /// Defaults to [defaultPlumeEmbedBuilder].
-  final PlumeEmbedBuilder embedBuilder;
-
-  /// Available configuration for [SpanEmbed]s.
-  /// If no configuration of found for a [SpanEmbed], builder will fallback to
-  /// [embedBuilder].
-  ///
-  /// Defaults to `{}`
-  final Map<String, PlumeSpanEmbedConfiguration> spanEmbedConfigurations;
+  /// The registry for embeddable objects.
+  final EmbedRegistry embedRegistry;
 
   /// Builds the text selection toolbar when requested by the user.
   ///
@@ -218,8 +210,7 @@ class PlumeField extends StatefulWidget {
     this.toolbar,
     this.contextMenuBuilder = defaultContextMenuBuilder,
     this.spellCheckConfiguration,
-    this.embedBuilder = defaultPlumeEmbedBuilder,
-    this.spanEmbedConfigurations = const {},
+    this.embedRegistry = const EmbedRegistry.fallback(),
     this.clipboardManager = const PlainTextClipboardManager(),
   });
 
@@ -288,8 +279,7 @@ class _PlumeFieldState extends State<PlumeField> {
       keyboardAppearance: keyboardAppearance,
       scrollPhysics: widget.scrollPhysics,
       onLaunchUrl: widget.onLaunchUrl,
-      embedBuilder: widget.embedBuilder,
-      spanEmbedConfigurations: widget.spanEmbedConfigurations,
+      embedRegistry: widget.embedRegistry,
       spellCheckConfiguration: widget.spellCheckConfiguration,
       contextMenuBuilder: widget.contextMenuBuilder,
       clipboardManager: widget.clipboardManager,
