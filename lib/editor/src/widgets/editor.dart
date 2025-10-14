@@ -21,6 +21,7 @@ import 'editable_text_block.dart';
 import 'editable_text_line.dart';
 import 'editor_input_client_mixin.dart';
 import 'editor_selection_delegate_mixin.dart';
+import 'embed_registry.dart';
 import 'history.dart';
 import 'keyboard_listener.dart';
 import 'link.dart';
@@ -285,17 +286,8 @@ class PlumeEditor extends StatefulWidget {
   /// Callback to invoke when user wants to launch a URL.
   final ValueChanged<String?>? onLaunchUrl;
 
-  /// Builder function for embeddable objects.
-  ///
-  /// Defaults to [defaultPlumeEmbedBuilder].
-  final PlumeEmbedBuilder embedBuilder;
-
-  /// Available configuration for [SpanEmbed]s.
-  /// If no configuration of found for a [SpanEmbed], builder will fallback to
-  /// [embedBuilder].
-  ///
-  /// Defaults to `{}`
-  final Map<String, PlumeSpanEmbedConfiguration> spanEmbedConfigurations;
+  /// The registry for embeddable objects.
+  final EmbedRegistry embedRegistry;
 
   /// Configuration that details how spell check should be performed.
   ///
@@ -372,8 +364,7 @@ class PlumeEditor extends StatefulWidget {
     this.clipboardManager = const PlainTextClipboardManager(),
     this.clipboardStatus,
     this.contextMenuBuilder = defaultContextMenuBuilder,
-    this.embedBuilder = defaultPlumeEmbedBuilder,
-    this.spanEmbedConfigurations = const {},
+    this.embedRegistry = const EmbedRegistry.fallback(),
     this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
     this.textSelectionControls,
   });
@@ -559,8 +550,7 @@ class _PlumeEditorState extends State<PlumeEditor>
       keyboardAppearance: keyboardAppearance,
       scrollPhysics: widget.scrollPhysics,
       onLaunchUrl: widget.onLaunchUrl,
-      embedBuilder: widget.embedBuilder,
-      spanEmbedConfigurations: widget.spanEmbedConfigurations,
+      embedRegistry: widget.embedRegistry,
       spellCheckConfiguration: widget.spellCheckConfiguration,
       linkActionPickerDelegate: widget.linkActionPickerDelegate,
       clipboardManager: widget.clipboardManager,
@@ -673,8 +663,7 @@ class RawEditor extends StatefulWidget {
     this.onSelectionChanged,
     this.contextMenuBuilder = defaultContextMenuBuilder,
     this.spellCheckConfiguration,
-    this.embedBuilder = defaultPlumeEmbedBuilder,
-    this.spanEmbedConfigurations = const {},
+    this.embedRegistry = const EmbedRegistry.fallback(),
     this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
   }) : assert(maxHeight == null || maxHeight > 0),
        assert(minHeight == null || minHeight >= 0),
@@ -850,12 +839,8 @@ class RawEditor extends StatefulWidget {
   /// See [Scrollable.physics].
   final ScrollPhysics? scrollPhysics;
 
-  /// Builder function for embeddable objects.
-  ///
-  /// Defaults to [defaultPlumeEmbedBuilder].
-  final PlumeEmbedBuilder embedBuilder;
-
-  final Map<String, PlumeSpanEmbedConfiguration> spanEmbedConfigurations;
+  /// The registry for embeddable objects.
+  final EmbedRegistry embedRegistry;
 
   final LinkActionPickerDelegate linkActionPickerDelegate;
 
@@ -1941,8 +1926,7 @@ class RawEditorState extends EditorState
                 node: node,
                 readOnly: widget.readOnly,
                 controller: widget.controller,
-                embedBuilder: widget.embedBuilder,
-                spanEmbedConfigurations: widget.spanEmbedConfigurations,
+                embedRegistry: widget.embedRegistry,
                 linkActionPicker: _linkActionPicker,
                 onLaunchUrl: widget.onLaunchUrl,
                 textWidthBasis: widget.textWidthBasis,
@@ -1971,8 +1955,7 @@ class RawEditorState extends EditorState
               contentPadding: (block == Attribute.block.code)
                   ? const EdgeInsets.all(16.0)
                   : null,
-              embedBuilder: widget.embedBuilder,
-              spanEmbedConfigurations: widget.spanEmbedConfigurations,
+              embedRegistry: widget.embedRegistry,
               linkActionPicker: _linkActionPicker,
               onLaunchUrl: widget.onLaunchUrl,
             ),
