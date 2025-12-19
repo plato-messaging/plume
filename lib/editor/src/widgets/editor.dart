@@ -1534,6 +1534,12 @@ class RawEditorState extends EditorState
       _selectionOverlay?.hideToolbar();
     }
 
+    if (clipboardStatus != oldWidget.clipboardStatus) {
+      oldWidget.clipboardStatus.removeListener(_onChangedClipboardStatus);
+      oldWidget.clipboardStatus.dispose();
+      clipboardStatus.addListener(_onChangedClipboardStatus);
+    }
+
     _selectionOverlay?.handlesVisible = widget.showSelectionHandles;
 
     if (!shouldCreateInputConnection) {
