@@ -438,23 +438,15 @@ _Throttled<T> _throttle<T>({
   bool leadingEdge = false,
 }) {
   Timer? timer;
-  bool calledDuringTimer = false;
   late T arg;
 
   return (T currentArg) {
     arg = currentArg;
-    if (timer != null) {
-      calledDuringTimer = true;
+    if (timer != null && timer!.isActive) {
       return timer!;
     }
-    if (leadingEdge) {
-      function(arg);
-    }
-    calledDuringTimer = false;
     timer = Timer(duration, () {
-      if (!leadingEdge || calledDuringTimer) {
-        function(arg);
-      }
+      function(arg);
       timer = null;
     });
     return timer!;
