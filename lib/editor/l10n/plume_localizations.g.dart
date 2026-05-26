@@ -100,7 +100,6 @@ abstract class PlumeLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('pt', 'BR'),
     Locale('de'),
     Locale('en'),
     Locale('fa'),
@@ -108,6 +107,7 @@ abstract class PlumeLocalizations {
     Locale('hu'),
     Locale('ko'),
     Locale('nl'),
+    Locale('pt', 'BR'),
     Locale('pt'),
   ];
 
@@ -209,7 +209,6 @@ class _PlumeLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) => <String>[
-    'pt',
     'de',
     'en',
     'fa',
@@ -217,6 +216,7 @@ class _PlumeLocalizationsDelegate
     'hu',
     'ko',
     'nl',
+    'pt',
   ].contains(locale.languageCode);
 
   @override
@@ -238,8 +238,6 @@ PlumeLocalizations lookupPlumeLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'pt':
-      return PlumeLocalizationsPt();
     case 'de':
       return PlumeLocalizationsDe();
     case 'en':
@@ -254,6 +252,8 @@ PlumeLocalizations lookupPlumeLocalizations(Locale locale) {
       return PlumeLocalizationsKo();
     case 'nl':
       return PlumeLocalizationsNl();
+    case 'pt':
+      return PlumeLocalizationsPt();
   }
 
   throw FlutterError(
