@@ -416,6 +416,9 @@ class FakeTicker implements Ticker {
       style: DiagnosticsTreeStyle.errorProperty,
     );
   }
+
+  @override
+  bool forceFrames = false;
 }
 
 class TestClipPaintingContext extends PaintingContext {
