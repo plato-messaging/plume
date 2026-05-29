@@ -1,12 +1,54 @@
-import 'package:plume/plume.dart';
-import 'package:plume/editor/src/widgets/editor_input_client_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:plume/editor/src/widgets/editor_input_client_mixin.dart';
+import 'package:plume/plume.dart';
 
 import '../testing.dart';
 
 void main() {
+  group('onFocusReceived', () {
+    testWidgets('requests focus when the editor can receive focus', (
+      tester,
+    ) async {
+      final editor = EditorSandBox(tester: tester);
+      await editor.pump();
+
+      final inputClient = getInputClient();
+      expect(editor.focusNode.hasFocus, isFalse);
+
+      expect(inputClient.onFocusReceived(), isTrue);
+      await tester.pump();
+
+      expect(editor.focusNode.hasFocus, isTrue);
+    });
+
+    testWidgets('returns false when the editor already has focus', (
+      tester,
+    ) async {
+      final editor = EditorSandBox(tester: tester);
+      await editor.pumpAndTap();
+
+      final inputClient = getInputClient();
+
+      expect(inputClient.onFocusReceived(), isFalse);
+      expect(editor.focusNode.hasFocus, isTrue);
+    });
+
+    testWidgets('returns false when focus cannot be requested', (tester) async {
+      final focusNode = FocusNode(canRequestFocus: false);
+      final editor = EditorSandBox(tester: tester, focusNode: focusNode);
+      await editor.pump();
+
+      final inputClient = getInputClient();
+
+      expect(inputClient.onFocusReceived(), isFalse);
+      await tester.pump();
+
+      expect(focusNode.hasFocus, isFalse);
+    });
+  });
+
   group('send text editing state to TextInputConnection', () {
     final composingRanges = <TextRange>[];
 

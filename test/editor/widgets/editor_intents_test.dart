@@ -269,47 +269,53 @@ void main() {
     },
   );
 
-  testWidgets('$ExtendSelectionByPageIntent selection to end', (tester) async {
-    final editor = EditorSandBox(
-      tester: tester,
-      document: Document.fromJson([
-        {'insert': 'Some text\nSome text\n'},
-      ]),
-    );
-    await editor.pumpAndTap();
-    await editor.updateSelection(base: 3, extent: 3);
-    await receiveAction('pageDownAndModifySelection:');
-    await tester.pumpAndSettle();
-    expect(
-      editor.controller.selection,
-      const TextSelection(
-        baseOffset: 3,
-        extentOffset: 19,
-        affinity: TextAffinity.upstream,
-      ),
-    );
-  });
+  testWidgets(
+    '$ExtendSelectionVerticallyToAdjacentPageIntent selection to end',
+    (tester) async {
+      final editor = EditorSandBox(
+        tester: tester,
+        document: Document.fromJson([
+          {'insert': 'Some text\nSome text\n'},
+        ]),
+      );
+      await editor.pumpAndTap();
+      await editor.updateSelection(base: 3, extent: 3);
+      await receiveAction('pageDownAndModifySelection:');
+      await tester.pumpAndSettle();
+      expect(
+        editor.controller.selection,
+        const TextSelection(
+          baseOffset: 3,
+          extentOffset: 19,
+          affinity: TextAffinity.upstream,
+        ),
+      );
+    },
+  );
 
-  testWidgets('$ExtendSelectionByPageIntent selection to end', (tester) async {
-    final editor = EditorSandBox(
-      tester: tester,
-      document: Document.fromJson([
-        {'insert': 'Some text\nSome text\n'},
-      ]),
-    );
-    await editor.pumpAndTap();
-    await editor.updateSelection(base: 3, extent: 3);
-    await receiveAction('pageDownAndModifySelection:');
-    await tester.pumpAndSettle();
-    expect(
-      editor.controller.selection,
-      const TextSelection(
-        baseOffset: 3,
-        extentOffset: 19,
-        affinity: TextAffinity.upstream,
-      ),
-    );
-  });
+  testWidgets(
+    '$ExtendSelectionVerticallyToAdjacentPageIntent selection to end',
+    (tester) async {
+      final editor = EditorSandBox(
+        tester: tester,
+        document: Document.fromJson([
+          {'insert': 'Some text\nSome text\n'},
+        ]),
+      );
+      await editor.pumpAndTap();
+      await editor.updateSelection(base: 3, extent: 3);
+      await receiveAction('pageDownAndModifySelection:');
+      await tester.pumpAndSettle();
+      expect(
+        editor.controller.selection,
+        const TextSelection(
+          baseOffset: 3,
+          extentOffset: 19,
+          affinity: TextAffinity.upstream,
+        ),
+      );
+    },
+  );
 
   testWidgets('$ScrollIntent page down', (tester) async {
     final editor = EditorSandBox(

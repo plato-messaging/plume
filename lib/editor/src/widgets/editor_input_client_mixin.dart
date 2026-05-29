@@ -146,14 +146,27 @@ mixin RawEditorStateTextInputClientMixin on EditorState
         return;
       }
 
-      _textInputConnection?.setStyle(
-        fontFamily: style.textStyle.fontFamily,
-        fontSize: style.textStyle.fontSize,
-        fontWeight: style.textStyle.fontWeight,
-        textDirection: style.textDirection,
-        textAlign: style.textAlign,
+      _textInputConnection?.updateStyle(
+        TextInputStyle(
+          fontFamily: style.textStyle.fontFamily,
+          fontSize: style.textStyle.fontSize,
+          fontWeight: style.textStyle.fontWeight,
+          textDirection: style.textDirection,
+          textAlign: style.textAlign,
+        ),
       );
     });
+  }
+
+  @override
+  bool onFocusReceived() {
+    if (mounted &&
+        !effectiveFocusNode.hasFocus &&
+        effectiveFocusNode.canRequestFocus) {
+      effectiveFocusNode.requestFocus();
+      return true;
+    }
+    return false;
   }
 
   // Start TextInputClient implementation
