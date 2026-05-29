@@ -1970,6 +1970,49 @@ void main() {
         await tester.pump(throttleDuration);
       });
 
+      testWidgets('does not reveal cursor or editor when not focused', (
+        tester,
+      ) async {
+        final scrollController = ScrollController();
+        final controller = PlumeController();
+        final widget = MaterialApp(
+          home: SingleChildScrollView(
+            controller: scrollController,
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < 20; i++) ...[
+                    PlumeField(
+                      key: Key('Field.Key.$i'),
+                      focusNode: FocusNode(),
+                      scrollable: false,
+                      autofocus: true,
+                      showCursor: true,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      controller: i == 15 ? controller : PlumeController(),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+        await tester.pumpWidget(widget);
+        final initialScrollPosition = scrollController.position.pixels;
+        final newInput = 'Line1\nLine2';
+        controller.replaceText(
+          0,
+          0,
+          newInput,
+          selection: TextSelection.collapsed(offset: newInput.length),
+        );
+        await tester.pumpAndSettle(throttleDuration);
+        expect(scrollController.position.pixels, initialScrollPosition);
+      });
+
       testWidgets(
         'shows cursor on screen when not scrollable with scroll parent',
         (tester) async {
@@ -2158,6 +2201,7 @@ class IconSpanEmbedConfiguration extends SpanEmbedConfiguration {
   @override
   Widget build(BuildContext context, Map<String, dynamic> data) {
     return Icon(
+      // ignore: non_const_argument_for_const_parameter
       IconData(int.parse(data['codePoint']), fontFamily: data['fontFamily']),
       color: Color(int.parse(data['color'])),
       size: 100,
