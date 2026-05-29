@@ -1,6 +1,6 @@
 name: plume
 description: "A gentle yet powerful rich text editor."
-version: 0.1.2-pre
+version: 0.2.0-pre
 publish_to: None
 
 environment:
