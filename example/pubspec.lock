@@ -355,7 +355,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.2.0-pre"
+    version: "0.3.0-pre"
   quiver:
     dependency: transitive
     description:
