@@ -1,5 +1,5 @@
 import 'package:plume/plume.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -91,86 +91,46 @@ void main() {
   }
 
   group('(macos) Shortcuts', () {
-    testWidgets(
-      '(macos) Toggle bold',
-      (tester) async {
-        await testToggle(tester, Attribute.bold, true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(macos) Toggle bold', (tester) async {
+      await testToggle(tester, Attribute.bold, true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(macos) Toggle italie',
-      (tester) async {
-        await testToggle(tester, Attribute.underline, true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(macos) Toggle italie', (tester) async {
+      await testToggle(tester, Attribute.underline, true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(macos) Toggle underline',
-      (tester) async {
-        await testToggle(tester, Attribute.underline, true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(macos) Toggle underline', (tester) async {
+      await testToggle(tester, Attribute.underline, true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(macos) Add indentation',
-      (tester) async {
-        await testIndentation(tester, addIndentation: true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(macos) Add indentation', (tester) async {
+      await testIndentation(tester, addIndentation: true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(macos) Remove indentation',
-      (tester) async {
-        await testIndentation(tester, addIndentation: false);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(macos) Remove indentation', (tester) async {
+      await testIndentation(tester, addIndentation: false);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
   });
 
   group('(Windows) Shortcuts', () {
-    testWidgets(
-      '(Windows) Toggle bold',
-      (tester) async {
-        await testToggle(tester, Attribute.bold, true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(Windows) Toggle bold', (tester) async {
+      await testToggle(tester, Attribute.bold, true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(Windows) Toggle italie',
-      (tester) async {
-        await testToggle(tester, Attribute.underline, true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(Windows) Toggle italie', (tester) async {
+      await testToggle(tester, Attribute.underline, true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(Windows) Toggle underline',
-      (tester) async {
-        await testToggle(tester, Attribute.underline, true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-    );
+    testWidgets('(Windows) Toggle underline', (tester) async {
+      await testToggle(tester, Attribute.underline, true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-    testWidgets(
-      '(Windows) Add indentation',
-      (tester) async {
-        await testIndentation(tester, addIndentation: true);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.windows),
-    );
+    testWidgets('(Windows) Add indentation', (tester) async {
+      await testIndentation(tester, addIndentation: true);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
-    testWidgets(
-      '(Windows) Remove indentation',
-      (tester) async {
-        await testIndentation(tester, addIndentation: false);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.windows),
-    );
+    testWidgets('(Windows) Remove indentation', (tester) async {
+      await testIndentation(tester, addIndentation: false);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
   });
 }

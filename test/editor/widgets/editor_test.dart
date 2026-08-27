@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart' hide SystemContextMenu;
+import 'package:cupertino_ui/cupertino_ui.dart' hide SystemContextMenu;
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart' hide SystemContextMenu;
+import 'package:material_ui/material_ui.dart' hide SystemContextMenu;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plume/editor/src/services/spell_check_suggestions_toolbar.dart';
@@ -394,26 +394,24 @@ void main() {
       variant: TargetPlatformVariant.only(TargetPlatform.android),
     );
 
-    testWidgets(
-      'Selection handle is hidden when editor is read-only',
-      (tester) async {
-        final editor = EditorSandBox(
-          tester: tester,
-          document: Document.fromDelta(Delta()..insert('Text\n')),
-        );
-        await editor.pump();
-        await editor.disable();
-        await tester.tapAt(
-          tester.getTopLeft(find.byType(RawEditor)) + const Offset(15, 5),
-        );
-        await tester.pumpAndSettle();
-        final handle =
-            tester.widget(editor.findSelectionHandles().first)
-                as SelectionHandleOverlay;
-        expect(handle.visibility?.value, false);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.android),
-    );
+    testWidgets('Selection handle is hidden when editor is read-only', (
+      tester,
+    ) async {
+      final editor = EditorSandBox(
+        tester: tester,
+        document: Document.fromDelta(Delta()..insert('Text\n')),
+      );
+      await editor.pump();
+      await editor.disable();
+      await tester.tapAt(
+        tester.getTopLeft(find.byType(RawEditor)) + const Offset(15, 5),
+      );
+      await tester.pumpAndSettle();
+      final handle =
+          tester.widget(editor.findSelectionHandles().first)
+              as SelectionHandleOverlay;
+      expect(handle.visibility?.value, false);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
     testWidgets('ability to paste upon long press on an empty document', (
       tester,
@@ -441,33 +439,29 @@ void main() {
       expect(editor.document.toPlainText(), '$clipboardText\n');
     });
 
-    testWidgets(
-      'Uses system context menu on iOS if supported',
-      (tester) async {
-        // if Clipboard not initialize (status 'unknown'), an shrunken toolbar appears
-        prepareClipboard();
+    testWidgets('Uses system context menu on iOS if supported', (tester) async {
+      // if Clipboard not initialize (status 'unknown'), an shrunken toolbar appears
+      prepareClipboard();
 
-        final editor = EditorSandBox(
-          tester: tester,
-          document: Document(),
-          autofocus: true,
-          appBuilder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(supportsShowingSystemContextMenu: true),
-            child: child!,
-          ),
-        );
-        await editor.pump();
+      final editor = EditorSandBox(
+        tester: tester,
+        document: Document(),
+        autofocus: true,
+        appBuilder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(supportsShowingSystemContextMenu: true),
+          child: child!,
+        ),
+      );
+      await editor.pump();
 
-        expect(find.text('Paste'), findsNothing);
-        await tester.longPress(find.byType(PlumeEditor));
-        await tester.pump();
+      expect(find.text('Paste'), findsNothing);
+      await tester.longPress(find.byType(PlumeEditor));
+      await tester.pump();
 
-        expect(find.byType(SystemContextMenu), findsOneWidget);
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-    );
+      expect(find.byType(SystemContextMenu), findsOneWidget);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
     testWidgets(
       'Does not use system context menu on iOS when editor is read-only',
@@ -1003,111 +997,100 @@ void main() {
         }),
       );
 
-      testWidgets(
-        'Mouse drag updates selection',
-        (tester) async {
-          final document = Document.fromJson([
-            {'insert': 'Test\n'},
-          ]);
-          final editor = EditorSandBox(tester: tester, document: document);
-          await editor.pump();
-          final gesture = await tester.startGesture(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(10, 1),
-            pointer: tester.nextPointer,
-            kind: PointerDeviceKind.mouse,
-          );
-          await tester.pump();
-          expect(
-            editor.selection,
-            const TextSelection.collapsed(
-              offset: 1,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-          await gesture.moveBy(const Offset(30, 0));
-          await tester.pump();
-          await gesture.up();
-          await tester.pumpAndSettle();
-          expect(
-            editor.selection,
-            const TextSelection(
-              baseOffset: 1,
-              extentOffset: 2,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-      );
+      testWidgets('Mouse drag updates selection', (tester) async {
+        final document = Document.fromJson([
+          {'insert': 'Test\n'},
+        ]);
+        final editor = EditorSandBox(tester: tester, document: document);
+        await editor.pump();
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(10, 1),
+          pointer: tester.nextPointer,
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        expect(
+          editor.selection,
+          const TextSelection.collapsed(
+            offset: 1,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+        await gesture.moveBy(const Offset(30, 0));
+        await tester.pump();
+        await gesture.up();
+        await tester.pumpAndSettle();
+        expect(
+          editor.selection,
+          const TextSelection(
+            baseOffset: 1,
+            extentOffset: 2,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-      testWidgets(
-        'Mouse drag with shift extends selection',
-        (tester) async {
-          final document = Document.fromJson([
-            {'insert': 'Test test\n'},
-          ]);
-          final editor = EditorSandBox(tester: tester, document: document);
-          await editor.pumpAndTap();
-          await editor.updateSelection(base: 1, extent: 2);
-          await tester.sendKeyDownEvent(LogicalKeyboardKey.shift);
-          final gesture = await tester.startGesture(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(45, 1),
-            pointer: tester.nextPointer,
-            kind: PointerDeviceKind.mouse,
-          );
-          await tester.pump();
-          expect(
-            editor.selection,
-            const TextSelection(
-              baseOffset: 1,
-              extentOffset: 3,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-          await gesture.moveBy(const Offset(30, 0));
-          await tester.pump();
-          await gesture.up();
-          await tester.pumpAndSettle();
-          expect(
-            editor.selection,
-            const TextSelection(
-              baseOffset: 1,
-              extentOffset: 5,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-      );
+      testWidgets('Mouse drag with shift extends selection', (tester) async {
+        final document = Document.fromJson([
+          {'insert': 'Test test\n'},
+        ]);
+        final editor = EditorSandBox(tester: tester, document: document);
+        await editor.pumpAndTap();
+        await editor.updateSelection(base: 1, extent: 2);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shift);
+        final gesture = await tester.startGesture(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(45, 1),
+          pointer: tester.nextPointer,
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        expect(
+          editor.selection,
+          const TextSelection(
+            baseOffset: 1,
+            extentOffset: 3,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+        await gesture.moveBy(const Offset(30, 0));
+        await tester.pump();
+        await gesture.up();
+        await tester.pumpAndSettle();
+        expect(
+          editor.selection,
+          const TextSelection(
+            baseOffset: 1,
+            extentOffset: 5,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-      testWidgets(
-        'Can select last separated character in paragraph on iOS',
-        (tester) async {
-          const text = 'Test.';
-          final document = Document.fromJson([
-            {'insert': '$text\n'},
-          ]);
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          await tester.tapAt(
-            tester.getBottomRight(find.byType(PlumeEditor)) -
-                const Offset(1, 1),
-          );
-          await tester.pump();
-          expect(
-            editor.selection,
-            const TextSelection.collapsed(
-              offset: text.length,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-      );
+      testWidgets('Can select last separated character in paragraph on iOS', (
+        tester,
+      ) async {
+        const text = 'Test.';
+        final document = Document.fromJson([
+          {'insert': '$text\n'},
+        ]);
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        await tester.tapAt(
+          tester.getBottomRight(find.byType(PlumeEditor)) - const Offset(1, 1),
+        );
+        await tester.pump();
+        expect(
+          editor.selection,
+          const TextSelection.collapsed(
+            offset: text.length,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
       testWidgets(
         'Tapping after the beginning of a word moves cursor after word on iOS',
@@ -1185,62 +1168,50 @@ void main() {
         },
       );
 
-      testWidgets(
-        'selection handles for iOS',
-        (tester) async {
-          final document = Document();
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
-          expect(
-            rawEditor.selectionControls,
-            const TypeMatcher<CupertinoTextSelectionControls>(),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-      );
+      testWidgets('selection handles for iOS', (tester) async {
+        final document = Document();
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
+        expect(
+          rawEditor.selectionControls,
+          const TypeMatcher<CupertinoTextSelectionControls>(),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-      testWidgets(
-        'selection handles for macOS',
-        (tester) async {
-          final document = Document();
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
-          expect(
-            rawEditor.selectionControls,
-            const TypeMatcher<CupertinoDesktopTextSelectionControls>(),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-      );
+      testWidgets('selection handles for macOS', (tester) async {
+        final document = Document();
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
+        expect(
+          rawEditor.selectionControls,
+          const TypeMatcher<CupertinoDesktopTextSelectionControls>(),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
-      testWidgets(
-        'selection handles for Android',
-        (tester) async {
-          final document = Document();
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
-          expect(
-            rawEditor.selectionControls,
-            const TypeMatcher<MaterialTextSelectionControls>(),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.android),
-      );
+      testWidgets('selection handles for Android', (tester) async {
+        final document = Document();
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
+        expect(
+          rawEditor.selectionControls,
+          const TypeMatcher<MaterialTextSelectionControls>(),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
       testWidgets(
         'show single selection handle when setting cursor position (Android)',
@@ -1413,83 +1384,68 @@ void main() {
         expect(magnifier, findsNothing);
       });
 
-      testWidgets(
-        'selection handles for Windows',
-        (tester) async {
-          final document = Document();
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
-          expect(
-            rawEditor.selectionControls,
-            const TypeMatcher<DesktopTextSelectionControls>(),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.windows),
-      );
+      testWidgets('selection handles for Windows', (tester) async {
+        final document = Document();
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
+        expect(
+          rawEditor.selectionControls,
+          const TypeMatcher<DesktopTextSelectionControls>(),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
-      testWidgets(
-        'selection handles for Linux',
-        (tester) async {
-          final document = Document();
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
-          expect(
-            rawEditor.selectionControls,
-            const TypeMatcher<DesktopTextSelectionControls>(),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.linux),
-      );
+      testWidgets('selection handles for Linux', (tester) async {
+        final document = Document();
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        final rawEditor = tester.widget<RawEditor>(find.byType(RawEditor));
+        expect(
+          rawEditor.selectionControls,
+          const TypeMatcher<DesktopTextSelectionControls>(),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.linux));
 
-      testWidgets(
-        'selectAll for macOS',
-        (tester) async {
-          final document = Document.fromJson([
-            {'insert': 'Test\nAnother line\n'},
-          ]);
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-            buttons: kSecondaryMouseButton,
-          );
-          tester.binding.scheduleWarmUpFrame();
-          await tester.pump();
-          expect(
-            find.byType(CupertinoDesktopTextSelectionToolbar),
-            findsOneWidget,
-          );
-          await tester.tap(find.text('Select All')); // Select All in macOS
-          await tester.pump();
-          expect(
-            editor.selection,
-            const TextSelection(
-              baseOffset: 0,
-              extentOffset: 17,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-          expect(
-            find.byType(CupertinoDesktopTextSelectionToolbar),
-            findsNothing,
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-      );
+      testWidgets('selectAll for macOS', (tester) async {
+        final document = Document.fromJson([
+          {'insert': 'Test\nAnother line\n'},
+        ]);
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+          buttons: kSecondaryMouseButton,
+        );
+        tester.binding.scheduleWarmUpFrame();
+        await tester.pump();
+        expect(
+          find.byType(CupertinoDesktopTextSelectionToolbar),
+          findsOneWidget,
+        );
+        await tester.tap(find.text('Select All')); // Select All in macOS
+        await tester.pump();
+        expect(
+          editor.selection,
+          const TextSelection(
+            baseOffset: 0,
+            extentOffset: 17,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+        expect(find.byType(CupertinoDesktopTextSelectionToolbar), findsNothing);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 
       testWidgets(
         'selectAll for Windows/Linux',
@@ -1563,43 +1519,39 @@ void main() {
         variant: TargetPlatformVariant.only(TargetPlatform.macOS),
       );
 
-      testWidgets(
-        'Triple tap selects a line on Linux',
-        (tester) async {
-          const text =
-              'This is a relatively long paragraph with multiple lines that'
-              ' we are going to triple tap on it in order to select it.';
-          final document = Document.fromJson([
-            {'insert': '$text\n'},
-            {'insert': 'Some other text in another paragraph\n'},
-          ]);
-          final editor = EditorSandBox(
-            tester: tester,
-            document: document,
-            autofocus: true,
-          );
-          await editor.pump();
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump();
-          expect(
-            editor.selection,
-            const TextSelection(
-              baseOffset: 0,
-              extentOffset: 50,
-              affinity: TextAffinity.upstream,
-            ),
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.linux),
-      );
+      testWidgets('Triple tap selects a line on Linux', (tester) async {
+        const text =
+            'This is a relatively long paragraph with multiple lines that'
+            ' we are going to triple tap on it in order to select it.';
+        final document = Document.fromJson([
+          {'insert': '$text\n'},
+          {'insert': 'Some other text in another paragraph\n'},
+        ]);
+        final editor = EditorSandBox(
+          tester: tester,
+          document: document,
+          autofocus: true,
+        );
+        await editor.pump();
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump();
+        expect(
+          editor.selection,
+          const TextSelection(
+            baseOffset: 0,
+            extentOffset: 50,
+            affinity: TextAffinity.upstream,
+          ),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.linux));
 
       testWidgets(
         'Arrow keys move cursor to next/previous line at correct position',
@@ -1739,178 +1691,161 @@ void main() {
         return editor;
       }
 
-      testWidgets(
-        'suggests correction on initial load (Android)',
-        (tester) async {
-          spellCheckService.stub = (_, _) async {
-            return [
-              const SuggestionSpan(TextRange(start: 0, end: 4), [
-                'Same',
-                'Some',
-                'Sales',
-              ]),
-            ];
-          };
-          await prepareTest(
-            tester,
-            Document.fromJson([
-              {'insert': 'Sole text\n'},
+      testWidgets('suggests correction on initial load (Android)', (
+        tester,
+      ) async {
+        spellCheckService.stub = (_, _) async {
+          return [
+            const SuggestionSpan(TextRange(start: 0, end: 4), [
+              'Same',
+              'Some',
+              'Sales',
             ]),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump(const Duration(seconds: 1));
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump();
-          expect(
-            find.byType(PlumeSpellCheckSuggestionsToolbar),
-            findsOneWidget,
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.android),
-      );
+          ];
+        };
+        await prepareTest(
+          tester,
+          Document.fromJson([
+            {'insert': 'Sole text\n'},
+          ]),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump();
+        expect(find.byType(PlumeSpellCheckSuggestionsToolbar), findsOneWidget);
+      }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
-      testWidgets(
-        'suggests correction on initial load (iOS)',
-        (tester) async {
-          spellCheckService.stub = (_, _) async {
-            return [
-              const SuggestionSpan(TextRange(start: 0, end: 4), [
-                'Same',
-                'Some',
-                'Sales',
-              ]),
-            ];
-          };
-          await prepareTest(
-            tester,
-            Document.fromJson([
-              {'insert': 'Sole text\n'},
+      testWidgets('suggests correction on initial load (iOS)', (tester) async {
+        spellCheckService.stub = (_, _) async {
+          return [
+            const SuggestionSpan(TextRange(start: 0, end: 4), [
+              'Same',
+              'Some',
+              'Sales',
             ]),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump();
-          expect(
-            find.byType(PlumeCupertinoSpellCheckSuggestionsToolbar),
-            findsOneWidget,
-          );
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-      );
+          ];
+        };
+        await prepareTest(
+          tester,
+          Document.fromJson([
+            {'insert': 'Sole text\n'},
+          ]),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump();
+        expect(
+          find.byType(PlumeCupertinoSpellCheckSuggestionsToolbar),
+          findsOneWidget,
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-      testWidgets(
-        'replaces text with selected suggestion (Android)',
-        (tester) async {
-          spellCheckService.stub = (_, _) async {
-            return [
-              const SuggestionSpan(TextRange(start: 0, end: 4), [
-                'Same',
-                'Some',
-                'Sales',
-              ]),
-            ];
-          };
-          final editor = await prepareTest(
-            tester,
-            Document.fromJson([
-              {'insert': 'Sole text\n'},
+      testWidgets('replaces text with selected suggestion (Android)', (
+        tester,
+      ) async {
+        spellCheckService.stub = (_, _) async {
+          return [
+            const SuggestionSpan(TextRange(start: 0, end: 4), [
+              'Same',
+              'Some',
+              'Sales',
             ]),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump(const Duration(seconds: 1));
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump();
-          await tester.tap(find.text('Some'));
-          await tester.pump(throttleDuration);
-          expect(editor.controller.document.toPlainText(), 'Some text\n');
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.android),
-      );
+          ];
+        };
+        final editor = await prepareTest(
+          tester,
+          Document.fromJson([
+            {'insert': 'Sole text\n'},
+          ]),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump();
+        await tester.tap(find.text('Some'));
+        await tester.pump(throttleDuration);
+        expect(editor.controller.document.toPlainText(), 'Some text\n');
+      }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
-      testWidgets(
-        'deletes erroneous text (Android)',
-        (tester) async {
-          spellCheckService.stub = (_, _) async {
-            return [
-              const SuggestionSpan(TextRange(start: 0, end: 4), [
-                'Same',
-                'Some',
-                'Sales',
-              ]),
-            ];
-          };
-          final editor = await prepareTest(
-            tester,
-            Document.fromJson([
-              {'insert': 'Sole text\n'},
+      testWidgets('deletes erroneous text (Android)', (tester) async {
+        spellCheckService.stub = (_, _) async {
+          return [
+            const SuggestionSpan(TextRange(start: 0, end: 4), [
+              'Same',
+              'Some',
+              'Sales',
             ]),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump(const Duration(seconds: 1));
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump();
-          await tester.tap(
-            find.text(
-              const DefaultMaterialLocalizations().deleteButtonTooltip
-                  .toUpperCase(),
-            ),
-          );
-          await tester.pump(throttleDuration);
-          expect(editor.controller.document.toPlainText(), 'Sole text\n');
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.android),
-      );
+          ];
+        };
+        final editor = await prepareTest(
+          tester,
+          Document.fromJson([
+            {'insert': 'Sole text\n'},
+          ]),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump();
+        await tester.tap(
+          find.text(
+            const DefaultMaterialLocalizations().deleteButtonTooltip
+                .toUpperCase(),
+          ),
+        );
+        await tester.pump(throttleDuration);
+        expect(editor.controller.document.toPlainText(), 'Sole text\n');
+      }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
-      testWidgets(
-        'replaces text with selected suggestion (iOS)',
-        (tester) async {
-          spellCheckService.stub = (_, _) async {
-            return [
-              const SuggestionSpan(TextRange(start: 0, end: 4), [
-                'Same',
-                'Some',
-                'Sales',
-              ]),
-            ];
-          };
-          final editor = await prepareTest(
-            tester,
-            Document.fromJson([
-              {'insert': 'Sole text\n'},
+      testWidgets('replaces text with selected suggestion (iOS)', (
+        tester,
+      ) async {
+        spellCheckService.stub = (_, _) async {
+          return [
+            const SuggestionSpan(TextRange(start: 0, end: 4), [
+              'Same',
+              'Some',
+              'Sales',
             ]),
-          );
-          await tester.tapAt(
-            tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
-          );
-          await tester.pump();
-          await tester.tap(find.text('Some'));
-          await tester.pump(throttleDuration);
-          expect(editor.controller.document.toPlainText(), 'Some text\n');
-        },
-        variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-      );
+          ];
+        };
+        final editor = await prepareTest(
+          tester,
+          Document.fromJson([
+            {'insert': 'Sole text\n'},
+          ]),
+        );
+        await tester.tapAt(
+          tester.getTopLeft(find.byType(PlumeEditor)) + const Offset(1, 1),
+        );
+        await tester.pump();
+        await tester.tap(find.text('Some'));
+        await tester.pump(throttleDuration);
+        expect(editor.controller.document.toPlainText(), 'Some text\n');
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
     });
 
     group('didUpdateWidget', () {
