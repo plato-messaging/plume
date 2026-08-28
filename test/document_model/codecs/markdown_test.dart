@@ -15,17 +15,14 @@ void main() {
       expect(delta, newParchment.toDelta());
     });
 
-    test(
-      'should convert invalid markdown with only line breaks to valid empty document',
-      () {
-        final markdown = '\n\n\n';
-        final delta = markdownCodec.decode(markdown).toDelta();
-        expect(delta.length, 1);
-        expect(delta.first.data, '\n');
-        final newParchment = Document();
-        expect(delta, newParchment.toDelta());
-      },
-    );
+    test('should convert invalid markdown with only line breaks to valid empty document', () {
+      final markdown = '\n\n\n';
+      final delta = markdownCodec.decode(markdown).toDelta();
+      expect(delta.length, 1);
+      expect(delta.first.data, '\n');
+      final newParchment = Document();
+      expect(delta, newParchment.toDelta());
+    });
 
     test('paragraphs', () {
       final markdown = 'First line\n\nSecond line\n\n';
@@ -600,15 +597,13 @@ void main() {
         ..insert('\n', Attribute.ul.toJson());
       expect(markdownCodec.encode(Document.fromDelta(delta)), '* Hello\n\n');
       expect(
-        MarkdownCodec(
-          unorderedListToken: '-',
-        ).encode(Document.fromDelta(delta)),
+        MarkdownCodec(unorderedListToken: '-')
+            .encode(Document.fromDelta(delta)),
         '- Hello\n\n',
       );
       expect(
-        MarkdownCodec(
-          unorderedListToken: '+',
-        ).encode(Document.fromDelta(delta)),
+        MarkdownCodec(unorderedListToken: '+')
+            .encode(Document.fromDelta(delta)),
         '+ Hello\n\n',
       );
     });

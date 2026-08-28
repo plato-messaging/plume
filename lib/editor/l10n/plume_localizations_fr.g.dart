@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'plume_localizations.g.dart';
 
 // ignore_for_file: type=lint

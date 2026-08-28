@@ -268,9 +268,9 @@ void main() {
       // capped
       scrollController.jumpTo(scrollController.position.maxScrollExtent);
       await tester.pumpAndSettle();
-      final renderToolbarTextButton =
-          tester.renderObject(find.byType(TextSelectionToolbarTextButton).first)
-              as RenderBox;
+      final renderToolbarTextButton = tester.renderObject(
+        find.byType(TextSelectionToolbarTextButton).first,
+      ) as RenderBox;
       final toolbarTop = renderToolbarTextButton.localToGlobal(Offset.zero);
       expect(toolbarTop.dy, greaterThan(90));
     });
@@ -285,9 +285,8 @@ void main() {
           ..insert('\n');
         var doc = Document.fromDelta(delta);
         final BuildContext context = tester.element(find.byType(Container));
-        var theme = PlumeThemeData.fallback(
-          context,
-        ).copyWith(link: const TextStyle(color: Colors.red));
+        var theme = PlumeThemeData.fallback(context)
+            .copyWith(link: const TextStyle(color: Colors.red));
         var editor = EditorSandBox(
           tester: tester,
           document: doc,
@@ -311,9 +310,8 @@ void main() {
         var editor = EditorSandBox(
           tester: tester,
           document: doc,
-          plumeTheme: PlumeThemeData.fallback(
-            context,
-          ).copyWith(strutStyle: strutStyle),
+          plumeTheme: PlumeThemeData.fallback(context)
+              .copyWith(strutStyle: strutStyle),
         );
         await editor.pumpAndTap();
         final p = tester.widget(find.byType(RichText).first) as RichText;
@@ -407,9 +405,9 @@ void main() {
         tester.getTopLeft(find.byType(RawEditor)) + const Offset(15, 5),
       );
       await tester.pumpAndSettle();
-      final handle =
-          tester.widget(editor.findSelectionHandles().first)
-              as SelectionHandleOverlay;
+      final handle = tester.widget(
+        editor.findSelectionHandles().first,
+      ) as SelectionHandleOverlay;
       expect(handle.visibility?.value, false);
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
@@ -448,9 +446,8 @@ void main() {
         document: Document(),
         autofocus: true,
         appBuilder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(supportsShowingSystemContextMenu: true),
+          data: MediaQuery.of(context)
+              .copyWith(supportsShowingSystemContextMenu: true),
           child: child!,
         ),
       );
@@ -474,9 +471,8 @@ void main() {
           document: Document(),
           autofocus: true,
           appBuilder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(supportsShowingSystemContextMenu: true),
+            data: MediaQuery.of(context)
+                .copyWith(supportsShowingSystemContextMenu: true),
             child: child!,
           ),
         );
@@ -504,9 +500,8 @@ void main() {
           document: Document(),
           autofocus: true,
           appBuilder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(supportsShowingSystemContextMenu: false),
+            data: MediaQuery.of(context)
+                .copyWith(supportsShowingSystemContextMenu: false),
             child: child!,
           ),
         );
@@ -2159,9 +2154,7 @@ void prepareClipboard() {
       });
 }
 
-Future<void> sendPasteIntent(WidgetTester tester) =>
-    (Actions.invoke(
-          tester.state(find.byType(PlumeKeyboardListener)).context,
-          const PasteTextIntent(SelectionChangedCause.longPress),
-        )
-        as Future);
+Future<void> sendPasteIntent(WidgetTester tester) => (Actions.invoke(
+  tester.state(find.byType(PlumeKeyboardListener)).context,
+  const PasteTextIntent(SelectionChangedCause.longPress),
+) as Future);

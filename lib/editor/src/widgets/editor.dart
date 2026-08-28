@@ -40,8 +40,10 @@ class _WebClipboardStatusNotifier extends ClipboardStatusNotifier {
 }
 
 /// Widget builder function for context menu in [PlumeEditor].
-typedef PlumeContextMenuBuilder =
-    Widget Function(BuildContext context, EditorState editorState);
+typedef PlumeContextMenuBuilder = Widget Function(
+  BuildContext context,
+  EditorState editorState,
+);
 
 /// Default implementation of a widget builder function for context menu.
 Widget defaultContextMenuBuilder(
@@ -79,8 +81,10 @@ Widget defaultSpellCheckMenuBuilder(
 }
 
 /// Builder function for embeddable objects in [PlumeEditor].
-typedef PlumeEmbedBuilder =
-    Widget Function(BuildContext context, EmbedNode node);
+typedef PlumeEmbedBuilder = Widget Function(
+  BuildContext context,
+  EmbedNode node,
+);
 
 /// Special configuration for [SpanEmbed]s
 class PlumeSpanEmbedConfiguration {
@@ -945,7 +949,7 @@ abstract class EditorState extends State<RawEditor>
   ///    suggestions in the toolbar for a misspelled word.
   SuggestionSpan? findSuggestionSpanAtCursorIndex(int cursorIndex);
 
-  Future<void> performSpellCheck(final String text);
+  Future<void> performSpellCheck(String text);
 
   void toggleToolbar([bool hideHandles = true]);
 
@@ -1230,7 +1234,7 @@ class RawEditorState extends EditorState
   }
 
   @override
-  Future<void> performSpellCheck(final String text) async {
+  Future<void> performSpellCheck(String text) async {
     try {
       final Locale? localeForSpellChecking = Localizations.maybeLocaleOf(
         context,
@@ -1840,9 +1844,8 @@ class RawEditorState extends EditorState
         excludeFromSemantics: true,
         controller: _scrollController,
         axisDirection: AxisDirection.down,
-        scrollBehavior: ScrollConfiguration.of(
-          context,
-        ).copyWith(scrollbars: true, overscroll: false),
+        scrollBehavior: ScrollConfiguration.of(context)
+            .copyWith(scrollbars: true, overscroll: false),
         physics: widget.scrollPhysics,
         viewportBuilder: (context, offset) => CompositedTransformTarget(
           link: _toolbarLayerLink,

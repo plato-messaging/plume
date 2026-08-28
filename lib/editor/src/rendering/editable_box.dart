@@ -163,15 +163,12 @@ class RenderEditableContainerBox extends RenderBox
         > {
   RenderEditableContainerBox({
     List<RenderEditableBox>? children,
-    required ContainerNode node,
-    required TextDirection textDirection,
+    required this._node,
+    required this._textDirection,
     required EdgeInsetsGeometry padding,
-    required TextWidthBasis textWidthBasis,
+    required this._textWidthBasis,
   }) : assert(padding.isNonNegative),
-       _node = node,
-       _textDirection = textDirection,
-       _padding = padding,
-       _textWidthBasis = textWidthBasis {
+       _padding = padding {
     addAll(children);
   }
 

@@ -136,8 +136,7 @@ void main() {
       test('html escaping', () {
         final doc = Document.fromJson([
           {
-            'insert':
-                'HTML special characters like < > & are escaped, but not \' " /.\n',
+            'insert': 'HTML special characters like < > & are escaped, but not \' " /.\n',
           },
         ]);
         expect(
@@ -146,47 +145,49 @@ void main() {
         );
       });
 
-      test('multiple line breaks in a row should render as actual line breaks', () {
-        // This has three blank lines between the Line 1/Line2 pair.
-        // The Line3/Line4 pair does not have blank lines, but both pairs should render to the
-        // same height. The Line5/Line6 pair has 3 blank lines but also were emboldened in Plume.
-        // The blank line after Line5 has a space in it just to distinguish it from a completely
-        // blank line.
-        final doc = Document.fromJson([
-          {
-            'insert':
-                'Line 1\n\n\n\nLine 2\nLine3\nnot blank1\nnot blank2\nnot blank3\nLine 4\n',
-          },
-          {
-            'insert': 'Line 5',
-            'attributes': {'b': true},
-          },
-          {'insert': '\n \n\n\n'},
-          {
-            'insert': 'Line 6',
-            'attributes': {'b': true},
-          },
-          {'insert': '\n'},
-        ]);
-        expect(
-          codec.encode(doc),
-          '<p>Line 1</p>'
-          '<p><br></p>'
-          '<p><br></p>'
-          '<p><br></p>'
-          '<p>Line 2</p>'
-          '<p>Line3</p>'
-          '<p>not blank1</p>'
-          '<p>not blank2</p>'
-          '<p>not blank3</p>'
-          '<p>Line 4</p>'
-          '<p><strong>Line 5</strong></p>'
-          '<p> <br></p>'
-          '<p><br></p>'
-          '<p><br></p>'
-          '<p><strong>Line 6</strong></p>',
-        );
-      });
+      test(
+        'multiple line breaks in a row should render as actual line breaks',
+        () {
+          // This has three blank lines between the Line 1/Line2 pair.
+          // The Line3/Line4 pair does not have blank lines, but both pairs should render to the
+          // same height. The Line5/Line6 pair has 3 blank lines but also were emboldened in Plume.
+          // The blank line after Line5 has a space in it just to distinguish it from a completely
+          // blank line.
+          final doc = Document.fromJson([
+            {
+              'insert': 'Line 1\n\n\n\nLine 2\nLine3\nnot blank1\nnot blank2\nnot blank3\nLine 4\n',
+            },
+            {
+              'insert': 'Line 5',
+              'attributes': {'b': true},
+            },
+            {'insert': '\n \n\n\n'},
+            {
+              'insert': 'Line 6',
+              'attributes': {'b': true},
+            },
+            {'insert': '\n'},
+          ]);
+          expect(
+            codec.encode(doc),
+            '<p>Line 1</p>'
+            '<p><br></p>'
+            '<p><br></p>'
+            '<p><br></p>'
+            '<p>Line 2</p>'
+            '<p>Line3</p>'
+            '<p>not blank1</p>'
+            '<p>not blank2</p>'
+            '<p>not blank3</p>'
+            '<p>Line 4</p>'
+            '<p><strong>Line 5</strong></p>'
+            '<p> <br></p>'
+            '<p><br></p>'
+            '<p><br></p>'
+            '<p><strong>Line 6</strong></p>',
+          );
+        },
+      );
 
       test('several styled lines in a row', () {
         // Tests that we don't generate nested <p> tags.
@@ -2093,8 +2094,7 @@ final doc = [
     'attributes': {'i': true},
   },
   {
-    'insert':
-        ' in mind. It provides clean interface for distraction-free editing. Think ',
+    'insert': ' in mind. It provides clean interface for distraction-free editing. Think ',
   },
   {
     'insert': 'Medium.com',

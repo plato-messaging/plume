@@ -23,8 +23,10 @@ enum LinkMenuAction {
 /// Used internally by Plume widget layer.
 typedef LinkActionPicker = Future<LinkMenuAction> Function(Node linkNode);
 
-typedef LinkActionPickerDelegate =
-    Future<LinkMenuAction> Function(BuildContext context, String link);
+typedef LinkActionPickerDelegate = Future<LinkMenuAction> Function(
+  BuildContext context,
+  String link,
+);
 
 Future<LinkMenuAction> defaultLinkActionPickerDelegate(
   BuildContext context,

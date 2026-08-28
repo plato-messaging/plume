@@ -19,16 +19,16 @@ enum TextLineSlot { leading, body }
 class RenderEditableTextLine extends RenderEditableBox {
   /// Creates new editable paragraph render box.
   RenderEditableTextLine({
-    required LineNode node,
+    required this._node,
     required EdgeInsetsGeometry padding,
-    required TextDirection textDirection,
-    required CursorController cursorController,
-    required TextSelection selection,
-    required Color selectionColor,
-    required bool enableInteractiveSelection,
-    required bool hasFocus,
-    required InlineCodeThemeData inlineCodeTheme,
-    double devicePixelRatio = 1.0,
+    required this._textDirection,
+    required this._cursorController,
+    required this._selection,
+    required this._selectionColor,
+    required this._enableInteractiveSelection,
+    required this._hasFocus,
+    required this._inlineCodeTheme,
+    this._devicePixelRatio = 1.0,
     // Not implemented fields are below:
     ui.BoxHeightStyle selectionHeightStyle = ui.BoxHeightStyle.tight,
     ui.BoxWidthStyle selectionWidthStyle = ui.BoxWidthStyle.tight,
@@ -39,16 +39,7 @@ class RenderEditableTextLine extends RenderEditableBox {
       5,
     ),
   }) : assert(padding.isNonNegative),
-       _textDirection = textDirection,
-       _padding = padding,
-       _node = node,
-       _cursorController = cursorController,
-       _selection = selection,
-       _selectionColor = selectionColor,
-       _enableInteractiveSelection = enableInteractiveSelection,
-       _devicePixelRatio = devicePixelRatio,
-       _inlineCodeTheme = inlineCodeTheme,
-       _hasFocus = hasFocus;
+       _padding = padding;
 
   //
 

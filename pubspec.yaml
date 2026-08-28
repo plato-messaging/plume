@@ -1,10 +1,9 @@
 name: plume
 description: "A gentle yet powerful rich text editor."
 version: 0.3.0-pre
-publish_to: None
 
 environment:
-  sdk: ">=3.9.0 <4.0.0"
+  sdk: ">=3.13.0 <4.0.0"
   flutter: ">=3.0.0"
 
 flutter:
@@ -21,7 +20,6 @@ dependencies:
   html: ^0.15.6
   meta: ^1.16.0
 
-  # Fleather
   collection: ^1.19.1
   intl: ">=0.19.0 <0.21.0"
 

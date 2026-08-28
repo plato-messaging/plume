@@ -58,8 +58,9 @@ class PlainTextClipboardManager extends ClipboardManager {
 typedef PlumeCustomClipboardGetData = Future<PlumeClipboardData?> Function();
 
 /// Used by [PlumeCustomClipboardManager] to set clipboard data.
-typedef PlumeCustomClipboardSetData =
-    Future<void> Function(PlumeClipboardData data);
+typedef PlumeCustomClipboardSetData = Future<void> Function(
+  PlumeClipboardData data,
+);
 
 /// A [ClipboardManager] which delegates getting and setting data to user and
 /// can be used to have rich clipboard.
@@ -68,10 +69,9 @@ final class PlumeCustomClipboardManager extends ClipboardManager {
   final PlumeCustomClipboardSetData _setData;
 
   const PlumeCustomClipboardManager({
-    required PlumeCustomClipboardGetData getData,
-    required PlumeCustomClipboardSetData setData,
-  }) : _getData = getData,
-       _setData = setData;
+    required this._getData,
+    required this._setData,
+  });
 
   @override
   Future<void> setData(PlumeClipboardData data) => _setData(data);

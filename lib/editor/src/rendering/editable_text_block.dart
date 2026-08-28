@@ -13,11 +13,10 @@ class RenderEditableTextBlock extends RenderEditableContainerBox
     required BlockNode super.node,
     required super.textDirection,
     required EdgeInsetsGeometry padding,
-    required Decoration decoration,
+    required this._decoration,
     required super.textWidthBasis,
     EdgeInsets contentPadding = EdgeInsets.zero,
-  }) : _decoration = decoration,
-       _configuration = ImageConfiguration(textDirection: textDirection),
+  }) : _configuration = ImageConfiguration(textDirection: textDirection),
        _savedPadding = padding,
        _contentPadding = contentPadding,
        super(padding: padding.add(contentPadding));

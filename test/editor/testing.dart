@@ -127,16 +127,16 @@ class EditorSandBox {
   }
 
   RawMaterialButton findButtonWithIcon(IconData icon) {
-    final button =
-        tester.widget(find.widgetWithIcon(RawMaterialButton, icon))
-            as RawMaterialButton;
+    final button = tester.widget(
+      find.widgetWithIcon(RawMaterialButton, icon),
+    ) as RawMaterialButton;
     return button;
   }
 
   RawMaterialButton findButtonWithText(String text) {
-    final button =
-        tester.widget(find.widgetWithText(RawMaterialButton, text))
-            as RawMaterialButton;
+    final button = tester.widget(
+      find.widgetWithText(RawMaterialButton, text),
+    ) as RawMaterialButton;
     return button;
   }
 
