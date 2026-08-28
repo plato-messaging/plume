@@ -43,8 +43,7 @@ abstract class AutoFormat {
 
 /// Registry for [AutoFormats].
 class AutoFormats {
-  AutoFormats({required List<AutoFormat> autoFormats})
-    : _autoFormats = autoFormats;
+  AutoFormats({required this._autoFormats});
 
   /// Default set of auto formats.
   ///

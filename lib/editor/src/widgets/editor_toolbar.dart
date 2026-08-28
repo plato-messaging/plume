@@ -224,14 +224,13 @@ class _LinkDialogState extends State<_LinkDialog> {
 /// Builder for toolbar buttons handling toggleable style attributes.
 ///
 /// See [defaultToggleStyleButtonBuilder] as a reference implementation.
-typedef ToggleStyleButtonBuilder =
-    Widget Function(
-      BuildContext context,
-      Attribute attribute,
-      IconData icon,
-      bool isToggled,
-      VoidCallback? onPressed,
-    );
+typedef ToggleStyleButtonBuilder = Widget Function(
+  BuildContext context,
+  Attribute attribute,
+  IconData icon,
+  bool isToggled,
+  VoidCallback? onPressed,
+);
 
 /// Toolbar button which allows to toggle a style attribute on or off.
 class ToggleStyleButton extends StatefulWidget {
@@ -1287,9 +1286,9 @@ class SelectorScope extends StatefulWidget {
     Widget selector,
     Completer<T?> completer, {
     bool rootOverlay = false,
-  }) => SelectorScope.of(
-    context,
-  ).showSelector(context, selector, completer, rootOverlay: rootOverlay);
+  }) =>
+      SelectorScope.of(context)
+          .showSelector(context, selector, completer, rootOverlay: rootOverlay);
 
   @override
   State<SelectorScope> createState() => SelectorScopeState();
@@ -1403,9 +1402,8 @@ class _SelectorLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus 8.0 pixels in each
     // direction.
-    return BoxConstraints.loose(
-      constraints.biggest,
-    ).deflate(const EdgeInsets.all(_selectorScreenPadding) + padding);
+    return BoxConstraints.loose(constraints.biggest)
+        .deflate(const EdgeInsets.all(_selectorScreenPadding) + padding);
   }
 
   @override

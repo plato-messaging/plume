@@ -16,8 +16,10 @@ import 'editable_box.dart';
 /// (including the cursor location).
 ///
 /// Used by [RenderEditor.onSelectionChanged].
-typedef TextSelectionChangedHandler =
-    void Function(TextSelection selection, SelectionChangedCause cause);
+typedef TextSelectionChangedHandler = void Function(
+  TextSelection selection,
+  SelectionChangedCause cause,
+);
 
 // The padding applied to text field. Used to determine the bounds when
 // moving the floating cursor.
@@ -149,12 +151,12 @@ class RenderEditor extends RenderEditableContainerBox
     required super.textDirection,
     required super.textWidthBasis,
     required Document document,
-    required ViewportOffset offset,
-    required bool hasFocus,
-    required TextSelection selection,
-    required LayerLink startHandleLayerLink,
-    required LayerLink endHandleLayerLink,
-    required CursorController cursorController,
+    required this._offset,
+    required this._hasFocus,
+    required this._selection,
+    required this._startHandleLayerLink,
+    required this._endHandleLayerLink,
+    required this._cursorController,
     this.onSelectionChanged,
     EdgeInsets floatingCursorAddedMargin = const EdgeInsets.fromLTRB(
       4,
@@ -162,15 +164,8 @@ class RenderEditor extends RenderEditableContainerBox
       4,
       5,
     ),
-    double? maxContentWidth,
+    this._maxContentWidth,
   }) : _document = document,
-       _offset = offset,
-       _hasFocus = hasFocus,
-       _selection = selection,
-       _startHandleLayerLink = startHandleLayerLink,
-       _endHandleLayerLink = endHandleLayerLink,
-       _cursorController = cursorController,
-       _maxContentWidth = maxContentWidth,
        super(node: document.root);
 
   Document _document;

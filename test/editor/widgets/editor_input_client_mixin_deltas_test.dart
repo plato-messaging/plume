@@ -106,9 +106,8 @@ void main() {
       controller = MockPlumeController();
       when(() => editorState.widget).thenReturn(rawEditor);
       when(() => editorState.viewId).thenReturn(0);
-      when(
-        () => editorState.textEditingValue,
-      ).thenReturn(initialTextEditingValue);
+      when(() => editorState.textEditingValue)
+          .thenReturn(initialTextEditingValue);
       when(() => editorState.themeData).thenReturn(
         PlumeThemeData(
           bold: const TextStyle(),
@@ -168,9 +167,8 @@ void main() {
       when(() => rawEditor.readOnly).thenReturn(false);
       when(() => rawEditor.autocorrect).thenReturn(true);
       when(() => rawEditor.keyboardAppearance).thenReturn(Brightness.light);
-      when(
-        () => rawEditor.textCapitalization,
-      ).thenReturn(TextCapitalization.none);
+      when(() => rawEditor.textCapitalization)
+          .thenReturn(TextCapitalization.none);
       when(() => rawEditor.autofocus).thenReturn(true);
       when(() => rawEditor.enableSuggestions).thenReturn(true);
       when(() => rawEditor.enableInteractiveSelection).thenReturn(true);

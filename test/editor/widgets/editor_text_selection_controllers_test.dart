@@ -73,9 +73,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(focusNode.hasFocus, isTrue);
       tester.binding.scheduleWarmUpFrame();
-      final handleState =
-          tester.state(find.byType(MyTextSelectionHandle))
-              as MyTextSelectionHandleState;
+      final handleState = tester.state(
+        find.byType(MyTextSelectionHandle),
+      ) as MyTextSelectionHandleState;
       expect(handleState.context.size, testSize);
     });
   });
