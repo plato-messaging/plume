@@ -1,6 +1,6 @@
 name: plume
 description: "A gentle yet powerful rich text editor."
-version: 0.3.0-pre
+version: 0.4.0-pre
 
 environment:
   sdk: ">=3.13.0 <4.0.0"
