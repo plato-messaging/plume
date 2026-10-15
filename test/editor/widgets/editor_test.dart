@@ -341,6 +341,50 @@ void main() {
             ..insert('\n', {'block': 'ul'}),
         );
       });
+
+      testWidgets('lines with span embeds do not force StrutStyle height', (
+        tester,
+      ) async {
+        final doc = Document.fromJson([
+          {'insert': 'Hello world\n'},
+          {
+            'insert': {'_type': 'something', '_inline': true},
+          },
+          {'insert': '\n'},
+        ]);
+        final strutStyle = StrutStyle(
+          leading: 0.2,
+          height: 1.0,
+          forceStrutHeight: true,
+        );
+        final BuildContext context = tester.element(find.byType(Container));
+        final editor = EditorSandBox(
+          tester: tester,
+          document: doc,
+          plumeTheme: PlumeThemeData.fallback(context)
+              .copyWith(strutStyle: strutStyle),
+          embedRegistry: EmbedRegistry.withConfigurations([
+            FakeSpanEmbedConfiguration(),
+          ]),
+        );
+        await editor.pump();
+        final richTexts = tester
+            .widgetList<RichText>(find.byType(RichText))
+            .toList();
+        final textLine = richTexts.first;
+        final embedLine = richTexts.last;
+        // Plain text line keeps the theme strut as is
+        expect(textLine.strutStyle?.forceStrutHeight, isTrue);
+        // Line with span embed keeps theme strut but does not force height
+        expect(embedLine.strutStyle?.leading, strutStyle.leading);
+        expect(embedLine.strutStyle?.height, strutStyle.height);
+        expect(embedLine.strutStyle?.forceStrutHeight, isFalse);
+        // The line grows to fit the embed (300 + vertical padding of 4)
+        expect(
+          tester.getSize(find.byWidget(embedLine)).height,
+          greaterThanOrEqualTo(304),
+        );
+      });
     });
 
     testWidgets('changes to controller does not request keyboard', (
