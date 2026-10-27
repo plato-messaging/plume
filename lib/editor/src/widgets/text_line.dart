@@ -1,8 +1,8 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:plume/document_model/document_model.dart';
 
 import 'controller.dart';
@@ -132,15 +132,15 @@ class _TextLineState extends State<TextLine> {
     // We don't want to force strut height when the line contains inline
     // embeds: an embed taller than the strut would otherwise overflow its
     // line and overlap the surrounding content.
-    final hasSpanEmbed = widget.node.hasSpanEmbed;
+    final hasOnlySpanEmbed = widget.node.hasOnlySpanEmbed;
     final themeStrutStyle = theme.strutStyle?.inheritFromTextStyle(text.style);
     final strutStyle = themeStrutStyle != null
-        ? (hasSpanEmbed
+        ? (hasOnlySpanEmbed
               ? themeStrutStyle.merge(const StrutStyle(forceStrutHeight: false))
               : themeStrutStyle)
         : StrutStyle.fromTextStyle(
             text.style!,
-            forceStrutHeight: !hasSpanEmbed,
+            forceStrutHeight: !hasOnlySpanEmbed,
           );
     return RichTextProxy(
       textStyle: text.style!,
