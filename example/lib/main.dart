@@ -1,9 +1,10 @@
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:plume/plume.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'
-    hide GlobalMaterialLocalizations;
+    hide GlobalMaterialLocalizations, GlobalCupertinoLocalizations;
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,7 +17,7 @@ class PlumeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    localizationsDelegates: const [
+    localizationsDelegates: [
       PlumeLocalizations.delegate,
       GlobalCupertinoLocalizations.delegate,
       GlobalMaterialLocalizations.delegate,
