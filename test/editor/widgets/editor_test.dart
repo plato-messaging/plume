@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plume/editor/src/services/spell_check_suggestions_toolbar.dart';
 import 'package:plume/editor/src/widgets/checkbox.dart';
 import 'package:plume/editor/src/widgets/keyboard_listener.dart';
+import 'package:plume/editor/src/widgets/shortcuts.dart';
 import 'package:plume/editor/src/widgets/system_context_menu.dart';
 import 'package:plume/editor/src/widgets/text_selection.dart';
 import 'package:plume/plume.dart';
@@ -14,6 +15,89 @@ import '../testing.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('display-only $RawEditor', () {
+    Widget buildEditor(
+      PlumeController controller, {
+      bool readOnly = true,
+      bool enableInteractiveSelection = false,
+    }) {
+      return MaterialApp(
+        home: Scaffold(
+          body: PlumeEditor(
+            controller: controller,
+            scrollable: false,
+            readOnly: readOnly,
+            enableInteractiveSelection: enableInteractiveSelection,
+          ),
+        ),
+      );
+    }
+
+    PlumeController newController() {
+      final controller = PlumeController(
+        document: Document.fromDelta(Delta()..insert('Hello\n')),
+      );
+      addTearDown(controller.dispose);
+      return controller;
+    }
+
+    Finder inEditor(Type type) => find.descendant(
+      of: find.byType(PlumeEditor),
+      matching: find.byType(type),
+    );
+
+    testWidgets('does not set up focus, keyboard, shortcuts and actions', (
+      tester,
+    ) async {
+      await tester.pumpWidget(buildEditor(newController()));
+      final editor = tester.widget<RawEditor>(find.byType(RawEditor));
+      expect(editor.isDisplayOnly, isTrue);
+      expect(inEditor(PlumeKeyboardListener), findsNothing);
+      expect(inEditor(Focus), findsNothing);
+      expect(inEditor(PlumeShortcuts), findsNothing);
+      expect(inEditor(PlumeActions), findsNothing);
+      expect(tester.getSize(find.byType(RawEditor)).height, greaterThan(0));
+    });
+
+    testWidgets('read-only editor with selection is still interactive', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildEditor(newController(), enableInteractiveSelection: true),
+      );
+      final editor = tester.widget<RawEditor>(find.byType(RawEditor));
+      expect(editor.isDisplayOnly, isFalse);
+      expect(inEditor(PlumeKeyboardListener), findsOneWidget);
+      expect(inEditor(PlumeShortcuts), findsOneWidget);
+    });
+
+    testWidgets('switches between display-only and editable', (tester) async {
+      final controller = newController();
+      await tester.pumpWidget(buildEditor(controller));
+      await tester.pumpWidget(
+        buildEditor(
+          controller,
+          readOnly: false,
+          enableInteractiveSelection: true,
+        ),
+      );
+      expect(inEditor(PlumeKeyboardListener), findsOneWidget);
+      await tester.tap(find.byType(RawEditor));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .state<RawEditorState>(find.byType(RawEditor))
+            .effectiveFocusNode
+            .hasFocus,
+        isTrue,
+      );
+      await tester.pumpWidget(buildEditor(controller));
+      await tester.pumpAndSettle();
+      expect(inEditor(PlumeKeyboardListener), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  });
 
   group('$RawEditor', () {
     testWidgets('Scrolls to reveal the cursor when keyboard pops up', (

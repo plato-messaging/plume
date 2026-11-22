@@ -88,13 +88,13 @@ class _TextLineState extends State<TextLine> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_pressedKeys == null) {
-      _pressedKeys = PlumePressedKeys.of(context);
-      _pressedKeys!.addListener(_pressedKeysChanged);
-    } else {
-      _pressedKeys!.removeListener(_pressedKeysChanged);
-      _pressedKeys = PlumePressedKeys.of(context);
-      _pressedKeys!.addListener(_pressedKeysChanged);
+    // There are no pressed keys to track in display-only editors: their links
+    // are launched by a simple tap (see [canLaunchLinks]).
+    final pressedKeys = PlumePressedKeys.maybeOf(context);
+    if (pressedKeys != _pressedKeys) {
+      _pressedKeys?.removeListener(_pressedKeysChanged);
+      _pressedKeys = pressedKeys;
+      _pressedKeys?.addListener(_pressedKeysChanged);
     }
   }
 

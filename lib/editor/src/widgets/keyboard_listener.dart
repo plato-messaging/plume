@@ -2,10 +2,15 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 class PlumePressedKeys extends ChangeNotifier {
-  static PlumePressedKeys of(BuildContext context) {
+  static PlumePressedKeys of(BuildContext context) => maybeOf(context)!;
+
+  /// The [PlumePressedKeys] of the closest [PlumeKeyboardListener], or `null`
+  /// when there is none (e.g. in a display-only editor, see
+  /// [RawEditor.isDisplayOnly]).
+  static PlumePressedKeys? maybeOf(BuildContext context) {
     final widget = context
         .dependOnInheritedWidgetOfExactType<_PlumePressedKeysAccess>();
-    return widget!.pressedKeys;
+    return widget?.pressedKeys;
   }
 
   bool _metaPressed = false;

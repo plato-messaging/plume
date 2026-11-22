@@ -578,11 +578,15 @@ class _PlumeEditorState extends State<PlumeEditor>
       contextMenuBuilder: widget.contextMenuBuilder,
     );
 
-    child = PlumeShortcuts(
-      child: PlumeActions(
-        child: PlumeHistory(controller: widget.controller, child: child),
-      ),
-    );
+    // A display-only editor (see [RawEditor.isDisplayOnly]) cannot be edited:
+    // it needs no shortcuts, actions or history.
+    if (!(widget.readOnly && !widget.enableInteractiveSelection)) {
+      child = PlumeShortcuts(
+        child: PlumeActions(
+          child: PlumeHistory(controller: widget.controller, child: child),
+        ),
+      );
+    }
 
     return widget.enableInteractiveSelection
         ? _selectionGestureDetectorBuilder.buildGestureDetector(
@@ -697,6 +701,15 @@ class RawEditor extends StatefulWidget {
   ///
   /// Defaults to false. Must not be null.
   final bool readOnly;
+
+  /// Whether the editor only displays its document: it is [readOnly] and
+  /// [enableInteractiveSelection] is `false`.
+  ///
+  /// Such an editor can neither be edited nor selected, so it does not set up
+  /// what only an interactive editor needs: its own cursor, focus, keyboard
+  /// listener, actions and clipboard status monitoring. This makes it cheap to
+  /// display many documents at once, e.g. messages in a list.
+  bool get isDisplayOnly => readOnly && !enableInteractiveSelection;
 
   /// Whether to enable autocorrection.
   ///
@@ -970,6 +983,30 @@ abstract class EditorState extends State<RawEditor>
 }
 
 // TODO: apply styling and color to spelling suggestion
+/// The [CursorController] shared by all display-only editors (see
+/// [RawEditor.isDisplayOnly]).
+///
+/// Display-only editors never have focus, so their cursor is never shown nor
+/// animated: sharing one controller avoids creating an animation controller and
+/// several notifiers per editor. It is never disposed.
+final _displayOnlyCursorController = CursorController(
+  showCursor: ValueNotifier<bool>(false),
+  style: const CursorStyle(
+    color: Color(0x00000000),
+    backgroundColor: Color(0x00000000),
+  ),
+  tickerProvider: const _NeverTickingTickerProvider(),
+);
+
+/// A [TickerProvider] for [_displayOnlyCursorController], whose cursor never
+/// blinks: its tickers are never started.
+class _NeverTickingTickerProvider implements TickerProvider {
+  const _NeverTickingTickerProvider();
+
+  @override
+  Ticker createTicker(TickerCallback onTick) => Ticker(onTick);
+}
+
 class RawEditorState extends EditorState
     with
         AutomaticKeepAliveClientMixin<RawEditor>,
@@ -1458,7 +1495,11 @@ class RawEditorState extends EditorState
   void initState() {
     super.initState();
 
-    clipboardStatus.addListener(_onChangedClipboardStatus);
+    // Listening to the clipboard status observes the app lifecycle and queries
+    // the platform clipboard: useless when nothing can be selected.
+    if (!widget.isDisplayOnly) {
+      clipboardStatus.addListener(_onChangedClipboardStatus);
+    }
 
     _spellCheckConfiguration = _inferSpellCheckConfiguration(
       widget.spellCheckConfiguration,
@@ -1470,11 +1511,7 @@ class RawEditorState extends EditorState
     _scrollController.addListener(_updateSelectionOverlayForScroll);
 
     // Cursor
-    _cursorController = CursorController(
-      showCursor: ValueNotifier<bool>(widget.showCursor),
-      style: widget.cursorStyle,
-      tickerProvider: this,
-    );
+    _cursorController = _createCursorController();
 
     // Floating cursor
     _floatingCursorResetController = AnimationController(vsync: this);
@@ -1507,8 +1544,20 @@ class RawEditorState extends EditorState
 
     performSpellCheck(widget.controller.plainTextEditingValue.text);
 
-    _cursorController.showCursor.value = widget.showCursor;
-    _cursorController.style = widget.cursorStyle;
+    if (widget.isDisplayOnly != oldWidget.isDisplayOnly) {
+      // Renderers still listen to the previous controller until this widget
+      // is rebuilt: dispose it after the frame.
+      final previous = _cursorController;
+      _cursorController = _createCursorController();
+      if (!identical(previous, _displayOnlyCursorController)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
+      }
+    }
+    // The shared display-only cursor controller must not be changed
+    if (!widget.isDisplayOnly) {
+      _cursorController.showCursor.value = widget.showCursor;
+      _cursorController.style = widget.cursorStyle;
+    }
 
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller.removeListener(_didChangeTextEditingValue);
@@ -1538,10 +1587,16 @@ class RawEditorState extends EditorState
       _selectionOverlay?.hideToolbar();
     }
 
-    if (clipboardStatus != oldWidget.clipboardStatus) {
-      oldWidget.clipboardStatus.removeListener(_onChangedClipboardStatus);
-      oldWidget.clipboardStatus.dispose();
-      clipboardStatus.addListener(_onChangedClipboardStatus);
+    final clipboardStatusChanged = clipboardStatus != oldWidget.clipboardStatus;
+    if (clipboardStatusChanged ||
+        widget.isDisplayOnly != oldWidget.isDisplayOnly) {
+      if (!oldWidget.isDisplayOnly) {
+        oldWidget.clipboardStatus.removeListener(_onChangedClipboardStatus);
+      }
+      if (clipboardStatusChanged) oldWidget.clipboardStatus.dispose();
+      if (!widget.isDisplayOnly) {
+        clipboardStatus.addListener(_onChangedClipboardStatus);
+      }
     }
 
     _selectionOverlay?.handlesVisible = widget.showSelectionHandles;
@@ -1571,10 +1626,29 @@ class RawEditorState extends EditorState
     widget.controller.removeListener(_didChangeTextEditingValue);
     effectiveFocusNode.removeListener(_handleFocusChanged);
     _internalFocusNode?.dispose();
-    _cursorController.dispose();
-    clipboardStatus.removeListener(_onChangedClipboardStatus);
+    _disposeCursorController();
+    if (!widget.isDisplayOnly) {
+      clipboardStatus.removeListener(_onChangedClipboardStatus);
+    }
     clipboardStatus.dispose();
     super.dispose();
+  }
+
+  /// Creates the cursor controller of this editor, or returns the shared one
+  /// for display-only editors (see [RawEditor.isDisplayOnly]).
+  CursorController _createCursorController() {
+    if (widget.isDisplayOnly) return _displayOnlyCursorController;
+    return CursorController(
+      showCursor: ValueNotifier<bool>(widget.showCursor),
+      style: widget.cursorStyle,
+      tickerProvider: this,
+    );
+  }
+
+  /// Disposes [_cursorController] unless it is the shared display-only one.
+  void _disposeCursorController() {
+    if (identical(_cursorController, _displayOnlyCursorController)) return;
+    _cursorController.dispose();
   }
 
   void _didChangeTextEditingValue() {
@@ -1897,6 +1971,15 @@ class RawEditorState extends EditorState
             minHeight: widget.minHeight ?? 0.0,
             maxHeight: widget.maxHeight ?? double.infinity,
           );
+
+    // A display-only editor can be neither focused nor selected: it needs no
+    // text mouse cursor, actions, focus or keyboard listener.
+    if (widget.isDisplayOnly) {
+      return PlumeTheme(
+        data: _themeData,
+        child: ConstrainedBox(constraints: constraints, child: child),
+      );
+    }
 
     return PlumeTheme(
       data: _themeData,
